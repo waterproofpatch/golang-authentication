@@ -45,10 +45,14 @@ def start_server(admin_email: str, admin_password: str, port: int):
             "PORT": port,
             "DATABASE_URL": "postgres://app-db-user:app-db-password@192.168.1.252:5432/app-db",
         },
-        detach=True,
+        detach=True,  # remove container after it is stopped
+        ports={port: port},
     )
-    print(f"Container started, name: {container.name}")
+    print(
+        f"Container started, name: {container.name} ports {container.ports}, logs: {container.logs()}"
+    )
 
+    time.sleep(1)
     try:
         yield
     finally:
