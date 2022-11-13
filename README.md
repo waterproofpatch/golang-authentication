@@ -40,3 +40,31 @@ docker-compose down --volumes
 ## Deployment
 
 TBD
+
+## Testing
+
+Testing for the backend is performed using Python's pytest module.
+
+1. Set up a virtual environment:
+
+ ```bash
+ python3 -venv --prompt venv venv
+ ```
+
+2. Activate it
+
+ ```bash
+ source venv/bin/python
+ ```
+
+3. Install dependencies
+
+ ```bash
+ python -m pip install -r requirements.txt
+ ```
+
+4. Run the tests
+
+ ```bash
+ python -m pytest
+ ```
