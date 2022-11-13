@@ -1,4 +1,5 @@
 import subprocess
+import docker
 import time
 import json
 import os
@@ -30,37 +31,38 @@ def port() -> int:
     return constants.PORT
 
 
-# @pytest.fixture(scope="function", autouse=True)
-# def start_server(port: int, coach_email: str, coach_password: str):
-#     def _kill(proc_pid):
-#         process = psutil.Process(proc_pid)
-#         for proc in process.children(recursive=True):
-#             proc.kill()
-#         process.kill()
+@pytest.fixture(scope="function", autouse=True)
+def start_server(admin_email: str, admin_password: str):
+    def _kill(proc_pid):
+        process = psutil.Process(proc_pid)
+        for proc in process.children(recursive=True):
+            proc.kill()
+        process.kill()
 
-#     my_env = os.environ.copy()
-#     my_env["PORT"] = str(port)  # env vars need to be strings for subprocess.run
-#     my_env["DATABASE_URL"] = "postgres://tennis:docker@localhost:5432/tennis-db"
-#     my_env["COACH_USER"] = coach_email
-#     my_env["COACH_PASS"] = coach_password
-#     my_env["SECRET"] = "secrettoken"
-#     my_env["DROP_TABLES"] = "true"
-#     proc = subprocess.Popen(
-#         args="go run .",
-#         stdout=subprocess.PIPE,
-#         stderr=subprocess.PIPE,
-#         shell=True,
-#         cwd="../backend/src",
-#         env=my_env,
-#     )
+    client = docker.from_env()
+    logs = client.containers.run(
+        "golang-backend-app",
+        auto_remove=True,
+        environment={
+            "DEFAULT_ADMIN_USER": admin_email,
+            "DEFAULT_ADMIN_PASSWORD": admin_password,
+            "SECRET": "123",
+            "DROP_TABLES": "true",
+            "PORT": "5000",
+            "DEFAULT_ADMIN_USER": "admin@gmail.com",
+            "DEFAULT_ADMIN_PASSWORD": "admin123",
+            "DATABASE_URL": "postgres://app-db-user:app-db-password@192.168.1.252:5432/app-db",
+        },
+        detach=True,
+    )
+    import pdb
 
-#     # wait for server startup
-#     time.sleep(3)
+    pdb.set_trace()
 
-#     try:
-#         yield
-#     finally:
-#         _kill(proc.pid)
+    try:
+        yield
+    finally:
+        _kill(proc.pid)
 
 
 @pytest.fixture(scope="function")
