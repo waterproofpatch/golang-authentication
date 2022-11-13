@@ -25,3 +25,6 @@ run_dev: dev
 	--mount type=bind,src="$(shell pwd)",target=/app \
 	golang-dev \
 	/bin/sh
+
+tests: prod
+	source venv/bin/activate && pip install -r requirements.txt && python -m pytest
