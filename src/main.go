@@ -20,18 +20,19 @@ import (
 func initViews(router *mux.Router) {
 	authentication.InitViews(router)
 	version.InitViews(router)
-
 	app.InitViews(router)
 }
 
-// startServing creates the server mux and registers endpoints with it.
-func startServing(port string) {
-	portStr := fmt.Sprintf("0.0.0.0:%s", port)
-	log.Printf("Starting server on %s...", portStr)
-
+func makeRouter() *mux.Router {
 	router := mux.NewRouter()
 
-	initViews(router)
+	return router
+}
+
+// startServing creates the server mux and registers endpoints with it.
+func startServing(port string, router *mux.Router) {
+	portStr := fmt.Sprintf("0.0.0.0:%s", port)
+	log.Printf("Starting server on %s...", portStr)
 
 	methods := []string{"GET", "POST", "PUT", "DELETE"}
 	headers := []string{"Content-Type", "Access-Control-Allow-Origin", "Authorization"}
@@ -66,6 +67,7 @@ func initUsers(db *gorm.DB, cfg *utils.Config) {
 
 // main is the entrypoint to the program.
 func main() {
+	// read the config from the environment
 	cfg := utils.GetConfig()
 	// init the database
 	log.Printf("Initializing database, dropTables=%v...\n", cfg.DropTables)
@@ -73,5 +75,7 @@ func main() {
 	db := database.GetDb()
 	initUsers(db, cfg)
 
-	startServing(cfg.Port)
+	var router = makeRouter()
+	initViews(router)
+	startServing(cfg.Port, router)
 }
