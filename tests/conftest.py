@@ -32,37 +32,27 @@ def port() -> int:
 
 
 @pytest.fixture(scope="function", autouse=True)
-def start_server(admin_email: str, admin_password: str):
-    def _kill(proc_pid):
-        process = psutil.Process(proc_pid)
-        for proc in process.children(recursive=True):
-            proc.kill()
-        process.kill()
-
+def start_server(admin_email: str, admin_password: str, port: int):
     client = docker.from_env()
-    logs = client.containers.run(
-        "golang-backend-app",
+    container = client.containers.run(
+        "golang-prod",
         auto_remove=True,
         environment={
             "DEFAULT_ADMIN_USER": admin_email,
             "DEFAULT_ADMIN_PASSWORD": admin_password,
             "SECRET": "123",
             "DROP_TABLES": "true",
-            "PORT": "5000",
-            "DEFAULT_ADMIN_USER": "admin@gmail.com",
-            "DEFAULT_ADMIN_PASSWORD": "admin123",
+            "PORT": port,
             "DATABASE_URL": "postgres://app-db-user:app-db-password@192.168.1.252:5432/app-db",
         },
         detach=True,
     )
-    import pdb
-
-    pdb.set_trace()
+    print(f"Container started, name: {container.name}")
 
     try:
         yield
     finally:
-        _kill(proc.pid)
+        container.stop()
 
 
 @pytest.fixture(scope="function")

@@ -22,5 +22,6 @@ run_dev: dev
 	--env DEFAULT_ADMIN_USER=admin@gmail.com \
 	--env DEFAULT_ADMIN_PASSWORD=admin123 \
 	--env DATABASE_URL=postgres://app-db-user:app-db-password@192.168.1.252:5432/app-db \
-	--mount type=bind,src="$(shell pwd)",target=/app golang-dev \
+	--mount type=bind,src="$(shell pwd)",target=/app \
+	golang-dev \
 	/bin/sh
