@@ -48,9 +48,7 @@ def start_server(admin_email: str, admin_password: str, port: int):
         detach=True,  # remove container after it is stopped
         ports={port: port},
     )
-    print(
-        f"Container started, name: {container.name} ports {container.ports}, logs: {container.logs()}"
-    )
+    print(f"Container started, name: {container.name} logs: {container.logs()}")
 
     time.sleep(1)
     try:
