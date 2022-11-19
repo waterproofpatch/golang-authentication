@@ -1,8 +1,11 @@
-all: dev prod
+all: python_venv dev prod
 prod:
 	docker build . --tag golang-prod --file Dockerfile.prod
 dev:
 	docker build . --tag golang-dev --file Dockerfile.dev
+
+python_venv:
+	@python3 -m venv --prompt venv venv
 
 run_prod: prod
 	@docker run -it -p 8080:8080 \

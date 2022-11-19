@@ -55,7 +55,7 @@ Testing for the backend is performed using Python's pytest module.
 1. Set up a virtual environment:
 
  ```bash
- python3 -venv --prompt venv venv
+ python3 -m venv --prompt venv venv
  ```
 
 2. Activate it
