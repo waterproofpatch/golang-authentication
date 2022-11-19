@@ -2,15 +2,12 @@
 package main
 
 import (
-	"app/api/app"
-	"app/api/authentication"
-	"app/api/version"
-	"app/database"
-	"app/utils"
 	"fmt"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/waterproofpatch/go_authentication"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -18,9 +15,8 @@ import (
 )
 
 func initViews(router *mux.Router) {
-	authentication.InitViews(router)
-	version.InitViews(router)
-	app.InitViews(router)
+	go_authentication.InitViews(router)
+	InitViews(router)
 }
 
 func makeRouter() *mux.Router {
@@ -48,16 +44,16 @@ func startServing(port string, router *mux.Router) {
 	log.Fatal(srv.ListenAndServe())
 }
 
-func initUsers(db *gorm.DB, cfg *utils.Config) {
-	adminPass, err := authentication.HashPassword(cfg.DefaultAdminPass)
+func initUsers(db *gorm.DB, cfg *go_authentication.Config) {
+	adminPass, err := go_authentication.HashPassword(cfg.DefaultAdminPass)
 	if err != nil {
 		panic("Failed hashing password for admin user")
 	}
-	_, err = authentication.CreateUser(cfg.DefaultAdminUser,
+	_, err = go_authentication.CreateUser(cfg.DefaultAdminUser,
 		adminPass,
 		true, // isVerified
 		true, // isAdmin
-		authentication.GeneratePseudorandomToken())
+		go_authentication.GeneratePseudorandomToken())
 	if err != nil {
 		log.Printf("Failed adding default admin user")
 		return
@@ -68,11 +64,11 @@ func initUsers(db *gorm.DB, cfg *utils.Config) {
 // main is the entrypoint to the program.
 func main() {
 	// read the config from the environment
-	cfg := utils.GetConfig()
+	cfg := go_authentication.GetConfig()
 	// init the database
 	log.Printf("Initializing database, dropTables=%v...\n", cfg.DropTables)
-	database.InitDb(cfg.DbUrl, cfg.DropTables)
-	db := database.GetDb()
+	go_authentication.InitDb(cfg.DbUrl, cfg.DropTables)
+	db := go_authentication.GetDb()
 	initUsers(db, cfg)
 
 	var router = makeRouter()
