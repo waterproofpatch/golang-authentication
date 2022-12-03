@@ -1,16 +1,34 @@
-# Golang Dev Environment
+# Golang Template
 
-## Development
+## Setup
+
+Configure the development environment:
+
+```bash
+make setup
+```
+
+You'll probably want the postgres server running in the background:
 
 ```bash
 docker-compose up --build
 ```
 
-### Step by step
+You can stop the compose service:
+
+```bash
+docker-compose down --volumes
+```
+
+## Building
+
+Build a development container:
 
 ```bash
 docker build . -t golang-dev -f Dockerfile.dev
 ```
+
+Drop into the development container for building (bind mounts source directory):
 
 ```bash
 docker run -it -p 5000:5000 \
@@ -24,11 +42,13 @@ docker run -it -p 5000:5000 \
  /bin/sh
  ```
 
-### Using the Makefile
+*or*, using the makefile included for convenience:
 
  ```bash
  make run_dev
  ```
+
+Once inside the docker container, build and run the project:
 
 ```bash
 cd src
@@ -36,49 +56,12 @@ go build .
 ./app
 ```
 
-Navigate to `http://localhost:5000/api/users` - in a browser - you should get a valid JSON response (an error).
-
-```bash
-docker-compose down --volumes
-```
-
-## Deployment
-
-TBD
+From the host, navigate to `http://localhost:5000/api/users` - in a browser - you should get a valid JSON response (an error).
 
 ## Testing
 
-Testing for the backend is performed using Python's pytest module.
-
-### Step by Step
-
-1. Set up a virtual environment:
-
- ```bash
- python3 -m venv --prompt venv venv
- ```
-
-2. Activate it
-
- ```bash
- source venv/bin/python
- ```
-
-3. Install dependencies
-
- ```bash
- python -m pip install -r requirements.txt
- ```
-
-4. Run the tests
-
- ```bash
- python -m pytest
- ```
-
-### Using the Makefile
-
-A makefile target is provided for convenience.
+Testing for the template is performed using Python's pytest module, and is performed
+against the production docker image built from source.
 
 ```bash
 make tests

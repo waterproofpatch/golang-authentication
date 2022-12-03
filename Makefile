@@ -1,4 +1,7 @@
 all: python_venv dev prod
+
+setup: python_venv
+	@source venv/bin/activate && python3 -m pip install -r requirements.txt
 prod:
 	docker build . --tag golang-prod --file Dockerfile.prod
 dev:
@@ -30,4 +33,4 @@ run_dev: dev
 	/bin/sh
 
 tests: prod
-	source venv/bin/activate && pip install -r requirements.txt && python -m pytest
+	@source venv/bin/activate && python3 -m pip install -r requirements.txt && python -m pytest
