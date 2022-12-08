@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/waterproofpatch/go_authentication"
+	"github.com/waterproofpatch/go_authentication/authentication"
 
 	"github.com/gorilla/mux"
 )
@@ -24,6 +24,6 @@ func dashboard(w http.ResponseWriter, r *http.Request) {
 }
 
 func InitViews(router *mux.Router) {
-	router.HandleFunc("/api/dashboard/{id:[0-9]+}", go_authentication.VerifiedOnly(dashboard)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+	router.HandleFunc("/api/dashboard/{id:[0-9]+}", authentication.VerifiedOnly(dashboard)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	router.HandleFunc("/api/dashboard", dashboard).Methods("GET", "POST", "PUT", "OPTIONS")
 }

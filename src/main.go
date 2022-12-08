@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/waterproofpatch/go_authentication"
+	"github.com/waterproofpatch/go_authentication/authentication"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -60,7 +60,7 @@ func main() {
 		return
 	}
 
-	go_authentication.Init(os.Getenv("SECRET"), os.Getenv("DEFAULT_ADMIN_USER"), os.Getenv("DEFAULT_ADMIN_PASSWORD"), router, os.Getenv("DATABASE_URL"), dropTables)
+	authentication.Init(os.Getenv("SECRET"), os.Getenv("DEFAULT_ADMIN_USER"), os.Getenv("DEFAULT_ADMIN_PASSWORD"), router, os.Getenv("DATABASE_URL"), dropTables)
 
 	InitViews(router)
 	startServing(port, router)

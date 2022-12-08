@@ -125,6 +125,12 @@ github.com/waterproofpatch/go_authentication v0.0.0-20221203040959-c37b6a943bf4 
 github.com/waterproofpatch/go_authentication v0.0.0-20221203040959-c37b6a943bf4/go.mod h1:PVrOhMFZPeMNgAjzt488PgDwbmx+FNPeoH3nwdb8k2k=
 github.com/waterproofpatch/go_authentication v0.0.0-20221203195450-375c5bab4825 h1:UXmjED0ymRLW/iybkgQDB4TCfK34P0mLd6Kq5Flp+Pk=
 github.com/waterproofpatch/go_authentication v0.0.0-20221203195450-375c5bab4825/go.mod h1:PVrOhMFZPeMNgAjzt488PgDwbmx+FNPeoH3nwdb8k2k=
+github.com/waterproofpatch/go_authentication v0.0.0-20221208092053-0396c142095f h1:1RFAbETieLg04McmJ+gq51QKqzG2CI4Ph029hYNi/nU=
+github.com/waterproofpatch/go_authentication v0.0.0-20221208092053-0396c142095f/go.mod h1:PVrOhMFZPeMNgAjzt488PgDwbmx+FNPeoH3nwdb8k2k=
+github.com/waterproofpatch/go_authentication v0.0.0-20221208092913-31459f25c330 h1:WM7EkTzr0rNwxYHEeBFJghDo9IKOijiqo5qE3sDP/HI=
+github.com/waterproofpatch/go_authentication v0.0.0-20221208092913-31459f25c330/go.mod h1:PVrOhMFZPeMNgAjzt488PgDwbmx+FNPeoH3nwdb8k2k=
+github.com/waterproofpatch/go_authentication v0.0.0-20221208094549-7d6aeba62d6d h1:0vi7JOBr48k84EuponbPemLuGxLWHoDDYOBm8nKLVYU=
+github.com/waterproofpatch/go_authentication v0.0.0-20221208094549-7d6aeba62d6d/go.mod h1:PVrOhMFZPeMNgAjzt488PgDwbmx+FNPeoH3nwdb8k2k=
 github.com/zenazn/goji v0.9.0/go.mod h1:7S9M489iMyHBNxwZnk9/EHS098H4/F6TATF2mIxtB1Q=
 go.uber.org/atomic v1.3.2/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
 go.uber.org/atomic v1.4.0/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
