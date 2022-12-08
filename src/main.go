@@ -5,19 +5,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/waterproofpatch/go_authentication"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"gorm.io/gorm"
 )
-
-func initViews(router *mux.Router) {
-	go_authentication.InitViews(router)
-	InitViews(router)
-}
 
 func makeRouter() *mux.Router {
 	router := mux.NewRouter()
@@ -25,9 +21,11 @@ func makeRouter() *mux.Router {
 	return router
 }
 
+var DEFAULT_PORT = 8080
+
 // startServing creates the server mux and registers endpoints with it.
-func startServing(port string, router *mux.Router) {
-	portStr := fmt.Sprintf("0.0.0.0:%s", port)
+func startServing(port int, router *mux.Router) {
+	portStr := fmt.Sprintf("0.0.0.0:%d", port)
 	log.Printf("Starting server on %s...", portStr)
 
 	methods := []string{"GET", "POST", "PUT", "DELETE"}
@@ -44,34 +42,26 @@ func startServing(port string, router *mux.Router) {
 	log.Fatal(srv.ListenAndServe())
 }
 
-func initUsers(db *gorm.DB, cfg *go_authentication.Config) {
-	adminPass, err := go_authentication.HashPassword(cfg.DefaultAdminPass)
-	if err != nil {
-		panic("Failed hashing password for admin user")
+// main is the entrypoint to the program.
+func main() {
+	log.Printf("Starting...")
+
+	var router = makeRouter()
+	var dropTables = false
+	var port = DEFAULT_PORT
+
+	if os.Getenv("DROP_TABLES") == "true" {
+		dropTables = true
 	}
-	_, err = go_authentication.CreateUser(cfg.DefaultAdminUser,
-		adminPass,
-		true, // isVerified
-		true, // isAdmin
-		go_authentication.GeneratePseudorandomToken())
+
+	port, err := strconv.Atoi(os.Getenv("PORT"))
 	if err != nil {
-		log.Printf("Failed adding default admin user")
+		log.Printf("Error converting port %s to int.", os.Getenv("PORT"))
 		return
 	}
 
-}
+	go_authentication.Init(os.Getenv("SECRET"), os.Getenv("DEFAULT_ADMIN_USER"), os.Getenv("DEFAULT_ADMIN_PASSWORD"), router, os.Getenv("DATABASE_URL"), dropTables)
 
-// main is the entrypoint to the program.
-func main() {
-	// read the config from the environment
-	cfg := go_authentication.GetConfig()
-	// init the database
-	log.Printf("Initializing database, dropTables=%v...\n", cfg.DropTables)
-	go_authentication.InitDb(cfg.DbUrl, cfg.DropTables)
-	db := go_authentication.GetDb()
-	initUsers(db, cfg)
-
-	var router = makeRouter()
-	initViews(router)
-	startServing(cfg.Port, router)
+	InitViews(router)
+	startServing(port, router)
 }

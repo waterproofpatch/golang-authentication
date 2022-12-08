@@ -121,6 +121,10 @@ github.com/thanhpk/randstr v1.0.4 h1:IN78qu/bR+My+gHCvMEXhR/i5oriVHcTB/BJJIRTsNo
 github.com/thanhpk/randstr v1.0.4/go.mod h1:M/H2P1eNLZzlDwAzpkkkUvoyNNMbzRGhESZuEQk3r0U=
 github.com/waterproofpatch/go_authentication v0.0.0-20221119160210-9bc5420532e7 h1:JPpESxUrNQ7ZSNea0XkQQlWpiIxOHDDW0tVnG+4vJ8k=
 github.com/waterproofpatch/go_authentication v0.0.0-20221119160210-9bc5420532e7/go.mod h1:PVrOhMFZPeMNgAjzt488PgDwbmx+FNPeoH3nwdb8k2k=
+github.com/waterproofpatch/go_authentication v0.0.0-20221203040959-c37b6a943bf4 h1:QcsMl4JlKNCPtMm4mMTHgPCWo36gPGIvBdFmkHgUP+M=
+github.com/waterproofpatch/go_authentication v0.0.0-20221203040959-c37b6a943bf4/go.mod h1:PVrOhMFZPeMNgAjzt488PgDwbmx+FNPeoH3nwdb8k2k=
+github.com/waterproofpatch/go_authentication v0.0.0-20221203195450-375c5bab4825 h1:UXmjED0ymRLW/iybkgQDB4TCfK34P0mLd6Kq5Flp+Pk=
+github.com/waterproofpatch/go_authentication v0.0.0-20221203195450-375c5bab4825/go.mod h1:PVrOhMFZPeMNgAjzt488PgDwbmx+FNPeoH3nwdb8k2k=
 github.com/zenazn/goji v0.9.0/go.mod h1:7S9M489iMyHBNxwZnk9/EHS098H4/F6TATF2mIxtB1Q=
 go.uber.org/atomic v1.3.2/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
 go.uber.org/atomic v1.4.0/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
