@@ -26,7 +26,7 @@ var DEFAULT_PORT = 8080
 // startServing creates the server mux and registers endpoints with it.
 func startServing(port int, router *mux.Router) {
 	portStr := fmt.Sprintf("0.0.0.0:%d", port)
-	log.Printf("Starting server on %s...", portStr)
+	log.Printf("Starting server on http://%s...", portStr)
 
 	methods := []string{"GET", "POST", "PUT", "DELETE"}
 	headers := []string{"Content-Type", "Access-Control-Allow-Origin", "Authorization"}
@@ -49,7 +49,6 @@ func main() {
 	var router = makeRouter()
 	var dropTables = false
 	var port = DEFAULT_PORT
-
 	if os.Getenv("DROP_TABLES") == "true" {
 		dropTables = true
 	}
@@ -59,9 +58,22 @@ func main() {
 		log.Printf("Error converting port %s to int.", os.Getenv("PORT"))
 		return
 	}
+	log.Printf("Port will be %d", port)
 
+	// must happen before we get the db
 	authentication.Init(os.Getenv("SECRET"), os.Getenv("DEFAULT_ADMIN_USER"), os.Getenv("DEFAULT_ADMIN_PASSWORD"), router, os.Getenv("DATABASE_URL"), dropTables)
 
+	var db = authentication.GetDb()
+
 	InitViews(router)
+	InitModels(db)
+
+	err = AddItem(db, "someName", 32)
+	if err != nil {
+		log.Printf("Error adding item: %s", err)
+		return
+	}
+
+	log.Printf("Starting serving...")
 	startServing(port, router)
 }
