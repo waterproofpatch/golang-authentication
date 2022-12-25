@@ -3,3 +3,4 @@ src/app
 *.cpython*
 tags
 golang-authentication.code-workspace
+src/main
