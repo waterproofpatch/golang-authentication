@@ -51,8 +51,8 @@ docker run -it -p 5000:5000 \
 Once inside the docker container, build and run the project:
 
 ```bash
-go build .
-./app
+go build main.go
+./main
 ```
 
 From the host, navigate to `http://localhost:5000/api/users` - in a browser - you should get a valid JSON response (an error).
