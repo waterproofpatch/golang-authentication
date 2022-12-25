@@ -6,7 +6,7 @@ require (
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/waterproofpatch/go_authentication v0.0.0-alpha.0
-	gorm.io/gorm v1.24.1
+	gorm.io/gorm v1.24.2
 )
 
 require (

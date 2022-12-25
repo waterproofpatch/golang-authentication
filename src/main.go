@@ -2,6 +2,7 @@
 package main
 
 import (
+	"app/app"
 	"fmt"
 	"log"
 	"net/http"
@@ -65,10 +66,10 @@ func main() {
 
 	var db = authentication.GetDb()
 
-	InitViews(router)
-	InitModels(db)
+	app.InitViews(router)
+	app.InitModels(db)
 
-	err = AddItem(db, "someName", 32)
+	err = app.AddItem(db, "someName", 32)
 	if err != nil {
 		log.Printf("Error adding item: %s", err)
 		return
