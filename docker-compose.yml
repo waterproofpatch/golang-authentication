@@ -24,7 +24,7 @@ services:
   #     - backend-db
   #   build:
   #     context: .
-  #     dockerfile: Dockerfile
+  #     dockerfile: Dockerfile.dev
   #   environment:
   #     - DEFAULT_ADMIN_USER=admin@gmail.com
   #     - DEFAULT_ADMIN_PASS=admin123
@@ -32,6 +32,7 @@ services:
   #     - DATABASE_URL=postgres://app-db-user:app-db-password@db:5432/app-db
   #     - SECRET=somesecretjwttoken
   #     - DROP_TABLES=true
+  #   command: go build main.go
   #   networks:
   #     - app-net
 
