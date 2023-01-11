@@ -8,7 +8,9 @@ Configure the development environment:
 make setup
 ```
 
-You'll probably want the postgres server running in the background:
+You'll want the postgres server running in the background in order to start the
+`go` app, since the app attempts to connect to the database specified vie the
+environment variables.
 
 ```bash
 docker-compose up --build
