@@ -34,7 +34,7 @@ services:
       - DATABASE_URL=postgres://app-db-user:app-db-password@db:5432/app-db
       - SECRET=somesecretjwttoken
       - DROP_TABLES=true
-    command: sh -c "go build main.go && ./main"
+    command: sh -c "air && go build main.go && ./main"
     networks:
       - app-net
 
