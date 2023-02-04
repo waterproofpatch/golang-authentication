@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrlBase: 'https://tennis-backend.herokuapp.com',
+  apiUrlBase: 'https://some-backend.herokuapp.com',
 };
