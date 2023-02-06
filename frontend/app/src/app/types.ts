@@ -27,14 +27,8 @@ export abstract class UserFactory {
    */
   public static createUser(): User {
     let user: User = {
-      firstName: '',
-      lastName: '',
-      phone: '',
       email: '',
       ID: 0,
-      isVerified: false,
-      verificationCode: '',
-      registrationDate: '',
     };
     return user;
   }

@@ -1,0 +1,64 @@
+<div class="container">
+  <div *ngIf="(getRegistrationState() | async) == RegistrationState.Pending">
+    Registration is pending. When the admin verifies your account, you'll be
+    able to log in. Check back in a bit!
+  </div>
+  <div *ngIf="
+      (getRegistrationState() | async) != RegistrationState.Pending &&
+      mode == 'register'
+    ">
+    <h1 mat-dialog-titl>Register</h1>
+    <div *ngIf="error" class="error">Registration failed: {{ error }}</div>
+    <div mat-dialog-content>
+      <form [formGroup]="registerForm">
+        <mat-form-field appearance="fill">
+          <mat-label>Email</mat-label>
+          <input matInput placeholder="" formControlName="email" required />
+          <mat-error *ngIf="registerForm.controls.email.invalid">{{
+            getErrorMessage()
+            }}</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Password</mat-label>
+          <input type="password" matInput formControlName="password" required />
+        </mat-form-field>
+        <div mat-dialog-actions>
+          <button (click)="register()" mat-stroked-button color="primary">
+            Register
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div *ngIf="mode == 'login'">
+    <h1 mat-dialog-title>Login</h1>
+    <div *ngIf="error" class="error">
+      Login failed: {{ error }}
+      <button mat-stroked-button [routerLink]="['/authentication']" [queryParams]="{ mode: 'register' }">
+        Create account
+      </button>
+    </div>
+
+    <div mat-dialog-content>
+      <form [formGroup]="loginForm">
+        <mat-form-field appearance="fill">
+          <mat-label>Enter your email</mat-label>
+          <input matInput placeholder="pat@example.com" formControlName="email" required />
+          <mat-error *ngIf="loginForm.controls.email.invalid">{{
+            getErrorMessage()
+            }}</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Enter your password</mat-label>
+          <input type="password" matInput formControlName="password" required />
+        </mat-form-field>
+        <div mat-dialog-actions>
+          <button (click)="login()" mat-stroked-button color="primary">
+            Login
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

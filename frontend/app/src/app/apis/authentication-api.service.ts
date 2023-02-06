@@ -17,16 +17,10 @@ export class AuthenticationApiService extends BaseService {
   registerHttp(
     email: string,
     password: string,
-    firstName: string,
-    lastName: string,
-    phoneNumber: string
   ): Observable<any> {
     const data = {
       email: email,
       password: password,
-      firstName: firstName,
-      lastName: lastName,
-      phone: phoneNumber,
     };
     return this.http.post(
       this.getUrlBase() + this.registerApiUrl,

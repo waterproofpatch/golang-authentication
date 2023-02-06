@@ -1,2 +1,18 @@
 Hello World
+<div *ngIf="authenticationService.isAuthenticated">
+	<button mat-button (click)="this.authenticationService.logout()" *ngIf="authenticationService.isAuthenticated">
+		Logout
+	</button>
+</div>
+<div *ngIf="!authenticationService.isAuthenticated">
+	<button mat-button routerLinkActive="mat-raised-button" [routerLink]="['/authentication']"
+		[queryParams]="{ mode: 'login' }">
+		Login
+	</button>
+	<button mat-button routerLinkActive="mat-raised-button" [routerLink]="['/authentication']"
+		[queryParams]="{ mode: 'register' }">
+		Create Account
+	</button>
+</div>
+
 <router-outlet></router-outlet>
