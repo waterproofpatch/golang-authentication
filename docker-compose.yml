@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
 
-  backend-db:
+  db:
     image: postgres:latest
     environment:
       - POSTGRES_PASSWORD=app-db-password
@@ -16,12 +16,12 @@ services:
       - 5432:5432
     volumes:
       - backend-db:/var/lib/postgresql/data
-  backend-app:
+  backend:
     restart: on-failure
     ports:
       - 5000:5000
     depends_on:
-      - backend-db
+      - db
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -35,6 +35,16 @@ services:
       - SECRET=somesecretjwttoken
       - DROP_TABLES=true
     command: sh -c "air && go build main.go && ./main"
+    networks:
+      - app-net
+  frontend:
+    depends_on:
+      - backend
+    image: frontend
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend/app:/app
     networks:
       - app-net
 
