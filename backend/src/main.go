@@ -62,7 +62,7 @@ func main() {
 	log.Printf("Port will be %d", port)
 
 	// must happen before we get the db
-	authentication.Init(os.Getenv("SECRET"), os.Getenv("DEFAULT_ADMIN_USER"), os.Getenv("DEFAULT_ADMIN_PASSWORD"), router, os.Getenv("DATABASE_URL"), dropTables)
+	authentication.Init(os.Getenv("SECRET"), os.Getenv("DEFAULT_ADMIN_USER"), os.Getenv("DEFAULT_ADMIN_PASSWORD"), router, os.Getenv("DATABASE_URL"), dropTables, false)
 
 	var db = authentication.GetDb()
 
