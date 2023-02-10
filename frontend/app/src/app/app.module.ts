@@ -29,6 +29,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 
 @NgModule({
@@ -37,7 +38,8 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     LogDialogComponent,
     ErrorDialogComponent,
     AppComponent,
-    BaseComponent
+    BaseComponent,
+    DashboardComponent
   ],
   imports: [
     HttpClientModule,
