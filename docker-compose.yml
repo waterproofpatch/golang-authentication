@@ -23,10 +23,11 @@ services:
     depends_on:
       - db
     build:
-      context: .
+      context: backend
       dockerfile: Dockerfile.dev
     volumes:
-      - .:/app
+      - ./backend:/app
+      - ../go_authentication:/go_authentication
     environment:
       - DEFAULT_ADMIN_USER=admin@gmail.com
       - DEFAULT_ADMIN_PASS=admin123

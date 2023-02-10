@@ -44,12 +44,6 @@ docker run -it -p 5000:5000 \
  /bin/sh
  ```
 
-*or*, using the makefile included for convenience:
-
- ```bash
- make run_dev
- ```
-
 Once inside the docker container, build and run the project:
 
 ```bash
