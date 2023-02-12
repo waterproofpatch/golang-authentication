@@ -1,5 +1,5 @@
 <p>dashboard works!</p>
 <div class="item" *ngFor="let item of getItems() | async">
-	<span>{{ item.name }}</span>
-	<span>{{ item.type }}</span>
+	<span>Name: {{ item.name }}<br></span>
+	<span>Type: {{ item.type }}<br></span>
 </div>
