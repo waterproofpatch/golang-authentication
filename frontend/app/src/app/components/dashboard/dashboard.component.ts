@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { Subject, throwError, Observable } from 'rxjs';
+import { ItemsService } from 'src/app/services/items.service';
+import { Item } from 'src/app/services/items.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,4 +10,12 @@ import { Component } from '@angular/core';
 })
 export class DashboardComponent {
 
+  constructor(
+    private itemsService: ItemsService,
+  ) {
+  }
+
+  getItems(): Subject<Item[]> {
+    return this.itemsService.items
+  }
 }
