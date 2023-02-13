@@ -32,7 +32,7 @@ export class ItemsApiService extends BaseService {
     id: number,
   ): Observable<any> {
     return this.http.delete(
-      this.getUrlBase() + this.itemsApiUrl + "?id=" + id,
+      this.getUrlBase() + this.itemsApiUrl + "/" + id,
       this.httpOptions);
   }
 }

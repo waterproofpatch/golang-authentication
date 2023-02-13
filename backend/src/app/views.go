@@ -13,30 +13,35 @@ func items(w http.ResponseWriter, r *http.Request) {
 	db := authentication.GetDb()
 	var items []Item
 	var item Item
-	db.Find(&items)
 	vars := mux.Vars(r)
 	id, hasLessonId := vars["id"]
-
-	// handle requests that want just a single item by id
-	if hasLessonId {
-		db.Find(&item, id)
-	}
 
 	switch r.Method {
 	case "GET":
 		if hasLessonId {
+			db.Find(&item, id)
 			json.NewEncoder(w).Encode(item)
 		} else {
-
+			db.Find(&items)
 			json.NewEncoder(w).Encode(items)
 		}
 		break
 	case "DELETE":
-		authentication.WriteError(w, "Not handling delete yet!", 501)
+		if !hasLessonId {
+			authentication.WriteError(w, "Must provide id!", http.StatusBadRequest)
+			break
+		}
+		db.Delete(&Item{}, id)
+		db.Find(&items)
+		json.NewEncoder(w).Encode(items)
 		break
 	case "POST":
+		db.Find(&items)
+		json.NewEncoder(w).Encode(items)
 		break
 	case "PUT":
+		db.Find(&items)
+		json.NewEncoder(w).Encode(items)
 		break
 	}
 
@@ -60,6 +65,6 @@ func dashboard(w http.ResponseWriter, r *http.Request) {
 func InitViews(router *mux.Router) {
 	router.HandleFunc("/api/dashboard/{id:[0-9]+}", authentication.VerifiedOnly(dashboard)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	router.HandleFunc("/api/dashboard", dashboard).Methods("GET", "POST", "PUT", "OPTIONS")
-	router.HandleFunc("/api/items", items).Methods("GET", "POST", "DELETE", "PUT", "OPTIONS")
-	router.HandleFunc("/api/items/{id:[0-9]+}", items).Methods("GET", "POST", "PUT", "OPTIONS")
+	router.HandleFunc("/api/items", items).Methods("GET", "POST", "PUT", "OPTIONS")
+	router.HandleFunc("/api/items/{id:[0-9]+}", items).Methods("GET", "POST", "DELETE", "PUT", "OPTIONS")
 }
