@@ -30,6 +30,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { ItemComponent } from './components/item/item.component';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
     ErrorDialogComponent,
     AppComponent,
     BaseComponent,
-    DashboardComponent
+    DashboardComponent,
+    ItemComponent
   ],
   imports: [
     HttpClientModule,

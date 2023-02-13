@@ -7,6 +7,7 @@ import { ItemsApiService } from '../apis/items-api.service';
 import { BaseService } from './base.service';
 
 export interface Item {
+  id: number;
   name: string;
   type: string;
 }
@@ -25,6 +26,10 @@ export class ItemsService extends BaseService {
   ) {
     super()
     this.getItems()
+  }
+
+  deleteItem(id: number) {
+    console.log("Deleting item " + id);
   }
 
   getItems(): void {
