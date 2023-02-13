@@ -29,7 +29,23 @@ export class ItemsService extends BaseService {
   }
 
   deleteItem(id: number) {
-    console.log("Deleting item " + id);
+    this.itemsApiService
+      .delete(id)
+      .pipe(
+        catchError((error: any) => {
+          if (error instanceof HttpErrorResponse) {
+            this.error$.next(error.error.error_message);
+          } else {
+            this.error$.next('Unexpected error');
+          }
+          return throwError(error);
+        })
+      )
+      .subscribe((x) => {
+        console.log('Got items ' + x);
+        this.items.next(x)
+        this.error$.next(''); // send a benign event so observers can close modals
+      });
   }
 
   getItems(): void {

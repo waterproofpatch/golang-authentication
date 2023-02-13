@@ -28,4 +28,11 @@ export class ItemsApiService extends BaseService {
       );
     }
   }
+  delete(
+    id: number,
+  ): Observable<any> {
+    return this.http.delete(
+      this.getUrlBase() + this.itemsApiUrl + "?id=" + id,
+      this.httpOptions);
+  }
 }

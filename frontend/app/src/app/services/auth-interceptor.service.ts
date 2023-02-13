@@ -4,6 +4,7 @@ import { Injectable, Injector } from '@angular/core';
 import { HttpInterceptor, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from './authentication.service';
 import { DialogService } from './dialog.service';
+import { Error } from '../types'
 
 @Injectable()
 export class AuthInterceptorService implements HttpInterceptor {
@@ -48,9 +49,15 @@ export class AuthInterceptorService implements HttpInterceptor {
                 this.authenticationService.logout();
                 break;
               default:
-                this.dialogService.displayErrorDialog(
-                  'Unknown error ' + error.status
-                );
+                if (error.error) {
+                  this.dialogService.displayErrorDialog(
+                    'Unknown error ' + error.status + " - " + error.error.error_message
+                  );
+                } else {
+                  this.dialogService.displayErrorDialog(
+                    'Unknown error ' + error.status
+                  );
+                }
             }
           }
         } else {

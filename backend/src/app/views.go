@@ -60,6 +60,6 @@ func dashboard(w http.ResponseWriter, r *http.Request) {
 func InitViews(router *mux.Router) {
 	router.HandleFunc("/api/dashboard/{id:[0-9]+}", authentication.VerifiedOnly(dashboard)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	router.HandleFunc("/api/dashboard", dashboard).Methods("GET", "POST", "PUT", "OPTIONS")
-	router.HandleFunc("/api/items", items).Methods("GET", "POST", "PUT", "OPTIONS")
+	router.HandleFunc("/api/items", items).Methods("GET", "POST", "DELETE", "PUT", "OPTIONS")
 	router.HandleFunc("/api/items/{id:[0-9]+}", items).Methods("GET", "POST", "PUT", "OPTIONS")
 }
