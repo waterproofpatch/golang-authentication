@@ -12,6 +12,9 @@ export class ItemComponent {
   }
   @Input() item?: Item
 
+  editItem() {
+    return;
+  }
   deleteItem() {
     if (this.item == null) {
       console.log("Unexpected item is NULL");

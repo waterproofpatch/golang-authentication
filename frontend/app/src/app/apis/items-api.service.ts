@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { BaseService } from '../services/base.service';
+import { Item } from '../services/items.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +14,9 @@ export class ItemsApiService extends BaseService {
     super();
   }
 
+  post(item: Item): Observable<any> {
+    return this.http.post(this.getUrlBase() + this.itemsApiUrl, item, this.httpOptions);
+  }
   get(
     id?: number,
   ): Observable<any> {

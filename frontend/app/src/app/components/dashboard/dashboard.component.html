@@ -1,4 +1,16 @@
-<p>dashboard works!</p>
+<form [formGroup]="form" (ngSubmit)="addItem()">
+	<mat-form-field>
+		<input matInput placeholder="Name" formControlName="name" type="string">
+	</mat-form-field>
+
+	<mat-form-field>
+		<input matInput placeholder="Type" formControlName="type" type="number">
+	</mat-form-field>
+
+	<button mat-raised-button type="submit">Add</button>
+</form>
+
+
 <div class="item" *ngFor="let item of getItems() | async">
 	<app-item [item]="item"></app-item>
 </div>
