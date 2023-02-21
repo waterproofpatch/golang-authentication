@@ -17,6 +17,9 @@ export class ItemsApiService extends BaseService {
   post(item: Item): Observable<any> {
     return this.http.post(this.getUrlBase() + this.itemsApiUrl, item, this.httpOptions);
   }
+  put(item: Item): Observable<any> {
+    return this.http.put(this.getUrlBase() + this.itemsApiUrl, item, this.httpOptions);
+  }
   get(
     id?: number,
   ): Observable<any> {

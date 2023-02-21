@@ -18,6 +18,16 @@ func (i Item) String() string {
 	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name: %s, type: %d", i.ID, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name, i.Type)
 }
 
+func UpdateItem(db *gorm.DB, id int, name string, itemType int) error {
+	var existingItem Item
+	existingItem.Id = id
+	db.First(&existingItem)
+	existingItem.Name = name
+	existingItem.Type = itemType
+	db.Save(existingItem)
+	return nil
+}
+
 func AddItem(db *gorm.DB, name string, itemType int) error {
 	var item = Item{
 		Name: name,

@@ -51,6 +51,17 @@ func items(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(items)
 		break
 	case "PUT":
+		var newItem Item
+		err := json.NewDecoder(r.Body).Decode(&newItem)
+		if err != nil {
+			authentication.WriteError(w, err.Error(), 400)
+			break
+		}
+		err = UpdateItem(db, newItem.Id, newItem.Name, newItem.Type)
+		if err != nil {
+			authentication.WriteError(w, err.Error(), 400)
+			break
+		}
 		db.Find(&items)
 		json.NewEncoder(w).Encode(items)
 		break

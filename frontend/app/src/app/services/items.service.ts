@@ -60,6 +60,25 @@ export class ItemsService extends BaseService {
       });
   }
 
+  updateItem(item: Item): void {
+    this.itemsApiService
+      .put(item)
+      .pipe(
+        catchError((error: any) => {
+          if (error instanceof HttpErrorResponse) {
+            this.error$.next(error.error.error_message);
+          } else {
+            this.error$.next('Unexpected error');
+          }
+          return throwError(error);
+        })
+      )
+      .subscribe((x) => {
+        console.log('Got items ' + x);
+        this.items.next(x)
+        this.error$.next(''); // send a benign event so observers can close modals
+      });
+  }
   addItem(item: Item): void {
     this.itemsApiService
       .post(item)

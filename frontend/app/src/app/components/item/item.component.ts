@@ -11,10 +11,28 @@ export class ItemComponent {
 
   }
   @Input() item?: Item
+  editMode: boolean = false
 
   editItem() {
+    this.editMode = true;
     return;
   }
+
+  leaveEditMode() {
+    this.editMode = false;
+  }
+  save() {
+    if (this.item) {
+      console.log("Sending item name " + this.item.name)
+      this.itemService.updateItem(this.item)
+    }
+    this.leaveEditMode();
+  }
+
+  cancel() {
+    this.leaveEditMode();
+  }
+
   deleteItem() {
     if (this.item == null) {
       console.log("Unexpected item is NULL");
