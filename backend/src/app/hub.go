@@ -36,10 +36,10 @@ func (h *Hub) run() {
 		fmt.Println("Top of hub run loop...")
 		select {
 		case client := <-h.register:
-			fmt.Println("Registering client... %u", client)
+			fmt.Println("Registering client... %u", client.conn.RemoteAddr().String())
 			h.clients[client] = true
 		case client := <-h.unregister:
-			fmt.Println("Unregistering client... %u", client)
+			fmt.Print("Unregistering client... %u", client.conn.RemoteAddr().String())
 			if _, ok := h.clients[client]; ok {
 				delete(h.clients, client)
 				close(client.send)
