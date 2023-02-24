@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { WebsocketService } from 'src/app/services/websocket.service';
+import { Message } from 'src/app/services/websocket.service';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +9,7 @@ import { WebsocketService } from 'src/app/services/websocket.service';
 })
 export class ChatComponent {
   title = '';
+  name: string = 'John Doe'
   message: string = '';
   messages: string[] = [];
 
@@ -20,7 +22,13 @@ export class ChatComponent {
   }
 
   sendMessage(): void {
-    this.chatService.sendMessage(this.message);
+
+    const message: Message = {
+
+      from: this.name,
+      content: this.message,
+    };
+    this.chatService.sendMessage(message);
     this.message = '';
   }
 }

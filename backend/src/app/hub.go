@@ -4,7 +4,15 @@
 
 package app
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
+
+type Message struct {
+	Content string `json:"content"`
+	From    string `json:"from"`
+}
 
 // Hub maintains the set of active clients and broadcasts messages to the
 // clients.
@@ -36,19 +44,21 @@ func (h *Hub) run() {
 		fmt.Println("Top of hub run loop...")
 		select {
 		case client := <-h.register:
-			fmt.Println("Registering client... %u", client.conn.RemoteAddr().String())
+			fmt.Println("Registering client: ", client.conn.RemoteAddr().String())
 			h.clients[client] = true
 		case client := <-h.unregister:
-			fmt.Print("Unregistering client... %u", client.conn.RemoteAddr().String())
+			fmt.Print("Unregistering client: ", client.conn.RemoteAddr().String())
 			if _, ok := h.clients[client]; ok {
 				delete(h.clients, client)
 				close(client.send)
 			}
 		case message := <-h.broadcast:
-			fmt.Printf("Broadcast message %s\n", message)
+			var typed_message Message
+			json.Unmarshal(message, &typed_message)
+			fmt.Printf("Broadcast message %s from %s\n", typed_message.Content, typed_message.From)
 			for client := range h.clients {
 				select {
-				case client.send <- message:
+				case client.send <- []byte(typed_message.Content):
 				default:
 					close(client.send)
 					delete(h.clients, client)
