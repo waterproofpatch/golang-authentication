@@ -21,7 +21,7 @@ export class ChatComponent {
     this.chatService.getMessages().pipe(
       map((message: any) => {
         let message_json: Message = JSON.parse(message)
-        return { from: message_json.from, content: message_json.content };
+        return { from: message_json.from, content: message_json.content, timestamp: message_json.timestamp };
       })
     ).subscribe((message: Message) => {
       this.messages.push(message);
@@ -46,6 +46,7 @@ export class ChatComponent {
     const message: Message = {
       from: this.username,
       content: this.message,
+      timestamp: "",
     };
     this.chatService.sendMessage(message);
     this.message = '';

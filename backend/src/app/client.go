@@ -76,6 +76,18 @@ func (c *Client) readPump() {
 	}
 }
 
+func formattedTime() string {
+	est, err := time.LoadLocation("EST")
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+
+	currentTime := time.Now().In(est)
+
+	return currentTime.Format("03:04:05 PM")
+}
+
 // writePump pumps messages from the hub to the websocket connection.
 //
 // A goroutine running writePump is started for each connection. The
@@ -101,6 +113,7 @@ func (c *Client) writePump() {
 			if err != nil {
 				return
 			}
+			message.Timestamp = formattedTime()
 			message_json, err := json.Marshal(message)
 			if err != nil {
 				fmt.Errorf("Failed encoding message: %s", err.Error())

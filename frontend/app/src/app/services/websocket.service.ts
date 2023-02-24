@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 export interface Message {
   content: string
   from: string
+  timestamp: string
 }
 
 @Injectable({

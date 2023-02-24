@@ -10,8 +10,9 @@ import (
 )
 
 type Message struct {
-	Content string `json:"content"`
-	From    string `json:"from"`
+	Content   string `json:"content"`
+	From      string `json:"from"`
+	Timestamp string `json:"timestamp"`
 }
 
 // Hub maintains the set of active clients and broadcasts messages to the
