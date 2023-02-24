@@ -43,9 +43,7 @@ export class ChatComponent {
   }
 
   sendMessage(): void {
-
     const message: Message = {
-
       from: this.username,
       content: this.message,
     };
