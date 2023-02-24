@@ -1,14 +1,38 @@
-<mat-card>
-	<mat-card-header>
-		<mat-card-title>{{ title }}</mat-card-title>
-	</mat-card-header>
-	<mat-card-content>
-		<mat-form-field>
-			<input matInput [(ngModel)]="message" placeholder="Enter message" />
-		</mat-form-field>
-		<button mat-raised-button color="primary" (click)="sendMessage()">Send</button>
-		<div *ngFor="let message of messages" class="message">
-			{{ message }}
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Chat</title>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@angular/material/prebuilt-themes/indigo-pink.css">
+</head>
+
+<body>
+	<div class="container">
+		<div class="header">
+			<h1>Chat</h1>
 		</div>
-	</mat-card-content>
-</mat-card>
+		<div class="chat-box">
+			<div class="input">
+				<mat-form-field appearance="fill">
+					<mat-label>Username</mat-label>
+					<input matInput [(ngModel)]="username">
+				</mat-form-field>
+				<mat-form-field appearance="fill">
+					<mat-label>Message</mat-label>
+					<input matInput [(ngModel)]="message" (keyup.enter)="sendMessage()">
+				</mat-form-field>
+				<button mat-raised-button color="primary" (click)="sendMessage()">Send</button>
+			</div>
+			<div class="messages">
+				<div *ngFor="let message of messages">
+					<p>{{ message }}</p>
+					<!-- <p>{{ message.username }}: {{ message.content }}</p> -->
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

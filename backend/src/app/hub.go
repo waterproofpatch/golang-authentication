@@ -58,7 +58,7 @@ func (h *Hub) run() {
 			fmt.Printf("Broadcast message %s from %s\n", typed_message.Content, typed_message.From)
 			for client := range h.clients {
 				select {
-				case client.send <- []byte(typed_message.Content):
+				case client.send <- typed_message:
 				default:
 					close(client.send)
 					delete(h.clients, client)

@@ -9,8 +9,8 @@ import { Message } from 'src/app/services/websocket.service';
 })
 export class ChatComponent {
   title = '';
-  name: string = 'John Doe'
   message: string = '';
+  username: string = 'John Doe';
   messages: string[] = [];
 
   constructor(private chatService: WebsocketService) { }
@@ -25,7 +25,7 @@ export class ChatComponent {
 
     const message: Message = {
 
-      from: this.name,
+      from: this.username,
       content: this.message,
     };
     this.chatService.sendMessage(message);
