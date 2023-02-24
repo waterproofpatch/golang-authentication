@@ -31,6 +31,7 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ItemComponent } from './components/item/item.component';
+import { ChatComponent } from './components/chat/chat.component';
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import { ItemComponent } from './components/item/item.component';
     AppComponent,
     BaseComponent,
     DashboardComponent,
-    ItemComponent
+    ItemComponent,
+    ChatComponent
   ],
   imports: [
     HttpClientModule,
