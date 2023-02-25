@@ -1,0 +1,12 @@
+FROM node:14 as builder
+WORKDIR /app
+RUN npm install -g @angular/cli
+RUN npm uninstall @angular-devkit/build-angular
+RUN npm install --save-dev @angular-devkit/build-angular
+COPY . .
+RUN npm install
+RUN ng build
+
+FROM nginx:latest
+COPY --from=builder /app/dist/app /usr/share/nginx/html
+RUN ls /usr/share/nginx/html
