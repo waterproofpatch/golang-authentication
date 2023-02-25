@@ -4,3 +4,5 @@ tags
 golang-authentication.code-workspace
 src/main
 backend/src/tmp/**
+**/node_modules/
+**/.angular

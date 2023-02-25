@@ -1,0 +1,5 @@
+FROM node:14
+WORKDIR /app
+RUN npm install -g @angular/cli
+RUN npm uninstall @angular-devkit/build-angular
+RUN npm install --save-dev @angular-devkit/build-angular

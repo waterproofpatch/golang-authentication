@@ -10,6 +10,10 @@ docker-compose up --build
 
 ## Backend
 
+```bash
+cd backend
+```
+
 ### Building
 
 Configure the development environment
@@ -37,4 +41,14 @@ against the production docker image built from source.
 
 ```bash
 make tests
+```
+
+## Frontend
+
+```bash
+cd frontend
+```
+
+```bash
+docker build . -t frontend -f Dockerfile
 ```
