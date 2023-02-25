@@ -5,16 +5,16 @@ go 1.18
 require (
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
-	github.com/waterproofpatch/go_authentication v0.0.0-alpha.0
+	github.com/gorilla/websocket v1.5.0
+	github.com/waterproofpatch/go_authentication v0.0.0-alpha.1
 	gorm.io/gorm v1.24.2
 )
 
-replace github.com/waterproofpatch/go_authentication v0.0.0-alpha.0 => ../../../go_authentication
+//replace github.com/waterproofpatch/go_authentication v0.0.0-alpha.0 => ../../../go_authentication
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/felixge/httpsnoop v1.0.1 // indirect
-	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.13.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect

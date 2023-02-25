@@ -27,7 +27,6 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./backend:/app
-      - ../go_authentication:/go_authentication
     environment:
       - DEFAULT_ADMIN_USER=admin@gmail.com
       - DEFAULT_ADMIN_PASS=admin123
