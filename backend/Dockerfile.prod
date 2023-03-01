@@ -17,4 +17,5 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /usr/bin
 COPY --from=build /web-app .
 
+EXPOSE 80
 CMD /usr/bin/web-app --port $PORT 

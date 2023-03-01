@@ -4,7 +4,7 @@ setup: python_venv
 	@source venv/bin/activate && python3 -m pip install -r requirements.txt
 
 prod:
-	docker build . --tag golang-prod --file Dockerfile.prod
+	docker build . --tag pointinsertion.azurecr.io/backend-prod --file Dockerfile.prod
 
 dev:
 	docker build . --tag golang-dev --file Dockerfile.dev

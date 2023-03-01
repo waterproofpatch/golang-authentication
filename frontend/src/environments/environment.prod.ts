@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrlBase: 'https://some-backend.herokuapp.com',
-  wsUrl: 'ws://some-backend.herokuapp:5000/ws',
+  apiUrlBase: 'https://strider.azurewebsites.net',
+  wsUrl: 'ws://strider.azurewebsites.net/ws',
 };
