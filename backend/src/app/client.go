@@ -81,15 +81,12 @@ func (c *Client) readPump() {
 }
 
 func formattedTime() string {
-	est, err := time.LoadLocation("EST")
-	if err != nil {
-		fmt.Println(err)
-		return ""
-	}
+	// est, err := time.LoadLocation("America/New York")
+	est := time.FixedZone("EST", -5*60*60)
 
 	currentTime := time.Now().In(est)
 
-	return currentTime.Format("03:04:05 PM")
+	return currentTime.Format("03:04:05 PM (EST)")
 }
 
 // writePump pumps messages from the hub to the websocket connection.
