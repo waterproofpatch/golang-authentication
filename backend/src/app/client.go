@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
 
@@ -48,6 +49,9 @@ type Client struct {
 
 	// Buffered channel of outbound messages.
 	send chan Message
+
+	// the name of the channel the user is in
+	channel string
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -114,6 +118,7 @@ func (c *Client) writePump() {
 				return
 			}
 			message.Timestamp = formattedTime()
+			message.Type = 1 // User
 			message_json, err := json.Marshal(message)
 			if err != nil {
 				fmt.Errorf("Failed encoding message: %s", err.Error())
@@ -142,13 +147,16 @@ func (c *Client) writePump() {
 
 // serveWs handles websocket requests from the peer.
 func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	channel, _ := vars["channel"]
+	log.Println("Starting client for channel", channel)
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	client := &Client{hub: hub, conn: conn, send: make(chan Message)}
+	client := &Client{hub: hub, conn: conn, send: make(chan Message), channel: channel}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in

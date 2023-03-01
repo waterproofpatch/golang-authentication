@@ -13,6 +13,8 @@ type Message struct {
 	Content   string `json:"content"`
 	From      string `json:"from"`
 	Timestamp string `json:"timestamp"`
+	Channel   string `json:"channel"`
+	Type      int    `json:"type"`
 }
 
 // Hub maintains the set of active clients and broadcasts messages to the
@@ -56,13 +58,16 @@ func (h *Hub) run() {
 		case message := <-h.broadcast:
 			var typed_message Message
 			json.Unmarshal(message, &typed_message)
-			fmt.Printf("Broadcast message %s from %s\n", typed_message.Content, typed_message.From)
+			fmt.Printf("Broadcast message %s from %s on channel %s\n", typed_message.Content, typed_message.From, typed_message.Channel)
 			for client := range h.clients {
-				select {
-				case client.send <- typed_message:
-				default:
-					close(client.send)
-					delete(h.clients, client)
+				if client.channel == typed_message.Channel {
+
+					select {
+					case client.send <- typed_message:
+					default:
+						close(client.send)
+						delete(h.clients, client)
+					}
 				}
 			}
 		}

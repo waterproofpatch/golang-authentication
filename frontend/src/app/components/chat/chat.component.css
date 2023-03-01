@@ -1,6 +1,50 @@
-.input {
+.container {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	height: 100vh;
+}
+
+.chat-box {
+	display: flex;
 	flex-direction: column;
+	width: 80%;
+	height: 80%;
+	border: 2px solid #ccc;
+	border-radius: 10px;
+	overflow: hidden;
+}
+
+.input {
+	padding: 10px;
+	background-color: #f5f5f5;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.form-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.form-group {
+	margin: 5px;
+}
+
+.messages {
+	padding: 10px;
+	background-color: #fff;
+	flex-grow: 1;
+	overflow-y: scroll;
+	scrollbar-width: thin;
+}
+
+.messages p {
+	margin: 5px;
+}
+
+.channel-name {
+	margin-left: 10px;
+	margin-right: 10px;
 }

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { WebsocketService } from 'src/app/services/websocket.service';
-import { Message } from 'src/app/services/websocket.service';
+import { Message, MessageType } from 'src/app/services/websocket.service';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs';
 
 @Component({
@@ -10,6 +11,7 @@ import { map } from 'rxjs';
 })
 export class ChatComponent {
   title = '';
+  channel: string = '';
   message: string = '';
   username: string = 'John Doe';
   messages: Message[] = [];
@@ -18,16 +20,19 @@ export class ChatComponent {
 
   ngOnInit(): void {
     this.initUsername()
+    this.subscribeToGetMessages()
+  }
+
+  subscribeToGetMessages() {
     this.chatService.getMessages().pipe(
       map((message: any) => {
         let message_json: Message = JSON.parse(message)
-        return { from: message_json.from, content: message_json.content, timestamp: message_json.timestamp };
+        return { from: message_json.from, content: message_json.content, timestamp: message_json.timestamp, type: message_json.type, channel: message_json.channel };
       })
     ).subscribe((message: Message) => {
       this.messages.push(message);
     });
   }
-
   initUsername() {
     const firstNames = ['Emma', 'Liam', 'Olivia', 'Noah', 'Ava', 'Ethan', 'Isabella', 'Mason', 'Sophia', 'Logan'];
     const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'];
@@ -42,11 +47,30 @@ export class ChatComponent {
     this.username = generateUsername();
   }
 
+  joinChannel(): void {
+    this.chatService.joinChannel(this.channel)
+    this.subscribeToGetMessages()
+  }
+
+  leaveChannel(): void {
+    this.chatService.leaveChannel()
+    const now = new Date(); // creates a new Date object with the current date and time
+    const estOptions = { timeZone: 'America/New_York', hour12: true };
+    const estTimeString = now.toLocaleTimeString('en-US', estOptions);
+    this.messages.push({ content: "Left channel.", timestamp: estTimeString, from: "<System>", type: MessageType.SYSTEM, channel: this.getCurrentChannel().getValue() })
+  }
+
+  getCurrentChannel(): BehaviorSubject<string> {
+    return this.chatService.currentChannel
+  }
+
   sendMessage(): void {
     const message: Message = {
       from: this.username,
       content: this.message,
       timestamp: "",
+      type: MessageType.USER,
+      channel: this.getCurrentChannel().getValue()
     };
     this.chatService.sendMessage(message);
     this.message = '';

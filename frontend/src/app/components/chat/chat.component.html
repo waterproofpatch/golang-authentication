@@ -1,19 +1,45 @@
 <div class="container">
 	<div class="chat-box">
 		<div class="input">
-			<mat-form-field appearance="fill">
-				<mat-label>Username</mat-label>
-				<input matInput [(ngModel)]="username">
-			</mat-form-field>
-			<mat-form-field appearance="fill">
-				<mat-label>Message</mat-label>
-				<input matInput [(ngModel)]="message" (keyup.enter)="sendMessage()">
-			</mat-form-field>
-			<button mat-raised-button color="primary" (click)="sendMessage()">Send</button>
+			<div class="form-row">
+				<div class="form-group">
+					<h3>Current Channel:
+						<span class="channel-name"><b>{{ this.getCurrentChannel() | async
+								}}</b></span>
+						<button mat-raised-button color="primary"
+							(click)="leaveChannel()">Leave</button>
+					</h3>
+				</div>
+				<div class="form-group">
+					<mat-form-field appearance="fill">
+						<mat-label>Username</mat-label>
+						<input matInput [(ngModel)]="username">
+					</mat-form-field>
+				</div>
+				<div class="form-group">
+					<mat-form-field appearance="fill">
+						<mat-label>Message</mat-label>
+						<input matInput [(ngModel)]="message" (keyup.enter)="sendMessage()">
+					</mat-form-field>
+				</div>
+				<div class="form-group">
+					<button mat-raised-button color="primary" (click)="sendMessage()">Send</button>
+				</div>
+				<div class="form-group">
+					<mat-form-field appearance="fill">
+						<mat-label>Channel</mat-label>
+						<input matInput [(ngModel)]="channel" (keyup.enter)="joinChannel()">
+					</mat-form-field>
+				</div>
+				<div class="form-group">
+					<button mat-raised-button color="primary" (click)="joinChannel()">Join</button>
+				</div>
+			</div>
 		</div>
 		<div class="messages">
 			<div *ngFor="let message of messages">
-				<p>{{message.timestamp}}: {{ message.from }}: {{message.content}} </p>
+				<p>{{message.timestamp}}/{{message.channel}}: {{ message.from }}: {{message.content}}
+				</p>
 			</div>
 		</div>
 	</div>
