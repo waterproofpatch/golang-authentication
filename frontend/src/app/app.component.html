@@ -7,13 +7,16 @@
 		<span class="nav-item">
 			<a mat-button routerLink="/chat" routerLinkActive="active">Chat</a>
 		</span>
-		<span class="nav-item">
+		<span *ngIf="!authenticationService.isAuthenticated" class="nav-item">
 			<a mat-button [routerLink]="['/authentication']" [queryParams]="{mode: 'login'}"
 				routerLinkActive="active">Login</a>
 		</span>
-		<span class="nav-item">
+		<span *ngIf="!authenticationService.isAuthenticated" class="nav-item">
 			<a mat-button [routerLink]="['/authentication']" [queryParams]="{mode: 'register'}"
 				routerLinkActive="active">Register</a>
+		</span>
+		<span *ngIf="authenticationService.isAuthenticated" class="nav-item">
+			<a mat-button routerLink="/profile" routerLinkActive="active">Profile</a>
 		</span>
 	</mat-toolbar-row>
 </mat-toolbar>

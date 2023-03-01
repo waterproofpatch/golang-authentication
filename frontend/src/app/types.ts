@@ -1,11 +1,6 @@
 export interface JWTData {
   email: string;
-  isCoach: boolean;
-  firstName: string;
-  lastName: string;
-  phone: string;
 }
-
 
 export interface User {
   ID: number;

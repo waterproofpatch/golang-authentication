@@ -5,6 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import jwt_decode from 'jwt-decode';
+import { JwtPayload } from 'jwt-decode';
 
 import { AuthenticationApiService } from '../apis/authentication-api.service';
 import { BaseService } from './base.service';
@@ -14,6 +15,7 @@ import { JWTData } from '../types';
 export enum IRegistrationState {
   None = 0,
   Pending,
+  Completed,
 }
 
 @Injectable({
@@ -45,51 +47,6 @@ export class AuthenticationService extends BaseService {
   resetRegistrationState(): void {
     this.registrationState$.next(IRegistrationState.None);
   }
-  /**
-   *
-   * @returns The email address we're logged in with.
-   */
-  lastName(): string {
-    if (!this.token) {
-      return '';
-    }
-    try {
-      return (jwt_decode(this.token) as JWTData).lastName;
-    } catch (Error) {
-      console.log('error decoding token');
-      return '';
-    }
-  }
-  /**
-   *
-   * @returns The email address we're logged in with.
-   */
-  firstName(): string {
-    if (!this.token) {
-      return '';
-    }
-    try {
-      return (jwt_decode(this.token) as JWTData).firstName;
-    } catch (Error) {
-      console.log('error decoding token');
-      return '';
-    }
-  }
-  /**
-   *
-   * @returns The email address we're logged in with.
-   */
-  phone(): string {
-    if (!this.token) {
-      return '';
-    }
-    try {
-      return (jwt_decode(this.token) as JWTData).phone;
-    } catch (Error) {
-      console.log('error decoding token');
-      return '';
-    }
-  }
 
   /**
    *
@@ -107,20 +64,28 @@ export class AuthenticationService extends BaseService {
     }
   }
 
-  /**
-   *
-   * @returns Whether or not the token belongs to coach
-   */
-  isCoach(): boolean {
+  getExpirationTime(): string {
     if (!this.token) {
-      return false;
+      return '';
     }
-    try {
-      return (jwt_decode(this.token) as JWTData).isCoach;
-    } catch (Error) {
-      console.log('error decoding token');
-      return false;
+    const decodedToken: JwtPayload = jwt_decode(this.token)
+    if (!decodedToken || !decodedToken.exp) {
+      return '';
     }
+    const expDate = new Date(0)
+    expDate.setUTCSeconds(decodedToken.exp);
+
+    const expTime = expDate.toLocaleString('en-US', {
+      timeZone: 'America/New_York',
+      hour12: true,
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric'
+    });
+    return expTime
   }
 
   get token() {
@@ -165,7 +130,7 @@ export class AuthenticationService extends BaseService {
       .subscribe((x) => {
         console.log('registration completed OK');
         this.error$.next(''); // send a benign event so observers can close modals
-        this.registrationState$.next(IRegistrationState.Pending);
+        this.registrationState$.next(IRegistrationState.Completed);
       });
   }
 
