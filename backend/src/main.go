@@ -73,6 +73,7 @@ func main() {
 		return
 	}
 	log.Printf("Port will be %d", port)
+	log.Printf("Default admin user name will be %s", os.Getenv("DEFAULT_ADMIN_USER"))
 
 	// must happen before we get the db
 	authentication.Init(os.Getenv("SECRET"), os.Getenv("DEFAULT_ADMIN_USER"), os.Getenv("DEFAULT_ADMIN_PASSWORD"), router, os.Getenv("DATABASE_URL"), dropTables, false)
