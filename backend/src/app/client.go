@@ -118,7 +118,8 @@ func (c *Client) writePump() {
 				return
 			}
 			message.Timestamp = formattedTime()
-			message.Type = 1 // User
+			message.Token = "" // dont send tokens to other clients
+			message.Type = 1   // User
 			message_json, err := json.Marshal(message)
 			if err != nil {
 				fmt.Errorf("Failed encoding message: %s", err.Error())

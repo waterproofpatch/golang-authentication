@@ -15,6 +15,7 @@ type Message struct {
 	Timestamp string `json:"timestamp"`
 	Channel   string `json:"channel"`
 	Type      int    `json:"type"`
+	Token     string `json:"token"`
 }
 
 // Hub maintains the set of active clients and broadcasts messages to the
@@ -59,6 +60,7 @@ func (h *Hub) run() {
 			var typed_message Message
 			json.Unmarshal(message, &typed_message)
 			fmt.Printf("Broadcast message %s from %s on channel %s\n", typed_message.Content, typed_message.From, typed_message.Channel)
+			fmt.Printf("Token sent is: %s\n", typed_message.Token)
 			for client := range h.clients {
 				if client.channel == typed_message.Channel {
 

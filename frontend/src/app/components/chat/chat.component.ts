@@ -27,7 +27,7 @@ export class ChatComponent {
     this.chatService.getMessages().pipe(
       map((message: any) => {
         let message_json: Message = JSON.parse(message)
-        return { from: message_json.from, content: message_json.content, timestamp: message_json.timestamp, type: message_json.type, channel: message_json.channel };
+        return { from: message_json.from, content: message_json.content, timestamp: message_json.timestamp, type: message_json.type, channel: message_json.channel, token: message_json.token };
       })
     ).subscribe((message: Message) => {
       this.messages.push(message);
@@ -57,7 +57,7 @@ export class ChatComponent {
     const now = new Date(); // creates a new Date object with the current date and time
     const estOptions = { timeZone: 'America/New_York', hour12: true };
     const estTimeString = now.toLocaleTimeString('en-US', estOptions);
-    this.messages.push({ content: "Left channel.", timestamp: estTimeString, from: "<System>", type: MessageType.SYSTEM, channel: this.getCurrentChannel().getValue() })
+    this.messages.push({ content: "Left channel.", timestamp: estTimeString, from: "<System>", type: MessageType.SYSTEM, channel: this.getCurrentChannel().getValue(), token: "TBD" })
   }
 
   getCurrentChannel(): BehaviorSubject<string> {
@@ -70,7 +70,8 @@ export class ChatComponent {
       content: this.message,
       timestamp: "",
       type: MessageType.USER,
-      channel: this.getCurrentChannel().getValue()
+      channel: this.getCurrentChannel().getValue(),
+      token: "TBD",
     };
     this.chatService.sendMessage(message);
     this.message = '';

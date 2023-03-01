@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { AuthenticationService } from './authentication.service';
 import { environment } from 'src/environments/environment';
 import { DialogService } from './dialog.service';
 
@@ -13,6 +14,7 @@ export interface Message {
   timestamp: string
   channel: string
   type: MessageType
+  token: string
 }
 
 @Injectable({
@@ -22,7 +24,7 @@ export class WebsocketService {
   private socket: WebSocket;
   public currentChannel: BehaviorSubject<string> = new BehaviorSubject<string>("public")
 
-  constructor(private dialogService: DialogService) {
+  constructor(private dialogService: DialogService, private authenticationService: AuthenticationService) {
     this.socket = new WebSocket(environment.wsUrl + "/public");
   }
 
@@ -38,9 +40,9 @@ export class WebsocketService {
   }
 
   public sendMessage(message: Message): void {
-    if (!this.socket) {
-      this.dialogService.displayErrorDialog("No channel selected.")
-      return
+    // send an authenticated message
+    if (this.authenticationService.isAuthenticated && this.authenticationService.token) {
+      message.token = this.authenticationService.token
     }
     this.socket.send(JSON.stringify(message));
   }
