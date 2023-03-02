@@ -41,13 +41,16 @@ export class ChatComponent {
     function generateUsername(): string {
       const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
       const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-      return `${firstName} ${lastName}`;
+      return `${firstName}_${lastName}`;
     }
 
     // Example usage:
     this.username = generateUsername();
   }
 
+  isConnected(): Observable<boolean> {
+    return this.chatService.isConnected
+  }
   isDisconnected(): Observable<boolean> {
     return this.chatService.isConnected.pipe(map(isConnected => !isConnected))
   }
