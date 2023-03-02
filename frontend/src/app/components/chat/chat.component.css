@@ -48,3 +48,12 @@
 	margin-left: 10px;
 	margin-right: 10px;
 }
+
+.table td:nth-child(4) {
+	word-wrap: break-word;
+	max-width: 200px;
+}
+
+.table th {
+	text-align: left;
+}

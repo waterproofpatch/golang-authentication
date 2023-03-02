@@ -25,8 +25,9 @@
 				<div class="form-group">
 					<mat-form-field appearance="fill">
 						<mat-label>Message</mat-label>
-						<input disabled="{{isDisconnected() | async}}" matInput
-							[(ngModel)]="message" (keyup.enter)="sendMessage()">
+						<textarea class="form-control" disabled="{{isDisconnected() | async}}"
+							matInput [(ngModel)]="message"
+							(keyup.enter)="sendMessage()"></textarea>
 					</mat-form-field>
 				</div>
 				<div class="form-group">
@@ -35,11 +36,24 @@
 				</div>
 			</div>
 		</div>
-		<div class="messages">
-			<div *ngFor="let message of messages">
-				<p>{{message.timestamp}}/{{message.channel}}: {{ message.from }}: {{message.content}}
-				</p>
-			</div>
-		</div>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Channel</th>
+					<th>From</th>
+					<th>Timestamp</th>
+					<th>Content</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let message of messages">
+					<td>{{ message.channel }}</td>
+					<td>{{ message.from }}</td>
+					<td>{{ message.timestamp }}</td>
+					<td>{{ message.content }}</td>
+				</tr>
+			</tbody>
+		</table>
+
 	</div>
 </div>
