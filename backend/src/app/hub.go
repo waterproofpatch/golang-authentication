@@ -18,6 +18,11 @@ type Message struct {
 	Token     string `json:"token"`
 }
 
+type MessageClientTuple struct {
+	Message []byte
+	Client  *Client
+}
+
 // Hub maintains the set of active clients and broadcasts messages to the
 // clients.
 type Hub struct {
@@ -25,7 +30,7 @@ type Hub struct {
 	clients map[*Client]bool
 
 	// Inbound messages from the clients.
-	broadcast chan []byte
+	broadcast chan *MessageClientTuple
 
 	// Register requests from the clients.
 	register chan *Client
@@ -36,7 +41,7 @@ type Hub struct {
 
 func newHub() *Hub {
 	return &Hub{
-		broadcast:  make(chan []byte),
+		broadcast:  make(chan *MessageClientTuple),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
 		clients:    make(map[*Client]bool),
@@ -88,10 +93,11 @@ func (h *Hub) run() {
 				close(client.send)
 			}
 			broadcastClientLeave(h, client.username)
-		case message := <-h.broadcast:
+		case messageTuple := <-h.broadcast:
 			var typed_message Message
-			json.Unmarshal(message, &typed_message)
-			fmt.Printf("Broadcast message %s from %s on channel %s\n", typed_message.Content, typed_message.From, typed_message.Channel)
+			json.Unmarshal(messageTuple.Message, &typed_message)
+			typed_message.From = messageTuple.Client.username
+			fmt.Printf("Broadcast message %s from %s on channel %s\n", typed_message.Content, messageTuple.Client.username, typed_message.Channel)
 			fmt.Printf("Token sent is: %s\n", typed_message.Token)
 			for client := range h.clients {
 				if client.channel == typed_message.Channel {

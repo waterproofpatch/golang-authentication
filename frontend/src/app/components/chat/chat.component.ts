@@ -85,7 +85,7 @@ export class ChatComponent {
 
   sendMessage(): void {
     const message: Message = {
-      from: this.username,
+      from: 'changeme!',
       content: this.message,
       timestamp: "",
       type: MessageType.USER,
