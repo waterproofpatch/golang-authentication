@@ -65,18 +65,10 @@ export class ChatComponent {
     localStorage.setItem("username", this.username)
     this.chatService.joinChannel(this.channel, this.username)
     this.subscribeToGetMessages()
-    const now = new Date(); // creates a new Date object with the current date and time
-    const estOptions = { timeZone: 'America/New_York', hour12: true };
-    const estTimeString = now.toLocaleTimeString('en-US', estOptions);
-    this.messages.push({ content: "Joined channel [" + this.getCurrentChannel().getValue() + "]", timestamp: estTimeString, from: "<System>", type: MessageType.SYSTEM, channel: this.getCurrentChannel().getValue(), token: "TBD" })
   }
 
   leaveChannel(): void {
     this.chatService.leaveChannel()
-    const now = new Date(); // creates a new Date object with the current date and time
-    const estOptions = { timeZone: 'America/New_York', hour12: true };
-    const estTimeString = now.toLocaleTimeString('en-US', estOptions);
-    this.messages.push({ content: "Left channel.", timestamp: estTimeString, from: "<System>", type: MessageType.SYSTEM, channel: this.getCurrentChannel().getValue(), token: "TBD" })
   }
 
   getCurrentChannel(): BehaviorSubject<string> {
