@@ -13,7 +13,7 @@ export class ChatComponent {
   title = '';
   channel: string = '';
   message: string = '';
-  username: string = 'John Doe';
+  username: string = '';
   messages: Message[] = [];
 
   constructor(private chatService: WebsocketService) { }

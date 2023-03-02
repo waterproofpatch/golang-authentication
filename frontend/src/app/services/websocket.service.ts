@@ -23,10 +23,9 @@ export interface Message {
 })
 export class WebsocketService {
   private socket: WebSocket | null = null;
-  public currentChannel: BehaviorSubject<string> = new BehaviorSubject<string>("public")
+  public currentChannel: BehaviorSubject<string> = new BehaviorSubject<string>("")
 
   constructor(private dialogService: DialogService, private authenticationService: AuthenticationService) {
-    // this.socket = new WebSocket(environment.wsUrl + "/public");
   }
 
   public joinChannel(channel: string, username: string): void {
@@ -34,19 +33,28 @@ export class WebsocketService {
       this.leaveChannel()
     }
     const url = `${environment.wsUrl}/${channel}?username=${username}`
-    console.log("URL: " + url)
     this.socket = new WebSocket(url);
+    this.socket.onerror = (event) => {
+      // this.dialogService.displayErrorDialog("Error: " + event)
+    };
+    this.socket.onclose = (event) => {
+      // 1000 is normal closure; e.g. triggered by the frontend client
+      if (event.code != 1000) {
+        this.dialogService.displayErrorDialog('WebSocket closed:' + event.code + ', ' + event.reason)
+      }
+    };
     this.currentChannel.next(channel)
   }
 
   public leaveChannel(): void {
     console.log("Closing socket...")
     if (!this.socket) {
-      this.dialogService.displayErrorDialog("Not in a channel.")
+      this.dialogService.displayErrorDialog("Not in a channel. Join a channel first.")
       return;
     }
     this.socket.close(1000, "Voluntary disconnect")
     this.socket = null;
+    this.currentChannel.next("")
   }
 
   public sendMessage(message: Message): void {
@@ -55,7 +63,7 @@ export class WebsocketService {
       message.token = this.authenticationService.token
     }
     if (!this.socket) {
-      this.dialogService.displayErrorDialog("Not connected.")
+      this.dialogService.displayErrorDialog("Not connected. Join a channel first.")
       return
     }
     this.socket.send(JSON.stringify(message));
