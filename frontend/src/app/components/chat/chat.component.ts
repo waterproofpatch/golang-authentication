@@ -25,6 +25,9 @@ export class ChatComponent {
     this.subscribeToGetMessages()
     this.route.queryParams.subscribe((params) => {
       this.channel = params['channel'];
+      if (this.channel == '') {
+        this.channel = 'public'
+      }
     });
   }
 
