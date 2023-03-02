@@ -22,15 +22,17 @@ export interface Message {
   providedIn: 'root'
 })
 export class WebsocketService {
-  private socket: WebSocket;
+  private socket: WebSocket | null = null;
   public currentChannel: BehaviorSubject<string> = new BehaviorSubject<string>("public")
 
   constructor(private dialogService: DialogService, private authenticationService: AuthenticationService) {
-    this.socket = new WebSocket(environment.wsUrl + "/public");
+    // this.socket = new WebSocket(environment.wsUrl + "/public");
   }
 
   public joinChannel(channel: string, username: string): void {
-    this.leaveChannel()
+    if (this.socket) {
+      this.leaveChannel()
+    }
     const url = `${environment.wsUrl}/${channel}?username=${username}`
     console.log("URL: " + url)
     this.socket = new WebSocket(url);
@@ -39,7 +41,12 @@ export class WebsocketService {
 
   public leaveChannel(): void {
     console.log("Closing socket...")
+    if (!this.socket) {
+      this.dialogService.displayErrorDialog("Not in a channel.")
+      return;
+    }
     this.socket.close(1000, "Voluntary disconnect")
+    this.socket = null;
   }
 
   public sendMessage(message: Message): void {
@@ -47,14 +54,22 @@ export class WebsocketService {
     if (this.authenticationService.isAuthenticated && this.authenticationService.token) {
       message.token = this.authenticationService.token
     }
+    if (!this.socket) {
+      this.dialogService.displayErrorDialog("Not connected.")
+      return
+    }
     this.socket.send(JSON.stringify(message));
   }
 
-  public getMessages(): Observable<string> {
+  getMessages(): Observable<string> {
     return new Observable<string>(observer => {
-      this.socket.addEventListener('message', event => {
-        observer.next(event.data);
-      });
+      if (this.socket) {
+        this.socket.addEventListener('message', event => {
+          observer.next(event.data);
+        });
+      } else {
+        observer.error('WebSocket is not connected');
+      }
     });
   }
 }
