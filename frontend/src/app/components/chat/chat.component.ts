@@ -32,6 +32,10 @@ export class ChatComponent {
         this.channel = params['channel']
       }
     });
+    if (this.channel != "" && this.username != "") {
+
+      this.joinChannel()
+    }
   }
 
   subscribeToGetMessages() {
