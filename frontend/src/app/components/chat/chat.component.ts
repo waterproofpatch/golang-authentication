@@ -12,7 +12,7 @@ import { DialogService } from 'src/app/services/dialog.service';
 })
 export class ChatComponent {
   title = '';
-  channel: string = '';
+  channel: string = 'public'; // default
   message: string = '';
   username: string = '';
   messages: Message[] = [];
