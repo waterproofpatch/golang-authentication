@@ -48,6 +48,10 @@ export class ChatComponent {
     this.username = generateUsername();
   }
 
+  isDisconnected(): Observable<boolean> {
+    return this.chatService.isConnected.pipe(map(isConnected => !isConnected))
+  }
+
   joinChannel(): void {
     if (this.channel == "") {
       this.dialogService.displayErrorDialog("Invalid channel.")

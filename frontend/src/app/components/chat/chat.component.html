@@ -19,11 +19,13 @@
 				<div class="form-group">
 					<mat-form-field appearance="fill">
 						<mat-label>Message</mat-label>
-						<input matInput [(ngModel)]="message" (keyup.enter)="sendMessage()">
+						<input disabled="{{isDisconnected() | async}}" matInput
+							[(ngModel)]="message" (keyup.enter)="sendMessage()">
 					</mat-form-field>
 				</div>
 				<div class="form-group">
-					<button mat-raised-button color="primary" (click)="sendMessage()">Send</button>
+					<button disabled="{{isDisconnected() | async }}" mat-raised-button
+						color="primary" (click)="sendMessage()">Send</button>
 				</div>
 				<div class="form-group">
 					<mat-form-field appearance="fill">

@@ -24,6 +24,7 @@ export interface Message {
 export class WebsocketService {
   private socket: WebSocket | null = null;
   public currentChannel: BehaviorSubject<string> = new BehaviorSubject<string>("")
+  public isConnected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
 
   constructor(private dialogService: DialogService, private authenticationService: AuthenticationService) {
   }
@@ -37,7 +38,11 @@ export class WebsocketService {
     this.socket.onerror = (event) => {
       // this.dialogService.displayErrorDialog("Error: " + event)
     };
+    this.socket.onopen = (event) => {
+      this.isConnected.next(true);
+    }
     this.socket.onclose = (event) => {
+      this.isConnected.next(false);
       // 1000 is normal closure; e.g. triggered by the frontend client
       if (event.code != 1000) {
         this.dialogService.displayErrorDialog('WebSocket closed:' + event.code + ', ' + event.reason)
