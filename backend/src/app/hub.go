@@ -43,12 +43,43 @@ func newHub() *Hub {
 	}
 }
 
+func broadcast(h *Hub, message *Message) {
+	for client := range h.clients {
+		select {
+		case client.send <- *message:
+		default:
+			close(client.send)
+			delete(h.clients, client)
+		}
+	}
+}
+func broadcastClientLeave(h *Hub) {
+
+	var message Message
+	message.Type = 3 // SERVER
+	message.Content = "Client left."
+	message.Timestamp = FormattedTime()
+	message.From = "Server"
+	message.Channel = "Broadcast"
+	broadcast(h, &message)
+}
+func broadcastClientJoin(h *Hub) {
+
+	var message Message
+	message.Type = 3 // SERVER
+	message.Content = "Client joined."
+	message.Timestamp = FormattedTime()
+	message.From = "Server"
+	message.Channel = "Broadcast"
+	broadcast(h, &message)
+}
 func (h *Hub) run() {
 	for {
 		fmt.Println("Top of hub run loop...")
 		select {
 		case client := <-h.register:
 			fmt.Println("Registering client: ", client.conn.RemoteAddr().String())
+			broadcastClientJoin(h)
 			h.clients[client] = true
 		case client := <-h.unregister:
 			fmt.Print("Unregistering client: ", client.conn.RemoteAddr().String())
@@ -56,6 +87,7 @@ func (h *Hub) run() {
 				delete(h.clients, client)
 				close(client.send)
 			}
+			broadcastClientLeave(h)
 		case message := <-h.broadcast:
 			var typed_message Message
 			json.Unmarshal(message, &typed_message)

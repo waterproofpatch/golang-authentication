@@ -80,7 +80,7 @@ func (c *Client) readPump() {
 	}
 }
 
-func formattedTime() string {
+func FormattedTime() string {
 	// est, err := time.LoadLocation("America/New York")
 	est := time.FixedZone("EST", -5*60*60)
 
@@ -114,7 +114,7 @@ func (c *Client) writePump() {
 			if err != nil {
 				return
 			}
-			message.Timestamp = formattedTime()
+			message.Timestamp = FormattedTime()
 			message.Token = "" // dont send tokens to other clients
 			message.Type = 1   // User
 			message_json, err := json.Marshal(message)

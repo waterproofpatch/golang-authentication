@@ -5,8 +5,9 @@ import { environment } from 'src/environments/environment';
 import { DialogService } from './dialog.service';
 
 export enum MessageType {
-  USER = 1,
-  SYSTEM = 2,
+  USER = 1, // from the user
+  SYSTEM = 2, // from the client code
+  SERVER = 3, // from the server code
 }
 export interface Message {
   content: string
