@@ -4,6 +4,7 @@ import { Message, MessageType } from 'src/app/services/websocket.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs';
 import { DialogService } from 'src/app/services/dialog.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -17,11 +18,14 @@ export class ChatComponent {
   username: string = '';
   messages: Message[] = [];
 
-  constructor(private chatService: WebsocketService, private dialogService: DialogService) { }
+  constructor(private route: ActivatedRoute, private chatService: WebsocketService, private dialogService: DialogService) { }
 
   ngOnInit(): void {
     this.initUsername()
     this.subscribeToGetMessages()
+    this.route.queryParams.subscribe((params) => {
+      this.channel = params['channel'];
+    });
   }
 
   subscribeToGetMessages() {
