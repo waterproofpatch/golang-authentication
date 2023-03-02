@@ -120,7 +120,6 @@ func (c *Client) writePump() {
 			message.Timestamp = FormattedTime()
 			message.Token = "" // dont send tokens to other clients
 			message.Type = 1   // User
-			// message.From = c.username // from previously validated username
 			message_json, err := json.Marshal(message)
 			if err != nil {
 				fmt.Errorf("Failed encoding message: %s", err.Error())
@@ -154,8 +153,6 @@ func isValidInput(input string) bool {
 
 // serveWs handles websocket requests from the peer.
 func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
-	// vars := mux.Vars(r)
-	// channel, _ := vars["channel"]
 	q := r.URL.Query()
 	username := q.Get("username")
 	channel := q.Get("channel")

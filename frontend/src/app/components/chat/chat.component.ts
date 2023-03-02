@@ -13,7 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ChatComponent {
   title = '';
-  channel: string = 'public'; // default
+  channel: string = '';
   message: string = '';
   username: string = '';
   messages: Message[] = [];
@@ -21,12 +21,15 @@ export class ChatComponent {
   constructor(private route: ActivatedRoute, private chatService: WebsocketService, private dialogService: DialogService) { }
 
   ngOnInit(): void {
-    this.initUsername()
+    this.username = localStorage.getItem("username") || ""
+    this.channel = localStorage.getItem("channel") || "public"
+    console.log("init channel to " + this.channel)
+    console.log("init username to " + this.username)
     this.subscribeToGetMessages()
     this.route.queryParams.subscribe((params) => {
-      this.channel = params['channel'];
-      if (this.channel == '') {
-        this.channel = 'public'
+      console.log("queryparams channel is " + params['channel'])
+      if (params['channel'] != '' && params['channel'] != undefined) {
+        this.channel = params['channel']
       }
     });
   }
@@ -41,19 +44,6 @@ export class ChatComponent {
       this.messages.push(message);
     });
   }
-  initUsername() {
-    const firstNames = ['Emma', 'Liam', 'Olivia', 'Noah', 'Ava', 'Ethan', 'Isabella', 'Mason', 'Sophia', 'Logan'];
-    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'];
-
-    function generateUsername(): string {
-      const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-      const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-      return `${firstName}_${lastName}`;
-    }
-
-    // Example usage:
-    this.username = generateUsername();
-  }
 
   isConnected(): Observable<boolean> {
     return this.chatService.isConnected
@@ -67,6 +57,8 @@ export class ChatComponent {
       this.dialogService.displayErrorDialog("Invalid channel.")
       return;
     }
+    localStorage.setItem("channel", this.channel)
+    localStorage.setItem("username", this.username)
     this.chatService.joinChannel(this.channel, this.username)
     this.subscribeToGetMessages()
     const now = new Date(); // creates a new Date object with the current date and time
