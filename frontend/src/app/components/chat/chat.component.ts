@@ -48,7 +48,7 @@ export class ChatComponent {
   }
 
   joinChannel(): void {
-    this.chatService.joinChannel(this.channel)
+    this.chatService.joinChannel(this.channel, this.username)
     this.subscribeToGetMessages()
     const now = new Date(); // creates a new Date object with the current date and time
     const estOptions = { timeZone: 'America/New_York', hour12: true };

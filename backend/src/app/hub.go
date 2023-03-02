@@ -53,21 +53,21 @@ func broadcast(h *Hub, message *Message) {
 		}
 	}
 }
-func broadcastClientLeave(h *Hub) {
+func broadcastClientLeave(h *Hub, username string) {
 
 	var message Message
 	message.Type = 3 // SERVER
-	message.Content = "Client left."
+	message.Content = fmt.Sprintf("Client [%s] left.", username)
 	message.Timestamp = FormattedTime()
 	message.From = "Server"
 	message.Channel = "Broadcast"
 	broadcast(h, &message)
 }
-func broadcastClientJoin(h *Hub) {
+func broadcastClientJoin(h *Hub, username string) {
 
 	var message Message
 	message.Type = 3 // SERVER
-	message.Content = "Client joined."
+	message.Content = fmt.Sprintf("Client [%s] joined.", username)
 	message.Timestamp = FormattedTime()
 	message.From = "Server"
 	message.Channel = "Broadcast"
@@ -79,7 +79,7 @@ func (h *Hub) run() {
 		select {
 		case client := <-h.register:
 			fmt.Println("Registering client: ", client.conn.RemoteAddr().String())
-			broadcastClientJoin(h)
+			broadcastClientJoin(h, client.username)
 			h.clients[client] = true
 		case client := <-h.unregister:
 			fmt.Print("Unregistering client: ", client.conn.RemoteAddr().String())
@@ -87,7 +87,7 @@ func (h *Hub) run() {
 				delete(h.clients, client)
 				close(client.send)
 			}
-			broadcastClientLeave(h)
+			broadcastClientLeave(h, client.username)
 		case message := <-h.broadcast:
 			var typed_message Message
 			json.Unmarshal(message, &typed_message)

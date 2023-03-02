@@ -29,9 +29,11 @@ export class WebsocketService {
     this.socket = new WebSocket(environment.wsUrl + "/public");
   }
 
-  public joinChannel(channel: string): void {
+  public joinChannel(channel: string, username: string): void {
     this.leaveChannel()
-    this.socket = new WebSocket(environment.wsUrl + "/" + channel);
+    const url = `${environment.wsUrl}/${channel}?username=${username}`
+    console.log("URL: " + url)
+    this.socket = new WebSocket(url);
     this.currentChannel.next(channel)
   }
 

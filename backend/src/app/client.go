@@ -52,6 +52,9 @@ type Client struct {
 
 	// the name of the channel the user is in
 	channel string
+
+	// the name of the user
+	username string
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -147,14 +150,16 @@ func (c *Client) writePump() {
 func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	channel, _ := vars["channel"]
-	log.Println("Starting client for channel", channel)
+	q := r.URL.Query()
+	username := q.Get("username")
+	log.Printf("Starting client for channel %s, user %s", channel, username)
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	client := &Client{hub: hub, conn: conn, send: make(chan Message), channel: channel}
+	client := &Client{hub: hub, conn: conn, send: make(chan Message), channel: channel, username: username}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in
