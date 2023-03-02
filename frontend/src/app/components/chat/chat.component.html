@@ -2,14 +2,14 @@
 	<div class="chat-box">
 		<div class="input">
 			<div class="form-row">
-				<div class="form-group">
+				<!-- <div class="form-group">
 					<h3>Current Channel:
 						<span class="channel-name"><b>{{ this.getCurrentChannel() | async
 								}}</b></span>
 						<button disabled="{{isDisconnected() | async}}" mat-raised-button
 							color="primary" (click)="leaveChannel()">Leave</button>
 					</h3>
-				</div>
+				</div> -->
 				<div class="form-group">
 					<mat-form-field appearance="fill">
 						<mat-label>Username</mat-label>
@@ -20,11 +20,15 @@
 				<div class="form-group">
 					<mat-form-field appearance="fill">
 						<mat-label>Channel</mat-label>
-						<input matInput [(ngModel)]="channel" (keyup.enter)="joinChannel()">
+						<input disabled="{{isConnected() | async}}" matInput
+							[(ngModel)]="channel" (keyup.enter)="joinChannel()">
 					</mat-form-field>
 				</div>
 				<div class="form-group">
-					<button mat-raised-button color="primary" (click)="joinChannel()">Join</button>
+					<button *ngIf="isDisconnected() | async" mat-raised-button color="primary"
+						(click)="joinChannel()">Join</button>
+					<button *ngIf="isConnected() | async" mat-raised-button color="primary"
+						(click)="leaveChannel()">Leave</button>
 				</div>
 				<div class="form-group">
 					<mat-form-field appearance="fill">
