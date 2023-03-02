@@ -32,7 +32,7 @@ export class WebsocketService {
     if (this.socket) {
       this.leaveChannel()
     }
-    const url = `${environment.wsUrl}/${channel}?username=${username}`
+    const url = `${environment.wsUrl}?channel=${channel}&username=${username}`
     this.socket = new WebSocket(url);
     this.socket.onerror = (event) => {
       // this.dialogService.displayErrorDialog("Error: " + event)

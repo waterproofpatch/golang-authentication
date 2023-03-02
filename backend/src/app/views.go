@@ -94,7 +94,7 @@ func InitViews(router *mux.Router) {
 	router.HandleFunc("/api/dashboard", dashboard).Methods("GET", "POST", "PUT", "OPTIONS")
 	router.HandleFunc("/api/items", items).Methods("GET", "POST", "PUT", "OPTIONS")
 	router.HandleFunc("/api/items/{id:[0-9]+}", items).Methods("GET", "POST", "DELETE", "PUT", "OPTIONS")
-	router.HandleFunc("/ws/{channel:[a-z0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)
 	})
 }

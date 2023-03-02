@@ -3,6 +3,7 @@ import { WebsocketService } from 'src/app/services/websocket.service';
 import { Message, MessageType } from 'src/app/services/websocket.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs';
+import { DialogService } from 'src/app/services/dialog.service';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,7 @@ export class ChatComponent {
   username: string = '';
   messages: Message[] = [];
 
-  constructor(private chatService: WebsocketService) { }
+  constructor(private chatService: WebsocketService, private dialogService: DialogService) { }
 
   ngOnInit(): void {
     this.initUsername()
@@ -48,6 +49,10 @@ export class ChatComponent {
   }
 
   joinChannel(): void {
+    if (this.channel == "") {
+      this.dialogService.displayErrorDialog("Invalid channel.")
+      return;
+    }
     this.chatService.joinChannel(this.channel, this.username)
     this.subscribeToGetMessages()
     const now = new Date(); // creates a new Date object with the current date and time
