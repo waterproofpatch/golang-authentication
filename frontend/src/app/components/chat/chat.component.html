@@ -25,9 +25,7 @@
 			</div>
 		</div>
 		<div class="messages" #scrollMe>
-			<div *ngFor="let message of messages">
-				{{ message.channel }} - {{ message.timestamp }} {{ message.from }}: {{message.content}}
-			</div>
+			<app-message [message]="message" *ngFor="let message of messages"></app-message>
 		</div>
 		<div class="input">
 			<div class="form-group">
