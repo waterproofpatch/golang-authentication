@@ -1,3 +1,10 @@
-<div *ngIf="message">
-	{{ message.channel }} - {{ message.timestamp }} {{ message.from }}: {{message.content}}
-</div>
+<mat-card *ngIf="message">
+	<mat-card-header>
+		<div mat-card-avatar>
+			<mat-icon>account_circle</mat-icon>
+		</div>
+		<mat-card-title>{{ message.from }}</mat-card-title>
+		<mat-card-subtitle>{{ message.channel }} - {{ message.timestamp }}</mat-card-subtitle>
+	</mat-card-header>
+	<mat-card-content>{{ message.content }}</mat-card-content>
+</mat-card>
