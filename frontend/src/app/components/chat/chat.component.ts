@@ -1,18 +1,21 @@
 import { Component } from '@angular/core';
 import { WebsocketService } from 'src/app/services/websocket.service';
+import { AfterViewInit } from '@angular/core';
 import { Message, MessageType } from 'src/app/services/websocket.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs';
 import { DialogService } from 'src/app/services/dialog.service';
 import { ActivatedRoute } from '@angular/router';
+import { ViewChild } from '@angular/core';
+import { ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css']
 })
-export class ChatComponent {
-  title = '';
+export class ChatComponent implements AfterViewInit {
+  @ViewChild('scrollMe') private scrollContainer: ElementRef | undefined;
   channel: string = '';
   message: string = '';
   username: string = '';
@@ -23,11 +26,8 @@ export class ChatComponent {
   ngOnInit(): void {
     this.username = localStorage.getItem("username") || ""
     this.channel = localStorage.getItem("channel") || "public"
-    console.log("init channel to " + this.channel)
-    console.log("init username to " + this.username)
     this.subscribeToGetMessages()
     this.route.queryParams.subscribe((params) => {
-      console.log("queryparams channel is " + params['channel'])
       if (params['channel'] != '' && params['channel'] != undefined) {
         this.channel = params['channel']
       }
@@ -37,6 +37,19 @@ export class ChatComponent {
       this.joinChannel()
     }
   }
+  ngAfterViewInit() {
+    this.scrollToBottom();
+  }
+  scrollToBottom(): void {
+    try {
+      setTimeout(() => {
+        if (this.scrollContainer == undefined) {
+          return;
+        }
+        this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
+      }, 50);
+    } catch (err) { }
+  }
 
   subscribeToGetMessages() {
     this.chatService.getMessages().pipe(
@@ -45,6 +58,7 @@ export class ChatComponent {
       })
     ).subscribe((message: Message) => {
       this.messages.push(message);
+      this.scrollToBottom()
     });
   }
 

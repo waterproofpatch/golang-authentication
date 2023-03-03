@@ -5,8 +5,8 @@
 				<div class="form-group">
 					<mat-form-field appearance="fill">
 						<mat-label>Username</mat-label>
-						<input disabled="{{isConnected() | async}}" matInput [(ngModel)]="
-							username">
+						<input disabled="{{isConnected() | async}}" matInput
+							[(ngModel)]="username">
 					</mat-form-field>
 				</div>
 				<div class="form-group">
@@ -22,38 +22,25 @@
 					<button *ngIf="isConnected() | async" mat-raised-button color="primary"
 						(click)="leaveChannel()">Leave</button>
 				</div>
-				<div class="form-group">
-					<mat-form-field appearance="fill">
-						<mat-label>Message</mat-label>
-						<textarea class="form-control" disabled="{{isDisconnected() | async}}"
-							matInput [(ngModel)]="message"
-							(keyup.enter)="sendMessage()"></textarea>
-					</mat-form-field>
-				</div>
-				<div class="form-group">
-					<button disabled="{{isDisconnected() | async }}" mat-raised-button
-						color="primary" (click)="sendMessage()">Send</button>
-				</div>
 			</div>
 		</div>
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th>Channel</th>
-					<th>From</th>
-					<th>Timestamp</th>
-					<th>Content</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr *ngFor="let message of messages.reverse()">
-					<td>{{ message.channel }}</td>
-					<td>{{ message.from }}</td>
-					<td>{{ message.timestamp }}</td>
-					<td>{{ message.content }}</td>
-				</tr>
-			</tbody>
-		</table>
-
+		<div class="messages" #scrollMe>
+			<div *ngFor="let message of messages">
+				{{ message.channel }} - {{ message.timestamp }} {{ message.from }}: {{message.content}}
+			</div>
+		</div>
+		<div class="input">
+			<div class="form-group">
+				<mat-form-field appearance="fill">
+					<mat-label>Message</mat-label>
+					<textarea class="form-control" disabled="{{isDisconnected() | async}}" matInput
+						[(ngModel)]="message" (keyup.enter)="sendMessage()"></textarea>
+				</mat-form-field>
+			</div>
+			<div class="form-group">
+				<button disabled="{{isDisconnected() | async }}" mat-raised-button color="primary"
+					(click)="sendMessage()">Send</button>
+			</div>
+		</div>
 	</div>
 </div>
