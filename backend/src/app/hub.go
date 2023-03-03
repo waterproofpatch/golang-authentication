@@ -98,9 +98,14 @@ func (h *Hub) run() {
 		case messageTuple := <-h.broadcast:
 			var typed_message Message
 			json.Unmarshal(messageTuple.Message, &typed_message)
+			// fmt.Printf("Token sent is: %s\n", typed_message.Token)
+
 			typed_message.From = messageTuple.Client.username
+			typed_message.Timestamp = FormattedTime()
+			typed_message.Token = "" // dont send tokens to other clients
+			typed_message.Type = 1   // User
+
 			fmt.Printf("Broadcast message %s from %s on channel %s\n", typed_message.Content, messageTuple.Client.username, typed_message.Channel)
-			fmt.Printf("Token sent is: %s\n", typed_message.Token)
 
 			err := AddMessage(authentication.GetDb(), typed_message)
 			if err != nil {

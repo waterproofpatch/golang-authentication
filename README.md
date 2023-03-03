@@ -2,7 +2,7 @@
 
 ## Quickstart
 
-THere is a `docker-compose.yml` file at the root of this repo that starts up database, backend and frontend services in development mode with auto-reload.
+There is a `docker-compose.yml` file at the root of this repo that starts up database, backend and frontend services in development mode with auto-reload.
 
 ```bash
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build

@@ -122,9 +122,6 @@ func (c *Client) writePump() {
 			if err != nil {
 				return
 			}
-			message.Timestamp = FormattedTime()
-			message.Token = "" // dont send tokens to other clients
-			message.Type = 1   // User
 			message_json, err := json.Marshal(message)
 			if err != nil {
 				fmt.Errorf("Failed encoding message: %s", err.Error())
@@ -200,6 +197,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 				Content:   message.Content,
 				Timestamp: message.Timestamp,
 			}
+			fmt.Printf("Message has timestamp %s\n", m.Timestamp)
 			client.send <- m
 		}
 
