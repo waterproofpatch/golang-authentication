@@ -7,6 +7,8 @@ package app
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/waterproofpatch/go_authentication/authentication"
 )
 
 type Message struct {
@@ -99,6 +101,12 @@ func (h *Hub) run() {
 			typed_message.From = messageTuple.Client.username
 			fmt.Printf("Broadcast message %s from %s on channel %s\n", typed_message.Content, messageTuple.Client.username, typed_message.Channel)
 			fmt.Printf("Token sent is: %s\n", typed_message.Token)
+
+			err := AddMessage(authentication.GetDb(), typed_message)
+			if err != nil {
+				fmt.Println("Error " + err.Error())
+			}
+
 			for client := range h.clients {
 				if client.channel == typed_message.Channel {
 

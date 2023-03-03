@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/waterproofpatch/go_authentication/authentication"
 )
 
 const (
@@ -186,4 +187,21 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	// new goroutines.
 	go client.writePump()
 	go client.readPump()
+
+	// send the client any/all messages saved in the db
+	db := authentication.GetDb()
+	var messages []MessageModel
+	db.Find(&messages)
+	for _, message := range messages {
+		if message.Channel == client.channel {
+			m := Message{
+				From:      message.From,
+				Channel:   message.Channel,
+				Content:   message.Content,
+				Timestamp: message.Timestamp,
+			}
+			client.send <- m
+		}
+
+	}
 }

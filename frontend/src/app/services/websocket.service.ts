@@ -10,6 +10,7 @@ export enum MessageType {
   SERVER = 3, // from the server code
 }
 export interface Message {
+  id: number
   content: string
   from: string
   timestamp: string

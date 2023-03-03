@@ -46,7 +46,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr *ngFor="let message of messages">
+				<tr *ngFor="let message of messages.reverse()">
 					<td>{{ message.channel }}</td>
 					<td>{{ message.from }}</td>
 					<td>{{ message.timestamp }}</td>

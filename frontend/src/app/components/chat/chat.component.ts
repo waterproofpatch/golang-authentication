@@ -40,9 +40,8 @@ export class ChatComponent {
 
   subscribeToGetMessages() {
     this.chatService.getMessages().pipe(
-      map((message: any) => {
-        let message_json: Message = JSON.parse(message)
-        return { from: message_json.from, content: message_json.content, timestamp: message_json.timestamp, type: message_json.type, channel: message_json.channel, token: message_json.token };
+      map((message: string) => {
+        return JSON.parse(message)
       })
     ).subscribe((message: Message) => {
       this.messages.push(message);
@@ -77,7 +76,8 @@ export class ChatComponent {
 
   sendMessage(): void {
     const message: Message = {
-      from: 'changeme!',
+      id: 0,
+      from: '',
       content: this.message,
       timestamp: "",
       type: MessageType.USER,
