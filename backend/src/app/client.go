@@ -112,6 +112,7 @@ func (c *Client) writePump() {
 	}()
 	for {
 		select {
+		// the hub send a client to the clients' 'send' method
 		case message, ok := <-c.send:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
@@ -126,7 +127,7 @@ func (c *Client) writePump() {
 			}
 			message_json, err := json.Marshal(message)
 			if err != nil {
-				fmt.Errorf("Failed encoding message: %s", err.Error())
+				fmt.Printf("Failed encoding message: %s", err.Error())
 			} else {
 				w.Write(message_json)
 			}
