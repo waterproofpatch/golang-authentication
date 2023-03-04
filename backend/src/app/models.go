@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Item struct {
+type ItemModel struct {
 	gorm.Model
 	Id   int    `json:"id"`
 	Name string `json:"name"`
@@ -22,7 +22,7 @@ type MessageModel struct {
 	Channel   string `json:"channel"`
 }
 
-func (i Item) String() string {
+func (i ItemModel) String() string {
 	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name: %s, type: %d", i.ID, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name, i.Type)
 }
 
@@ -50,7 +50,7 @@ func AddMessage(db *gorm.DB, message *Message) error {
 	return nil
 }
 func UpdateItem(db *gorm.DB, id int, name string, itemType int) error {
-	var existingItem Item
+	var existingItem ItemModel
 	existingItem.Id = id
 	db.First(&existingItem)
 	existingItem.Name = name
@@ -60,7 +60,7 @@ func UpdateItem(db *gorm.DB, id int, name string, itemType int) error {
 }
 
 func AddItem(db *gorm.DB, name string, itemType int) error {
-	var item = Item{
+	var item = ItemModel{
 		Name: name,
 		Type: itemType,
 	}
@@ -77,6 +77,6 @@ func AddItem(db *gorm.DB, name string, itemType int) error {
 
 func InitModels(db *gorm.DB) {
 	log.Printf("Initializing models...\n")
-	db.AutoMigrate(&Item{})
+	db.AutoMigrate(&ItemModel{})
 	db.AutoMigrate(&MessageModel{})
 }

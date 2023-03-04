@@ -12,8 +12,8 @@ import (
 
 func items(w http.ResponseWriter, r *http.Request) {
 	db := authentication.GetDb()
-	var items []Item
-	var item Item
+	var items []ItemModel
+	var item ItemModel
 	vars := mux.Vars(r)
 	id, hasLessonId := vars["id"]
 
@@ -32,12 +32,12 @@ func items(w http.ResponseWriter, r *http.Request) {
 			authentication.WriteError(w, "Must provide id!", http.StatusBadRequest)
 			break
 		}
-		db.Delete(&Item{}, id)
+		db.Delete(&ItemModel{}, id)
 		db.Find(&items)
 		json.NewEncoder(w).Encode(items)
 		break
 	case "POST":
-		var newItem Item
+		var newItem ItemModel
 		err := json.NewDecoder(r.Body).Decode(&newItem)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
@@ -52,7 +52,7 @@ func items(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(items)
 		break
 	case "PUT":
-		var newItem Item
+		var newItem ItemModel
 		err := json.NewDecoder(r.Body).Decode(&newItem)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
