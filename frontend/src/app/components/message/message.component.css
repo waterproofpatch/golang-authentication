@@ -1,0 +1,7 @@
+mat-card {
+	width: calc(100%-30px);
+}
+
+.messageWrapper {
+	margin: 30px;
+}

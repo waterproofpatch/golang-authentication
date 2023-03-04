@@ -1,45 +1,23 @@
 <div class="container">
-	<div class="chat-box">
-		<div class="input">
-			<div class="form-row">
-				<div class="form-group">
-					<mat-form-field appearance="fill">
-						<mat-label>Username</mat-label>
-						<input disabled="{{isConnected() | async}}" matInput
-							[(ngModel)]="username">
-					</mat-form-field>
-				</div>
-				<div class="form-group">
-					<mat-form-field appearance="fill">
-						<mat-label>Channel</mat-label>
-						<input disabled="{{isConnected() | async}}" matInput
-							[(ngModel)]="channel" (keyup.enter)="joinChannel()">
-					</mat-form-field>
-				</div>
-				<div class="form-group">
-					<button *ngIf="isDisconnected() | async" mat-raised-button color="primary"
-						(click)="joinChannel()">Join</button>
-					<button *ngIf="isConnected() | async" mat-raised-button color="primary"
-						(click)="leaveChannel()">Leave</button>
-				</div>
-			</div>
-		</div>
+	<div class="panel left-panel">
+		<mat-form-field class="username-input">
+			<mat-label>Username</mat-label>
+			<input matInput [(ngModel)]="username">
+		</mat-form-field>
+		<mat-form-field class="username-input">
+			<mat-label>Channel</mat-label>
+			<input matInput [(ngModel)]="channel">
+		</mat-form-field>
+		<button mat-button *ngIf="isDisconnected() | async" (click)="joinChannel()">Join</button>
+		<button mat-button *ngIf="isConnected() | async" (click)="leaveChannel()">Leave</button>
+	</div>
+	<div class="panel right-panel">
 		<div class="messages" #scrollMe>
 			<app-message [message]="message" *ngFor="let message of messages"></app-message>
 		</div>
-		<div class="input" id="messageBox">
-			<div class="form-group">
-				<mat-form-field appearance="fill">
-					<mat-label>Message</mat-label>
-					<textarea class="form-control" disabled="{{isDisconnected() | async}}" matInput
-						[(ngModel)]="message" (keyup.enter)="sendMessage()"></textarea>
-				</mat-form-field>
-			</div>
-			<div class="form-group">
-				<button disabled="{{isDisconnected() | async }}" mat-raised-button color="primary"
-					(click)="sendMessage()">Send</button>
-			</div>
+		<div class="footer">
+			<textarea [(ngModel)]="message" (keyup.enter)="sendMessage()"></textarea>
+			<button (click)="sendMessage()"><i class="material-icons">send</i></button>
 		</div>
-
 	</div>
 </div>
