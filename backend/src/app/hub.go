@@ -59,7 +59,7 @@ func broadcast(h *Hub, message *Message) {
 		}
 	}
 }
-func broadcastClientLeave(h *Hub, username string) {
+func (h *Hub) broadcastClientLeave(username string) {
 
 	var message Message
 	message.Type = 3 // SERVER
@@ -69,8 +69,8 @@ func broadcastClientLeave(h *Hub, username string) {
 	message.Channel = "Broadcast"
 	broadcast(h, &message)
 }
-func broadcastClientJoin(h *Hub, username string) {
 
+func (h *Hub) broadcastClientJoin(username string) {
 	var message Message
 	message.Type = 3 // SERVER
 	message.Content = fmt.Sprintf("Client [%s] joined.", username)
@@ -86,7 +86,7 @@ func (h *Hub) run() {
 		select {
 		case client := <-h.register:
 			fmt.Println("Registering client: ", client.conn.RemoteAddr().String())
-			broadcastClientJoin(h, client.username)
+			h.broadcastClientJoin(client.username)
 			h.clients[client] = true
 		case client := <-h.unregister:
 			fmt.Print("Unregistering client: ", client.conn.RemoteAddr().String())
@@ -94,7 +94,7 @@ func (h *Hub) run() {
 				delete(h.clients, client)
 				close(client.send)
 			}
-			broadcastClientLeave(h, client.username)
+			h.broadcastClientLeave(client.username)
 		case messageTuple := <-h.broadcast:
 			// fmt.Printf("Token sent is: %s\n", message.Token)
 
