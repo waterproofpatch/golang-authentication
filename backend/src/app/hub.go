@@ -49,7 +49,7 @@ func newHub() *Hub {
 	}
 }
 
-func broadcast(h *Hub, message *Message) {
+func (h *Hub) broadcastMessage(message *Message) {
 	for client := range h.clients {
 		select {
 		case client.send <- message:
@@ -67,7 +67,7 @@ func (h *Hub) broadcastClientLeave(username string) {
 	message.Timestamp = FormattedTime()
 	message.From = "Server"
 	message.Channel = "Broadcast"
-	broadcast(h, &message)
+	h.broadcastMessage(&message)
 }
 
 func (h *Hub) broadcastClientJoin(username string) {
@@ -77,7 +77,7 @@ func (h *Hub) broadcastClientJoin(username string) {
 	message.Timestamp = FormattedTime()
 	message.From = "Server"
 	message.Channel = "Broadcast"
-	broadcast(h, &message)
+	h.broadcastMessage(&message)
 }
 
 func (h *Hub) run() {
