@@ -1,2 +1,4 @@
-prod:
-	(cd frontend && make prod) & (cd backend && make prod)
+up: 
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+down:
+	docker-compose down --volumes
