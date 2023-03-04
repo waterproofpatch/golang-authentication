@@ -8,10 +8,8 @@
 .chat-box {
 	display: flex;
 	flex-direction: column;
-	width: 80%;
-	height: 80%;
-	border: 2px solid #ccc;
-	border-radius: 10px;
+	width: 100%;
+	height: 100%;
 	overflow: hidden;
 }
 
@@ -27,14 +25,10 @@
 	color: green;
 	width: 100%;
 	flex-direction: row;
-}
-
-#messageBox textarea {
-	width: 100%;
-}
-
-#messageBox .form-group {
-	flex: 1;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
 }
 
 .form-row {
