@@ -26,7 +26,7 @@ func (i Item) String() string {
 	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name: %s, type: %d", i.ID, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name, i.Type)
 }
 
-func AddMessage(db *gorm.DB, message Message) error {
+func AddMessage(db *gorm.DB, message *Message) error {
 	// Delete old records if the limit has been reached
 	var count int64
 	db.Model(&MessageModel{}).Count(&count)

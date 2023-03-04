@@ -49,7 +49,7 @@ type Client struct {
 	conn *websocket.Conn
 
 	// Buffered channel of outbound messages.
-	send chan Message
+	send chan *Message
 
 	// the name of the channel the user is in
 	channel string
@@ -80,8 +80,10 @@ func (c *Client) readPump() {
 			break
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+		var typedMessage Message
+		json.Unmarshal(message, &typedMessage)
 		messageTuple := MessageClientTuple{
-			Message: message,
+			Message: &typedMessage,
 			Client:  c,
 		}
 		c.hub.broadcast <- &messageTuple
@@ -177,7 +179,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// client looks legit, let them in
-	client := &Client{hub: hub, conn: conn, send: make(chan Message), channel: channel, username: username}
+	client := &Client{hub: hub, conn: conn, send: make(chan *Message), channel: channel, username: username}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in
@@ -198,7 +200,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 				Timestamp: message.Timestamp,
 			}
 			fmt.Printf("Message has timestamp %s\n", m.Timestamp)
-			client.send <- m
+			client.send <- &m
 		}
 
 	}

@@ -5,7 +5,6 @@
 package app
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/waterproofpatch/go_authentication/authentication"
@@ -21,8 +20,8 @@ type Message struct {
 }
 
 type MessageClientTuple struct {
-	Message []byte
-	Client  *Client
+	Message *Message
+	Client  *Client // the client (server authoritative) that send this message
 }
 
 // Hub maintains the set of active clients and broadcasts messages to the
@@ -53,7 +52,7 @@ func newHub() *Hub {
 func broadcast(h *Hub, message *Message) {
 	for client := range h.clients {
 		select {
-		case client.send <- *message:
+		case client.send <- message:
 		default:
 			close(client.send)
 			delete(h.clients, client)
@@ -80,6 +79,7 @@ func broadcastClientJoin(h *Hub, username string) {
 	message.Channel = "Broadcast"
 	broadcast(h, &message)
 }
+
 func (h *Hub) run() {
 	for {
 		fmt.Println("Top of hub run loop...")
@@ -96,27 +96,24 @@ func (h *Hub) run() {
 			}
 			broadcastClientLeave(h, client.username)
 		case messageTuple := <-h.broadcast:
-			var typed_message Message
-			json.Unmarshal(messageTuple.Message, &typed_message)
-			// fmt.Printf("Token sent is: %s\n", typed_message.Token)
+			// fmt.Printf("Token sent is: %s\n", message.Token)
 
-			typed_message.From = messageTuple.Client.username
-			typed_message.Timestamp = FormattedTime()
-			typed_message.Token = "" // dont send tokens to other clients
-			typed_message.Type = 1   // User
+			messageTuple.Message.From = messageTuple.Client.username
+			messageTuple.Message.Timestamp = FormattedTime()
+			messageTuple.Message.Token = "" // dont send tokens to other clients
+			messageTuple.Message.Type = 1   // User
 
-			fmt.Printf("Broadcast message %s from %s on channel %s\n", typed_message.Content, messageTuple.Client.username, typed_message.Channel)
+			fmt.Printf("Broadcast message %s from %s on channel %s\n", messageTuple.Message.Content, messageTuple.Client.username, messageTuple.Message.Channel)
 
-			err := AddMessage(authentication.GetDb(), typed_message)
+			err := AddMessage(authentication.GetDb(), messageTuple.Message)
 			if err != nil {
 				fmt.Println("Error " + err.Error())
 			}
 
 			for client := range h.clients {
-				if client.channel == typed_message.Channel {
-
+				if client.channel == messageTuple.Message.Channel {
 					select {
-					case client.send <- typed_message:
+					case client.send <- messageTuple.Message:
 					default:
 						close(client.send)
 						delete(h.clients, client)
