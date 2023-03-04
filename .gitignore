@@ -6,3 +6,4 @@ src/main
 backend/src/tmp/**
 **/node_modules/
 **/.angular
+build-errors.log
