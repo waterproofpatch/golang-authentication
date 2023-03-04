@@ -2,17 +2,19 @@
 	<div class="panel left-panel">
 		<mat-form-field class="username-input">
 			<mat-label>Username</mat-label>
-			<input matInput [(ngModel)]="username">
+			<input disabled="{{isConnected()  | async}}" matInput [(ngModel)]="username">
 		</mat-form-field>
 		<mat-form-field class="username-input">
 			<mat-label>Channel</mat-label>
-			<input matInput [(ngModel)]="channel">
+			<input disabled="{{isConnected() | async}}" matInput [(ngModel)]="channel">
 		</mat-form-field>
-		<button mat-button *ngIf="isDisconnected() | async" (click)="joinChannel()">Join</button>
-		<button mat-button *ngIf="isConnected() | async" (click)="leaveChannel()">Leave</button>
+		<button mat-raised-button color="primary" *ngIf="isDisconnected() | async"
+			(click)="joinChannel()">Join</button>
+		<button mat-raised-button color="warn" *ngIf="isConnected() | async"
+			(click)="leaveChannel()">Leave</button>
 	</div>
-	<div class="panel right-panel">
-		<div class="messages" #scrollMe>
+	<div class="panel right-panel" #scrollMe>
+		<div class="messages">
 			<app-message [message]="message" *ngFor="let message of messages"></app-message>
 		</div>
 		<div class="footer">
