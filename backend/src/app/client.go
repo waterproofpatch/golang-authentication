@@ -9,12 +9,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
 	"regexp"
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/waterproofpatch/go_authentication/authentication"
 )
 
 const (
@@ -147,62 +145,4 @@ func (c *Client) writePump() {
 func isValidInput(input string) bool {
 	var alphanumeric = regexp.MustCompile(`^[a-zA-Z0-9_]{3,16}$`)
 	return alphanumeric.MatchString(input)
-}
-
-// serveWs handles websocket requests from the peer.
-func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
-	q := r.URL.Query()
-	username := q.Get("username")
-	channel := q.Get("channel")
-
-	log.Printf("Starting client for channel %s, user %s", channel, username)
-
-	// upgrade the connection
-	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	// validate client metadata
-	if !isValidInput(username) {
-		fmt.Println("Invalid username " + username)
-		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "Invalid username."))
-		conn.Close()
-		return
-	}
-	if !isValidInput(channel) {
-		fmt.Println("Invalid channel " + channel)
-		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "Invalid channel."))
-		conn.Close()
-		return
-	}
-
-	// client looks legit, let them in
-	client := &Client{hub: hub, conn: conn, send: make(chan *Message), channel: channel, username: username}
-	client.hub.register <- client
-
-	// Allow collection of memory referenced by the caller by doing all work in
-	// new goroutines.
-	go client.writePump()
-	go client.readPump()
-
-	// send the client any/all messages saved in the db
-	db := authentication.GetDb()
-	var messages []MessageModel
-	db.Find(&messages)
-	for _, message := range messages {
-		if message.Channel == client.channel {
-			m := Message{
-				From:      message.From,
-				Channel:   message.Channel,
-				Content:   message.Content,
-				Timestamp: message.Timestamp,
-			}
-			fmt.Printf("Message has timestamp %s\n", m.Timestamp)
-			client.send <- &m
-		}
-
-	}
 }
