@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
+// format the date and time.
 func formattedTime() string {
-	// est, err := time.LoadLocation("America/New York")
 	est := time.FixedZone("EST", -5*60*60)
 
 	currentTime := time.Now().In(est)
