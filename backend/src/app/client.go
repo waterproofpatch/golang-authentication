@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"regexp"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -131,9 +130,4 @@ func (c *Client) writePump() {
 			}
 		}
 	}
-}
-
-func isValidInput(input string) bool {
-	var alphanumeric = regexp.MustCompile(`^[a-zA-Z0-9_]{3,16}$`)
-	return alphanumeric.MatchString(input)
 }

@@ -1,6 +1,9 @@
 package app
 
-import "time"
+import (
+	"regexp"
+	"time"
+)
 
 func formattedTime() string {
 	// est, err := time.LoadLocation("America/New York")
@@ -9,4 +12,9 @@ func formattedTime() string {
 	currentTime := time.Now().In(est)
 
 	return currentTime.Format("03:04:05 PM (EST)")
+}
+
+func isValidInput(input string) bool {
+	var alphanumeric = regexp.MustCompile(`^[a-zA-Z0-9_]{3,16}$`)
+	return alphanumeric.MatchString(input)
 }
