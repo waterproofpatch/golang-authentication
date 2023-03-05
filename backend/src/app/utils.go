@@ -11,7 +11,7 @@ func formattedTime() string {
 
 	currentTime := time.Now().In(est)
 
-	return currentTime.Format("03:04:05 PM (EST)")
+	return currentTime.Format("01/02/2006  03:04:05 PM (EST)")
 }
 
 func isValidInput(input string) bool {
