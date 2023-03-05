@@ -120,6 +120,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	if existing_client != nil {
 		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "Username taken."))
 		conn.Close()
+		return
 	}
 
 	// client looks legit, let them in
