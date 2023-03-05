@@ -92,6 +92,7 @@ export class ChatComponent implements AfterViewInit {
 
   leaveChannel(): void {
     this.chatService.leaveChannel()
+    this.users = []
   }
 
   getCurrentChannel(): BehaviorSubject<string> {
