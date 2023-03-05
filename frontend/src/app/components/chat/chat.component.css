@@ -28,6 +28,7 @@ footer {
 .user-list {
 	margin-left: 10px;
 	margin-right: 10px;
+	margin-top: 10px;
 	width: calc(100% - 20px);
 }
 
