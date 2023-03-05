@@ -16,7 +16,9 @@
 	</div>
 	<div class="panel right-panel" #scrollMe>
 		<div class="messages">
-			<app-message [message]="message" *ngFor="let message of messages"></app-message>
+			<app-message [class.message-theirs]="message.from !== username"
+				[class.message-mine]="message.from==username" [message]="message"
+				*ngFor="let message of messages"></app-message>
 		</div>
 		<div class="footer">
 			<textarea [(ngModel)]="message" (keyup.enter)="sendMessage()"></textarea>

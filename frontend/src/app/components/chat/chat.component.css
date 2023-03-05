@@ -56,6 +56,16 @@ footer {
 	margin-bottom: 32px;
 }
 
+.message-mine {
+	display: flex;
+	justify-content: flex-start;
+}
+
+.message-theirs {
+	display: flex;
+	justify-content: flex-end;
+}
+
 .messages p {
 	margin: 5px;
 }
