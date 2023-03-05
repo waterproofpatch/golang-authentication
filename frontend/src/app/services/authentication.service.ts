@@ -39,6 +39,14 @@ export class AuthenticationService extends BaseService {
     private dialogService: DialogService
   ) {
     super();
+    if (this.isAuthenticated && this.isTokenExpired()) {
+      this.clearToken();
+      this.dialogService.displayErrorDialog("Token exipred. Log in again.")
+    }
+  }
+
+  clearToken(): void {
+    localStorage.removeItem(this.TOKEN_KEY)
   }
 
   /**
