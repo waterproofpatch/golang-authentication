@@ -64,7 +64,7 @@ func (h *Hub) broadcastClientLeave(username string) {
 	var message Message
 	message.Type = 3 // SERVER
 	message.Content = fmt.Sprintf("Client [%s] left.", username)
-	message.Timestamp = FormattedTime()
+	message.Timestamp = formattedTime()
 	message.From = "Server"
 	message.Channel = "Broadcast"
 	h.broadcastMessage(&message)
@@ -74,7 +74,7 @@ func (h *Hub) broadcastClientJoin(username string) {
 	var message Message
 	message.Type = 3 // SERVER
 	message.Content = fmt.Sprintf("Client [%s] joined.", username)
-	message.Timestamp = FormattedTime()
+	message.Timestamp = formattedTime()
 	message.From = "Server"
 	message.Channel = "Broadcast"
 	h.broadcastMessage(&message)
@@ -99,7 +99,7 @@ func (h *Hub) run() {
 			// fmt.Printf("Token sent is: %s\n", message.Token)
 
 			messageTuple.Message.From = messageTuple.Client.username
-			messageTuple.Message.Timestamp = FormattedTime()
+			messageTuple.Message.Timestamp = formattedTime()
 			messageTuple.Message.Token = "" // dont send tokens to other clients
 			messageTuple.Message.Type = 1   // User
 

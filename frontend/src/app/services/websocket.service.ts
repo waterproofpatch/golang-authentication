@@ -19,6 +19,10 @@ export interface Message {
   token: string
 }
 
+export interface User {
+  username: string
+}
+
 @Injectable({
   providedIn: 'root'
 })

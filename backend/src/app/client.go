@@ -88,7 +88,7 @@ func (c *Client) readPump() {
 	}
 }
 
-func FormattedTime() string {
+func formattedTime() string {
 	// est, err := time.LoadLocation("America/New York")
 	est := time.FixedZone("EST", -5*60*60)
 

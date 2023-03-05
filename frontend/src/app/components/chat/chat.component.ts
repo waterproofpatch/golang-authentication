@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { WebsocketService } from 'src/app/services/websocket.service';
 import { AfterViewInit } from '@angular/core';
-import { Message, MessageType } from 'src/app/services/websocket.service';
+import { Message, MessageType, User } from 'src/app/services/websocket.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs';
 import { DialogService } from 'src/app/services/dialog.service';
@@ -20,6 +20,7 @@ export class ChatComponent implements AfterViewInit {
   message: string = '';
   username: string = '';
   messages: Message[] = [];
+  users: User[] = [];
 
   constructor(private route: ActivatedRoute, private chatService: WebsocketService, private dialogService: DialogService) { }
 
@@ -57,6 +58,9 @@ export class ChatComponent implements AfterViewInit {
         return JSON.parse(message)
       })
     ).subscribe((message: Message) => {
+      if (message.type == MessageType.SERVER) {
+        console.log("Server message")
+      }
       this.messages.push(message);
       this.scrollToBottom()
     });
