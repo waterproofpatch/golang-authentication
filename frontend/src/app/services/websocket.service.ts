@@ -8,6 +8,8 @@ export enum MessageType {
   USER = 1, // from the user
   SYSTEM = 2, // from the client code
   SERVER = 3, // from the server code
+  USER_JOIN = 4, // from the server code
+  USER_LEAVE = 5, // from the server code
 }
 export interface Message {
   id: number
