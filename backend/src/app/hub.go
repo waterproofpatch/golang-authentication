@@ -102,7 +102,6 @@ func (h *Hub) broadcastClientJoin(username string) {
 
 func (h *Hub) run() {
 	for {
-		fmt.Println("Top of hub run loop...")
 		select {
 		case client := <-h.register:
 			fmt.Println("Registering client: ", client.conn.RemoteAddr().String())

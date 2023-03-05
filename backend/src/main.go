@@ -43,19 +43,6 @@ func startServing(port int, router *mux.Router) {
 	log.Fatal(srv.ListenAndServe())
 }
 
-func serveHome(w http.ResponseWriter, r *http.Request) {
-	log.Println(r.URL)
-	if r.URL.Path != "/" {
-		http.Error(w, "Not found", http.StatusNotFound)
-		return
-	}
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	http.ServeFile(w, r, "home.html")
-}
-
 // main is the entrypoint to the program.
 func main() {
 	log.Printf("Starting...")
@@ -89,6 +76,5 @@ func main() {
 		return
 	}
 
-	log.Printf("Starting serving 347...")
 	startServing(port, router)
 }
