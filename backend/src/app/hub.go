@@ -10,6 +10,14 @@ import (
 	"github.com/waterproofpatch/go_authentication/authentication"
 )
 
+const (
+	USER       = 1 // from the user
+	SYSTEM     = 2 // from the client code
+	SERVER     = 3 // from the server code
+	USER_JOIN  = 4 // from the server code
+	USER_LEAVE = 5 // from the server code
+)
+
 type Message struct {
 	Content   string `json:"content"`
 	From      string `json:"from"`
@@ -72,7 +80,7 @@ func (h *Hub) broadcastMessage(message *Message) {
 func (h *Hub) broadcastClientLeave(username string) {
 
 	var message Message
-	message.Type = 5 // USER_LEAVE
+	message.Type = USER_LEAVE
 	// message.Content = fmt.Sprintf("Client [%s] left.", username)
 	message.Content = username
 	message.Timestamp = formattedTime()
@@ -83,7 +91,7 @@ func (h *Hub) broadcastClientLeave(username string) {
 
 func (h *Hub) broadcastClientJoin(username string) {
 	var message Message
-	message.Type = 4 // USER_JOIN
+	message.Type = USER_JOIN
 	// message.Content = fmt.Sprintf("Client [%s] joined.", username)
 	message.Content = username
 	message.Timestamp = formattedTime()
@@ -113,7 +121,7 @@ func (h *Hub) run() {
 			messageTuple.Message.From = messageTuple.Client.username
 			messageTuple.Message.Timestamp = formattedTime()
 			messageTuple.Message.Token = "" // dont send tokens to other clients
-			messageTuple.Message.Type = 1   // User
+			messageTuple.Message.Type = USER
 
 			fmt.Printf("Broadcast message %s from %s on channel %s\n", messageTuple.Message.Content, messageTuple.Client.username, messageTuple.Message.Channel)
 
