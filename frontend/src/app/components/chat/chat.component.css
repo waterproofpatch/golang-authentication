@@ -25,6 +25,12 @@ footer {
 	width: calc(100% - 20px);
 }
 
+.user-list {
+	margin-left: 10px;
+	margin-right: 10px;
+	width: calc(100% - 20px);
+}
+
 .left-panel {
 	background-color: gainsboro;
 	width: 30%;

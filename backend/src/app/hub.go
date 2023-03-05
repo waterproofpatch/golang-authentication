@@ -62,8 +62,9 @@ func (h *Hub) broadcastMessage(message *Message) {
 func (h *Hub) broadcastClientLeave(username string) {
 
 	var message Message
-	message.Type = 3 // SERVER
-	message.Content = fmt.Sprintf("Client [%s] left.", username)
+	message.Type = 5 // USER_LEAVE
+	// message.Content = fmt.Sprintf("Client [%s] left.", username)
+	message.Content = username
 	message.Timestamp = formattedTime()
 	message.From = "Server"
 	message.Channel = "Broadcast"
@@ -72,8 +73,9 @@ func (h *Hub) broadcastClientLeave(username string) {
 
 func (h *Hub) broadcastClientJoin(username string) {
 	var message Message
-	message.Type = 3 // SERVER
-	message.Content = fmt.Sprintf("Client [%s] joined.", username)
+	message.Type = 4 // USER_JOIN
+	// message.Content = fmt.Sprintf("Client [%s] joined.", username)
+	message.Content = username
 	message.Timestamp = formattedTime()
 	message.From = "Server"
 	message.Channel = "Broadcast"

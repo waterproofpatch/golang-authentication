@@ -58,8 +58,14 @@ export class ChatComponent implements AfterViewInit {
         return JSON.parse(message)
       })
     ).subscribe((message: Message) => {
-      if (message.type == MessageType.SERVER) {
-        console.log("Server message")
+      if (message.type == MessageType.USER_JOIN) {
+        let user = { username: message.content }
+        this.users.push(user)
+        return;
+      }
+      if (message.type == MessageType.USER_LEAVE) {
+        this.users = this.users.filter(obj => { return obj.username !== message.content });
+        return;
       }
       this.messages.push(message);
       this.scrollToBottom()
