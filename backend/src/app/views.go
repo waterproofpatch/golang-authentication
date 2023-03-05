@@ -116,6 +116,11 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		conn.Close()
 		return
 	}
+	existing_client := hub.getClientByName(username)
+	if existing_client != nil {
+		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "Username taken."))
+		conn.Close()
+	}
 
 	// client looks legit, let them in
 	client := &Client{hub: hub, conn: conn, send: make(chan *Message), channel: channel, username: username}

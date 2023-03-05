@@ -40,6 +40,16 @@ type Hub struct {
 	unregister chan *Client
 }
 
+// get a connected client by their username.
+// returns nil if no such client is connected.
+func (h *Hub) getClientByName(username string) *Client {
+	for client := range h.clients {
+		if client.username == username {
+			return client
+		}
+	}
+	return nil
+}
 func newHub() *Hub {
 	return &Hub{
 		broadcast:  make(chan *MessageClientTuple),
