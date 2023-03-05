@@ -34,6 +34,7 @@ import { ItemComponent } from './components/item/item.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { MessageComponent } from './components/message/message.component';
+import { UserComponent } from './components/user/user.component';
 
 
 @NgModule({
@@ -47,7 +48,8 @@ import { MessageComponent } from './components/message/message.component';
     ItemComponent,
     ChatComponent,
     ProfileComponent,
-    MessageComponent
+    MessageComponent,
+    UserComponent
   ],
   imports: [
     HttpClientModule,

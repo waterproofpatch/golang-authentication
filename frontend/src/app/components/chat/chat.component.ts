@@ -37,6 +37,11 @@ export class ChatComponent implements AfterViewInit {
 
       this.joinChannel()
     }
+    this.chatService.isConnected.subscribe((isConnected: boolean) => {
+      if (!isConnected) {
+        this.users = []
+      }
+    })
   }
   ngAfterViewInit() {
     this.scrollToBottom();
