@@ -64,6 +64,14 @@ export class AuthenticationService extends BaseService {
     }
   }
 
+  isTokenExpired(): boolean {
+    if (!this.token) {
+      return true;
+    }
+    const decodedToken: any = jwt_decode(this.token);
+    const currentTime = Date.now() / 1000; // convert to seconds
+    return decodedToken.exp < currentTime;
+  }
   getExpirationTime(): string {
     if (!this.token) {
       return '';
