@@ -102,6 +102,10 @@ func (h *Hub) broadcastClientJoin(client *Client) {
 		if _client == client {
 			continue
 		}
+		// don't tell clients in other channels about this client
+		if _client.channel != client.channel {
+			continue
+		}
 		fmt.Printf("Broadcasting message to client %s\n", _client.username)
 		select {
 		case _client.send <- &message:
