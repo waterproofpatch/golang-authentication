@@ -144,7 +144,6 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 				Content:   message.Content,
 				Timestamp: message.Timestamp,
 			}
-			fmt.Printf("Message has timestamp %s\n", m.Timestamp)
 			client.send <- &m
 		}
 
