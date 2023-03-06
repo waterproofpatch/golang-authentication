@@ -103,3 +103,13 @@ button {
 	margin-left: 10px;
 	margin-right: 10px;
 }
+
+mat-divider {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+app-user {
+	display: flex;
+	justify-content: center;
+}

@@ -12,7 +12,7 @@
 			(click)="joinChannel()">Join</button>
 		<button mat-raised-button color="warn" *ngIf="isConnected() | async"
 			(click)="leaveChannel()">Leave</button>
-		<!-- <div class="user-list" *ngFor="let user of users">User: {{user.username}}</div> -->
+		<mat-divider></mat-divider>
 		<app-user [user]="user" class="user-list" *ngFor="let user of users"></app-user>
 	</div>
 	<div class="panel right-panel" #scrollMe>
