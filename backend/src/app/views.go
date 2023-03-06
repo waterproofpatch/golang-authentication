@@ -149,6 +149,9 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
+	// tell all clients, including the one who just joined,
+	// that a new client has joined.
+	hub.broadcastClientJoin(client)
 }
 func InitViews(router *mux.Router) {
 	fmt.Println("Starting websocket hub...")

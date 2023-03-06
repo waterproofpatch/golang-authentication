@@ -58,6 +58,7 @@ func (h *Hub) getClientByName(username string) *Client {
 	}
 	return nil
 }
+
 func newHub() *Hub {
 	return &Hub{
 		broadcast:  make(chan *MessageClientTuple),
@@ -69,6 +70,7 @@ func newHub() *Hub {
 
 func (h *Hub) broadcastMessage(message *Message) {
 	for client := range h.clients {
+		fmt.Printf("Broadcasting message to client %s\n", client.username)
 		select {
 		case client.send <- message:
 		default:
@@ -89,15 +91,26 @@ func (h *Hub) broadcastClientLeave(username string) {
 	h.broadcastMessage(&message)
 }
 
-func (h *Hub) broadcastClientJoin(username string) {
+func (h *Hub) broadcastClientJoin(client *Client) {
 	var message Message
 	message.Type = USER_JOIN
 	// message.Content = fmt.Sprintf("Client [%s] joined.", username)
-	message.Content = username
+	message.Content = client.username
 	message.Timestamp = formattedTime()
 	message.From = "Server"
 	message.Channel = "Broadcast"
-	h.broadcastMessage(&message)
+	for _client := range h.clients {
+		if _client == client {
+			continue
+		}
+		fmt.Printf("Broadcasting message to client %s\n", _client.username)
+		select {
+		case _client.send <- &message:
+		default:
+			close(_client.send)
+			delete(h.clients, _client)
+		}
+	}
 }
 
 func (h *Hub) run() {
@@ -105,7 +118,7 @@ func (h *Hub) run() {
 		select {
 		case client := <-h.register:
 			fmt.Println("Registering client: ", client.conn.RemoteAddr().String())
-			h.broadcastClientJoin(client.username)
+			// h.broadcastClientJoin(client.username)
 			h.clients[client] = true
 		case client := <-h.unregister:
 			fmt.Print("Unregistering client: ", client.conn.RemoteAddr().String())
