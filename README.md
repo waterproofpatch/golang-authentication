@@ -2,10 +2,17 @@
 
 ## Quickstart
 
-There is a `docker-compose.yml` file at the root of this repo that starts up database, backend and frontend services in development mode with auto-reload.
+Install azure-cli (MacOS):
 
 ```bash
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+brew update && brew install azure-cli
+```
+
+There is a `docker-compose.yml` file at the root of this repo that starts up
+database, backend and frontend services in development mode with auto-reload:
+
+```bash
+make up
 ```
 
 ## Backend
@@ -59,4 +66,23 @@ Build production image
 
 ```bash
 make prod
+```
+
+## Deploy
+
+Login to your Azure account:
+
+```bash
+az login
+```
+
+Set the following environment variables to your azure account values (do not commit them to source control!)
+
+`export AZ_SUBCRIPTION_ID=<your-subscription-id>`
+`export AZ_RESOURCE_GROUP=<your-resource-group>`
+
+Then run the deploy target:
+
+```bash
+make deploy
 ```
