@@ -121,7 +121,7 @@ func (h *Hub) run() {
 		select {
 		case client := <-h.register:
 			fmt.Println("Registering client: ", client.conn.RemoteAddr().String())
-			h.broadcastClientJoin(client)
+			// h.broadcastClientJoin(client)
 			h.clients[client] = true
 		case client := <-h.unregister:
 			fmt.Print("Unregistering client: ", client.conn.RemoteAddr().String())
