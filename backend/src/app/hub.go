@@ -94,7 +94,6 @@ func (h *Hub) broadcastClientLeave(username string) {
 func (h *Hub) broadcastClientJoin(client *Client) {
 	var message Message
 	message.Type = USER_JOIN
-	// message.Content = fmt.Sprintf("Client [%s] joined.", username)
 	message.Content = client.username
 	message.Timestamp = formattedTime()
 	message.From = "Server"
@@ -118,7 +117,7 @@ func (h *Hub) run() {
 		select {
 		case client := <-h.register:
 			fmt.Println("Registering client: ", client.conn.RemoteAddr().String())
-			// h.broadcastClientJoin(client.username)
+			h.broadcastClientJoin(client)
 			h.clients[client] = true
 		case client := <-h.unregister:
 			fmt.Print("Unregistering client: ", client.conn.RemoteAddr().String())
