@@ -9,6 +9,7 @@ prod_frontend:
 prod_backend:
 	$(MAKE) -C backend prod
 
+# run prod target with -j2 for parallel builds
 prod: prod_frontend prod_backend
 
 deploy: prod
