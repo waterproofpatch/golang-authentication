@@ -9,5 +9,6 @@ import { User } from 'src/app/services/websocket.service';
 })
 export class UserComponent {
   @Input() user?: User
+  @Input() username?: string
 
 }
