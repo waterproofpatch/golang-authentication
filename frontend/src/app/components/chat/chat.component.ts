@@ -48,6 +48,8 @@ export class ChatComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.scrollToBottom();
   }
+
+  // scroll to latest message
   scrollToBottom(): void {
     try {
       setTimeout(() => {
@@ -59,6 +61,7 @@ export class ChatComponent implements AfterViewInit {
     } catch (err) { }
   }
 
+  // add a new tab for PMing another user
   pmUser(username: string) {
     // don't add self to tab list
     if (username == this.username) {
@@ -77,6 +80,7 @@ export class ChatComponent implements AfterViewInit {
     this.pmUsername = event['tab']['textLabel']
   }
 
+  // called at the beginning to get messages from socket
   subscribeToGetMessages() {
     this.chatService.getMessages().pipe(
       map((message: string) => {
@@ -103,13 +107,17 @@ export class ChatComponent implements AfterViewInit {
     });
   }
 
+  // whether or not the socket is connected
   isConnected(): Observable<boolean> {
     return this.chatService.isConnected
   }
+
+  // whether or not the socket is connected
   isDisconnected(): Observable<boolean> {
     return this.chatService.isConnected.pipe(map(isConnected => !isConnected))
   }
 
+  // join a different channel
   joinChannel(): void {
     if (this.channel == "") {
       this.dialogService.displayErrorDialog("Invalid channel.")
@@ -121,15 +129,18 @@ export class ChatComponent implements AfterViewInit {
     this.subscribeToGetMessages()
   }
 
+  // leave the current channel
   leaveChannel(): void {
     this.chatService.leaveChannel()
     this.users = []
   }
 
+  // what channel we're currently connected to
   getCurrentChannel(): BehaviorSubject<string> {
     return this.chatService.currentChannel
   }
 
+  // send a message to the server
   sendMessage(): void {
     const message: Message = {
       pmUsername: this.pmUsername,
