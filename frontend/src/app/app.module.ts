@@ -9,7 +9,7 @@ import { AuthenticationService } from './services/authentication.service';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
 import { LogDialogComponent } from './components/log-dialog/log-dialog.component';
 import { ErrorDialogComponent } from './components/error-dialog/error-dialog.component';
-
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -54,6 +54,7 @@ import { UserComponent } from './components/user/user.component';
   imports: [
     HttpClientModule,
     BrowserModule,
+    MatTabsModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatMenuModule,
