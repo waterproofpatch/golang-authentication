@@ -16,7 +16,7 @@
 		<app-user (click)="pmUser(user.username)" [username]="username" [user]="user" class="user-list"
 			*ngFor="let user of users"></app-user>
 	</div>
-	<div class="panel right-panel">
+	<div class="panel right-panel" #scrollMe>
 		<mat-tab-group (selectedTabChange)="pmUserSelect($event)" dynamicHeight>
 			<mat-tab label="{{channel}}">
 				<ng-template matTabContent>
