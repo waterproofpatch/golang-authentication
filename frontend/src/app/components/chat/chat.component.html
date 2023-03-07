@@ -19,7 +19,7 @@
 	<div class="panel right-panel" #scrollMe>
 		<mat-tab-group (selectedTabChange)="pmUserSelect($event)" dynamicHeight>
 			<mat-tab label="{{channel}}">
-				<ng-template matTabContent #scrollMe>
+				<ng-template matTabContent>
 					<div class="messages">
 						<div *ngFor="let message of messages">
 							<app-message *ngIf="message.pmUsername == ''"
