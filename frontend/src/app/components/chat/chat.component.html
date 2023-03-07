@@ -13,7 +13,8 @@
 		<button mat-raised-button color="warn" *ngIf="isConnected() | async"
 			(click)="leaveChannel()">Leave</button>
 		<mat-divider></mat-divider>
-		<app-user [username]="username" [user]="user" class="user-list" *ngFor="let user of users"></app-user>
+		<app-user (click)="pmUser(user.username)" [username]="username" [user]="user" class="user-list"
+			*ngFor="let user of users"></app-user>
 	</div>
 	<div class="panel right-panel" #scrollMe>
 		<div class="messages">

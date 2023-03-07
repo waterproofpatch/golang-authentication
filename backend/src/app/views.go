@@ -138,11 +138,16 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	db.Find(&messages)
 	for _, message := range messages {
 		if message.Channel == client.channel {
+			// don't send pms that aren't for this client
+			if message.PmUsername != "" && message.PmUsername != client.username {
+				continue
+			}
 			m := Message{
-				From:      message.From,
-				Channel:   message.Channel,
-				Content:   message.Content,
-				Timestamp: message.Timestamp,
+				From:       message.From,
+				Channel:    message.Channel,
+				Content:    message.Content,
+				Timestamp:  message.Timestamp,
+				PmUsername: message.PmUsername,
 			}
 			client.send <- &m
 		}

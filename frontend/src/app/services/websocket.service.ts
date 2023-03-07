@@ -19,6 +19,7 @@ export interface Message {
   channel: string
   type: MessageType
   token: string
+  pmUsername: string
 }
 
 export interface User {

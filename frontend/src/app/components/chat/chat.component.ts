@@ -19,6 +19,7 @@ export class ChatComponent implements AfterViewInit {
   channel: string = '';
   message: string = '';
   username: string = '';
+  pmUsername: string = '';
   messages: Message[] = [];
   users: User[] = [];
 
@@ -55,6 +56,11 @@ export class ChatComponent implements AfterViewInit {
         this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
       }, 50);
     } catch (err) { }
+  }
+
+  pmUser(username: string) {
+    console.log("PMing user " + username)
+    this.pmUsername = username;
   }
 
   subscribeToGetMessages() {
@@ -106,6 +112,7 @@ export class ChatComponent implements AfterViewInit {
 
   sendMessage(): void {
     const message: Message = {
+      pmUsername: this.pmUsername,
       id: 0,
       from: '',
       content: this.message,

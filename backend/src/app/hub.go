@@ -19,12 +19,13 @@ const (
 )
 
 type Message struct {
-	Content   string `json:"content"`
-	From      string `json:"from"`
-	Timestamp string `json:"timestamp"`
-	Channel   string `json:"channel"`
-	Type      int    `json:"type"`
-	Token     string `json:"token"`
+	Content    string `json:"content"`
+	From       string `json:"from"`
+	Timestamp  string `json:"timestamp"`
+	Channel    string `json:"channel"`
+	Type       int    `json:"type"`
+	Token      string `json:"token"`
+	PmUsername string `json:"pmUsername"`
 }
 
 type MessageClientTuple struct {
@@ -83,7 +84,6 @@ func (h *Hub) broadcastClientLeave(username string) {
 
 	var message Message
 	message.Type = USER_LEAVE
-	// message.Content = fmt.Sprintf("Client [%s] left.", username)
 	message.Content = username
 	message.Timestamp = formattedTime()
 	message.From = "Server"
@@ -116,12 +116,15 @@ func (h *Hub) broadcastClientJoin(client *Client) {
 	}
 }
 
+func (m *Message) String() string {
+	return fmt.Sprintf("from=%s, channel=%s, timestamp=%s, pmUsername=%s, content=%s", m.From, m.Channel, m.Timestamp, m.PmUsername, m.Content)
+}
+
 func (h *Hub) run() {
 	for {
 		select {
 		case client := <-h.register:
 			fmt.Println("Registering client: ", client.conn.RemoteAddr().String())
-			// h.broadcastClientJoin(client)
 			h.clients[client] = true
 		case client := <-h.unregister:
 			fmt.Print("Unregistering client: ", client.conn.RemoteAddr().String())
@@ -138,7 +141,7 @@ func (h *Hub) run() {
 			messageTuple.Message.Token = "" // dont send tokens to other clients
 			messageTuple.Message.Type = USER
 
-			fmt.Printf("Broadcast message %s from %s on channel %s\n", messageTuple.Message.Content, messageTuple.Client.username, messageTuple.Message.Channel)
+			fmt.Printf("%v", messageTuple.Message)
 
 			err := AddMessage(authentication.GetDb(), messageTuple.Message)
 			if err != nil {
@@ -147,6 +150,10 @@ func (h *Hub) run() {
 
 			for client := range h.clients {
 				if client.channel == messageTuple.Message.Channel {
+					// we have a private message, and it's not for this user
+					if messageTuple.Message.PmUsername != "" && messageTuple.Message.PmUsername != client.username {
+						continue
+					}
 					select {
 					case client.send <- messageTuple.Message:
 					default:
