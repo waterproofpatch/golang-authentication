@@ -78,6 +78,11 @@ export class ChatComponent implements AfterViewInit {
   // when someone clicks a tab, set the current pm username
   pmUserSelect(event: any) {
     this.pmUsername = event['tab']['textLabel']
+
+    // if we're back to our channel, its not a pm
+    if (this.pmUsername == this.channel) {
+      this.pmUsername = '';
+    }
   }
 
   // called at the beginning to get messages from socket
