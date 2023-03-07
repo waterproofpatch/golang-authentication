@@ -97,7 +97,7 @@ export class ChatComponent implements AfterViewInit {
       // handle another user sending us a PM by opening a tab
       if (message.pmUsername != '') {
         console.log("Received a pm from " + message.from)
-        this.pmUser(message.pmUsername)
+        this.pmUser(message.from)
       }
       this.scrollToBottom()
     });

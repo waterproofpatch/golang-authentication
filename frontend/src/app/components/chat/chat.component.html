@@ -16,11 +16,11 @@
 		<app-user (click)="pmUser(user.username)" [username]="username" [user]="user" class="user-list"
 			*ngFor="let user of users"></app-user>
 	</div>
-	<div class="panel right-panel" #scrollMe>
+	<div class="panel right-panel">
 		<mat-tab-group (selectedTabChange)="pmUserSelect($event)" dynamicHeight>
 			<mat-tab label="{{channel}}">
 				<ng-template matTabContent>
-					<div class="messages">
+					<div class="messages" #scrollMe>
 						<div *ngFor="let message of messages">
 							<app-message *ngIf="message.pmUsername == ''"
 								[class.message-theirs]="message.from !== username"
