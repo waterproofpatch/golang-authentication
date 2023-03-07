@@ -75,6 +75,14 @@ export class ChatComponent implements AfterViewInit {
     this.selectedUsernames.push(username)
   }
 
+  removeTab(tabUsername: any) {
+    // event.stopPropagation();
+    this.selectedUsernames = this.selectedUsernames.filter(name => name != tabUsername);
+    if (this.pmUsername === tabUsername) {
+      this.pmUsername = '';
+    }
+  }
+
   // when someone clicks a tab, set the current pm username
   pmUserSelect(event: any) {
     this.pmUsername = event['tab']['textLabel']
@@ -83,6 +91,7 @@ export class ChatComponent implements AfterViewInit {
     if (this.pmUsername == this.channel) {
       this.pmUsername = '';
     }
+    console.log("PMing " + this.pmUsername)
   }
 
   // called at the beginning to get messages from socket

@@ -19,18 +19,24 @@
 	<div class="panel right-panel">
 		<mat-tab-group (selectedTabChange)="pmUserSelect($event)" dynamicHeight>
 			<mat-tab label="{{channel}}">
-				<ng-template matTabContent>
-					<div class="messages" #scrollMe>
-						<div *ngFor="let message of messages">
-							<app-message *ngIf="message.pmUsername == ''"
-								[class.message-theirs]="message.from !== username"
-								[class.message-mine]="message.from==username"
-								[message]="message"></app-message>
-						</div>
+				<div class="messages" #scrollMe>
+					<div *ngFor="let message of messages">
+						<app-message *ngIf="message.pmUsername == ''"
+							[class.message-theirs]="message.from !== username"
+							[class.message-mine]="message.from==username"
+							[message]="message"></app-message>
 					</div>
-				</ng-template>
+				</div>
 			</mat-tab>
-			<mat-tab *ngFor="let selectedUsername of selectedUsernames" label="{{selectedUsername}}">
+			<!-- label here only for the event so we can get the username to pm to, the displayed 
+			label comes from the ng-template mat-tab-label. -->
+			<mat-tab label="{{selectedUsername}}" *ngFor="let selectedUsername of selectedUsernames">
+				<ng-template mat-tab-label>{{selectedUsername}}
+					<button style="color:black" mat-icon-button
+						(click)="removeTab(selectedUsername)">
+						<mat-icon>close</mat-icon>
+					</button>
+				</ng-template>
 				<ng-template matTabContent>
 					<div class="messages" #scrollMe>
 						<div *ngFor="let message of messages">
