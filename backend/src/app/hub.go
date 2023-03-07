@@ -151,7 +151,7 @@ func (h *Hub) run() {
 			for client := range h.clients {
 				if client.channel == messageTuple.Message.Channel {
 					// we have a private message, and it's not for this user
-					if messageTuple.Message.PmUsername != "" && messageTuple.Message.PmUsername != client.username {
+					if messageTuple.Message.PmUsername != "" && messageTuple.Message.PmUsername != client.username && messageTuple.Message.From != client.username {
 						continue
 					}
 					select {

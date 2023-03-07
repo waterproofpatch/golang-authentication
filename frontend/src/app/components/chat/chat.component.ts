@@ -20,6 +20,7 @@ export class ChatComponent implements AfterViewInit {
   message: string = '';
   username: string = '';
   pmUsername: string = '';
+  selectedUsernames: string[] = [];
   messages: Message[] = [];
   users: User[] = [];
 
@@ -59,8 +60,21 @@ export class ChatComponent implements AfterViewInit {
   }
 
   pmUser(username: string) {
-    console.log("PMing user " + username)
-    this.pmUsername = username;
+    // don't add self to tab list
+    if (username == this.username) {
+      return;
+    }
+    const existingUsername = this.selectedUsernames.find(name => name === username);
+    // don't double add tabs
+    if (existingUsername != undefined) {
+      return;
+    }
+    this.selectedUsernames.push(username)
+  }
+
+  // when someone clicks a tab, set the current pm username
+  pmUserSelect(event: any) {
+    this.pmUsername = event['tab']['textLabel']
   }
 
   subscribeToGetMessages() {
@@ -79,6 +93,12 @@ export class ChatComponent implements AfterViewInit {
         return;
       }
       this.messages.push(message);
+
+      // handle another user sending us a PM by opening a tab
+      if (message.pmUsername != '') {
+        console.log("Received a pm from " + message.from)
+        this.pmUser(message.pmUsername)
+      }
       this.scrollToBottom()
     });
   }

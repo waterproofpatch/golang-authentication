@@ -17,19 +17,34 @@
 			*ngFor="let user of users"></app-user>
 	</div>
 	<div class="panel right-panel" #scrollMe>
-		<mat-tab-group dynamicHeight>
-			<mat-tab label="First">
+		<mat-tab-group (selectedTabChange)="pmUserSelect($event)" dynamicHeight>
+			<mat-tab label="{{channel}}">
 				<ng-template matTabContent #scrollMe>
 					<div class="messages">
-						<app-message [class.message-theirs]="message.from !== username"
-							[class.message-mine]="message.from==username"
-							[message]="message"
-							*ngFor="let message of messages"></app-message>
+						<div *ngFor="let message of messages">
+							<app-message *ngIf="message.pmUsername == ''"
+								[class.message-theirs]="message.from !== username"
+								[class.message-mine]="message.from==username"
+								[message]="message"></app-message>
+						</div>
 					</div>
 				</ng-template>
 			</mat-tab>
-			<mat-tab label="Second"> Content 2 </mat-tab>
-			<mat-tab label="Third"> Content 3 </mat-tab>
+			<mat-tab *ngFor="let selectedUsername of selectedUsernames" label="{{selectedUsername}}">
+				<ng-template matTabContent #scrollMe>
+					<div class="messages">
+						<div *ngFor="let message of messages">
+							<app-message
+								*ngIf="(message.from == selectedUsername || message.from == username) && message.pmUsername != ''"
+								[class.message-theirs]="message.from !== username"
+								[class.message-mine]="message.from==username"
+								[message]="message"></app-message>
+						</div>
+					</div>
+				</ng-template>
+			</mat-tab>
+			<!-- <mat-tab label="Second"> Content 2 </mat-tab>
+			<mat-tab label="Third"> Content 3 </mat-tab> -->
 		</mat-tab-group>
 	</div>
 	<div class="footer">
