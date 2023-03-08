@@ -16,6 +16,9 @@
 				routerLinkActive="active">Register</a>
 		</span>
 		<span *ngIf="authenticationService.isAuthenticated" class="nav-item">
+			<a mat-button (click)="authenticationService.logout()" routerLinkActive="active">Logout</a>
+		</span>
+		<span *ngIf="authenticationService.isAuthenticated" class="nav-item">
 			<a mat-button routerLink="/profile" routerLinkActive="active">Profile</a>
 		</span>
 	</mat-toolbar-row>
