@@ -7,3 +7,5 @@ backend/src/tmp/**
 **/node_modules/
 **/.angular
 build-errors.log
+# don't vc the local copy of externals
+backend/src/go_authentication
