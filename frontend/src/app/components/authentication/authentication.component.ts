@@ -16,6 +16,7 @@ export class AuthenticationComponent implements OnInit {
   hide = true;
   registerForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
+    username: new FormControl('', [Validators.required]),
     password: new FormControl(''),
   });
   loginForm = new FormGroup({
@@ -58,12 +59,12 @@ export class AuthenticationComponent implements OnInit {
         this.error = '';
       }
     });
-    if (this.registerForm.controls.email.value == null || this.registerForm.controls.password.value == null) {
-      console.log("Password or Email is NULL")
+    if (this.registerForm.controls.email.value == null || this.registerForm.controls.password.value == null || this.registerForm.controls.username.value == null) {
       return;
     }
     this.authenticationService.register(
       this.registerForm.controls.email.value,
+      this.registerForm.controls.username.value,
       this.registerForm.controls.password.value,
     );
   }

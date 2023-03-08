@@ -19,6 +19,13 @@
             }}</mat-error>
         </mat-form-field>
         <mat-form-field appearance="fill">
+          <mat-label>Username</mat-label>
+          <input matInput placeholder="" formControlName="username" required />
+          <mat-error *ngIf="registerForm.controls.username.invalid">{{
+            getErrorMessage()
+            }}</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
           <mat-label>Password</mat-label>
           <input type="password" matInput formControlName="password" required />
         </mat-form-field>

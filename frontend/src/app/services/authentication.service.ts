@@ -129,10 +129,11 @@ export class AuthenticationService extends BaseService {
 
   register(
     email: string,
+    username: string,
     password: string,
   ) {
     this.authenticationApiService
-      .registerHttp(email, password)
+      .registerHttp(email, username, password)
       .pipe(
         catchError((error: any) => {
           if (error instanceof HttpErrorResponse) {

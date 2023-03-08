@@ -16,10 +16,12 @@ export class AuthenticationApiService extends BaseService {
 
   registerHttp(
     email: string,
+    username: string,
     password: string,
   ): Observable<any> {
     const data = {
       email: email,
+      username: username,
       password: password,
     };
     return this.http.post(
