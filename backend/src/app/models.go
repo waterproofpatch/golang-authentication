@@ -15,12 +15,13 @@ type ItemModel struct {
 }
 type MessageModel struct {
 	gorm.Model
-	Id         int    `json:"id"`
-	From       string `json:"from"`
-	Timestamp  string `json:"timestamp"`
-	Content    string `json:"content"`
-	Channel    string `json:"channel"`
-	PmUsername string `json:"pmUsername"`
+	Id            int    `json:"id"`
+	From          string `json:"from"`
+	Timestamp     string `json:"timestamp"`
+	Content       string `json:"content"`
+	Channel       string `json:"channel"`
+	PmUsername    string `json:"pmUsername"`
+	Authenticated bool   `json:"authenticated"`
 }
 
 func (i ItemModel) String() string {
@@ -38,11 +39,12 @@ func AddMessage(db *gorm.DB, message *Message) error {
 		db.Delete(&messages)
 	}
 	newDbMessage := MessageModel{
-		From:       message.From,
-		Timestamp:  message.Timestamp,
-		Content:    message.Content,
-		Channel:    message.Channel,
-		PmUsername: message.PmUsername,
+		From:          message.From,
+		Timestamp:     message.Timestamp,
+		Content:       message.Content,
+		Channel:       message.Channel,
+		PmUsername:    message.PmUsername,
+		Authenticated: message.Authenticated,
 	}
 	err := db.Create(&newDbMessage).Error
 	if err != nil {

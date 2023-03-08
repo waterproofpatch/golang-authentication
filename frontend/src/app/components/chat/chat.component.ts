@@ -165,6 +165,7 @@ export class ChatComponent implements AfterViewInit {
       type: MessageType.USER,
       channel: this.getCurrentChannel().getValue(),
       token: "TBD",
+      authenticated: false, // filled by server before broadcasting to clients
     };
     this.chatService.sendMessage(message);
     this.message = '';

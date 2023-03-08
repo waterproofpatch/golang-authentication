@@ -20,6 +20,7 @@ export interface Message {
   type: MessageType
   token: string
   pmUsername: string
+  authenticated: boolean
 }
 
 export interface User {
@@ -73,7 +74,7 @@ export class WebsocketService {
   public sendMessage(message: Message): void {
     // send an authenticated message
     if (this.authenticationService.isAuthenticated && this.authenticationService.token) {
-      message.token = this.authenticationService.token
+      message.token = "Bearer " + this.authenticationService.token
     }
     if (!this.socket) {
       this.dialogService.displayErrorDialog("Not connected. Join a channel first.")

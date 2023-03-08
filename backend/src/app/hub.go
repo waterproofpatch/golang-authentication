@@ -19,13 +19,14 @@ const (
 )
 
 type Message struct {
-	Content    string `json:"content"`
-	From       string `json:"from"`
-	Timestamp  string `json:"timestamp"`
-	Channel    string `json:"channel"`
-	Type       int    `json:"type"`
-	Token      string `json:"token"`
-	PmUsername string `json:"pmUsername"`
+	Content       string `json:"content"`
+	From          string `json:"from"`
+	Timestamp     string `json:"timestamp"`
+	Channel       string `json:"channel"`
+	Type          int    `json:"type"`
+	Token         string `json:"token"`
+	PmUsername    string `json:"pmUsername"`
+	Authenticated bool   `json:"authenticated"`
 }
 
 type MessageClientTuple struct {
@@ -117,7 +118,7 @@ func (h *Hub) broadcastClientJoin(client *Client) {
 }
 
 func (m *Message) String() string {
-	return fmt.Sprintf("from=%s, channel=%s, timestamp=%s, pmUsername=%s, content=%s", m.From, m.Channel, m.Timestamp, m.PmUsername, m.Content)
+	return fmt.Sprintf("from=%s, channel=%s, timestamp=%s, pmUsername=%s, authenticated=%s, content=%s", m.From, m.Channel, m.Timestamp, m.PmUsername, m.Authenticated, m.Content)
 }
 
 func (h *Hub) run() {
@@ -134,7 +135,14 @@ func (h *Hub) run() {
 			}
 			h.broadcastClientLeave(client.username)
 		case messageTuple := <-h.broadcast:
-			// fmt.Printf("Token sent is: %s\n", message.Token)
+			success, _, errorMsg := authentication.ParseToken(messageTuple.Message.Token)
+			if !success {
+				fmt.Printf("Failed parsing token from message: %s\n", errorMsg)
+				messageTuple.Message.Authenticated = false
+			} else {
+				fmt.Printf("Message is from an authenticated user.")
+				messageTuple.Message.Authenticated = true
+			}
 
 			messageTuple.Message.From = messageTuple.Client.username
 			messageTuple.Message.Timestamp = formattedTime()
