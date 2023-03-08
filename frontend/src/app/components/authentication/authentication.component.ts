@@ -19,7 +19,7 @@ export class AuthenticationComponent implements OnInit {
     password: new FormControl(''),
   });
   loginForm = new FormGroup({
-    email: new FormControl<string>('blah', [Validators.required, Validators.email]),
+    email: new FormControl<string>('', [Validators.required, Validators.email]),
     password: new FormControl(''),
   });
 
