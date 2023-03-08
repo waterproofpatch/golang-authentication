@@ -148,6 +148,7 @@ export class AuthenticationService extends BaseService {
         console.log('registration completed OK');
         this.error$.next(''); // send a benign event so observers can close modals
         this.registrationState$.next(IRegistrationState.Completed);
+        this.router.navigateByUrl('/authentication?mode=login');
       });
   }
 
@@ -168,7 +169,7 @@ export class AuthenticationService extends BaseService {
         console.log('Setting token to ' + x.token);
         localStorage.setItem(this.TOKEN_KEY, x.token);
         this.error$.next(''); // send a benign event so observers can close modals
-        this.location.back();
+        this.router.navigateByUrl('/');
       });
   }
 }
