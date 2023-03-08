@@ -89,6 +89,7 @@ func (h *Hub) broadcastClientLeave(username string) {
 	message.Timestamp = formattedTime()
 	message.From = "Server"
 	message.Channel = "Broadcast"
+	message.Authenticated = true
 	h.broadcastMessage(&message)
 }
 
@@ -99,6 +100,7 @@ func (h *Hub) broadcastClientJoin(client *Client) {
 	message.Timestamp = formattedTime()
 	message.From = "Server"
 	message.Channel = "Broadcast"
+	message.Authenticated = true
 	for _client := range h.clients {
 		if _client == client {
 			continue
@@ -118,7 +120,7 @@ func (h *Hub) broadcastClientJoin(client *Client) {
 }
 
 func (m *Message) String() string {
-	return fmt.Sprintf("from=%s, channel=%s, timestamp=%s, pmUsername=%s, authenticated=%s, content=%s", m.From, m.Channel, m.Timestamp, m.PmUsername, m.Authenticated, m.Content)
+	return fmt.Sprintf("from=%s, channel=%s, timestamp=%s, pmUsername=%s, authenticated=%t, content=%s", m.From, m.Channel, m.Timestamp, m.PmUsername, m.Authenticated, m.Content)
 }
 
 func (h *Hub) run() {

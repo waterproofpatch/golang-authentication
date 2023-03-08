@@ -143,11 +143,12 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 			m := Message{
-				From:       message.From,
-				Channel:    message.Channel,
-				Content:    message.Content,
-				Timestamp:  message.Timestamp,
-				PmUsername: message.PmUsername,
+				From:          message.From,
+				Channel:       message.Channel,
+				Content:       message.Content,
+				Timestamp:     message.Timestamp,
+				PmUsername:    message.PmUsername,
+				Authenticated: message.Authenticated,
 			}
 			client.send <- &m
 		}
