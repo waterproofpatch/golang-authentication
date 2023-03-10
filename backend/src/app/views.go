@@ -96,19 +96,31 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Starting client for channel=%s, user=%s", channel, username)
 	success, jwtData, errorMsg := authentication.ParseToken(token)
-	if !success {
-		fmt.Printf("Client is not authenticated: %s.\n", errorMsg)
-	} else {
-		fmt.Printf("Client is authenticated, using their registered username %s\n", jwtData.Username)
-		username = jwtData.Username
-	}
 
 	// upgrade the connection
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	conn, err := upgrader.Upgrade(w, r, nil)
+
 	if err != nil {
 		log.Println(err)
 		return
+	}
+
+	if !success {
+		fmt.Printf("Client is not authenticated: %s.\n", errorMsg)
+		// make sure they don't pick a username that a registered user
+		// is already using
+		var user authentication.User
+		result := authentication.GetDb().First(&user, "username = ?", username)
+		if result.RowsAffected > 0 {
+
+			conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "Username taken by registered user."))
+			conn.Close()
+			return
+		}
+	} else {
+		fmt.Printf("Client is authenticated, using their registered username %s\n", jwtData.Username)
+		username = jwtData.Username
 	}
 
 	// validate client metadata
