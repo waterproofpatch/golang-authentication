@@ -42,10 +42,17 @@ export class WebsocketService {
     if (this.socket) {
       this.leaveChannel()
     }
-    const url = `${environment.wsUrl}?channel=${channel}&username=${username}`
+    var token = this.authenticationService.token
+    var url = ""
+    if (token) {
+      url = `${environment.wsUrl}?channel=${channel}&username=${username}&token=Bearer ${token}`
+    } else {
+      url = `${environment.wsUrl}?channel=${channel}&username=${username}`
+    }
     this.socket = new WebSocket(url);
     this.socket.onerror = (event) => {
       // this.dialogService.displayErrorDialog("Error: " + event)
+      console.log(`Error in websocket: ${event}`)
     };
     this.socket.onopen = (event) => {
       this.isConnected.next(true);

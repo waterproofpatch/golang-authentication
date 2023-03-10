@@ -92,8 +92,16 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	username := q.Get("username")
 	channel := q.Get("channel")
+	token := q.Get("token")
 
-	log.Printf("Starting client for channel %s, user %s", channel, username)
+	log.Printf("Starting client for channel=%s, user=%s", channel, username)
+	success, jwtData, errorMsg := authentication.ParseToken(token)
+	if !success {
+		fmt.Printf("Client is not authenticated: %s.\n", errorMsg)
+	} else {
+		fmt.Printf("Client is authenticated, using their registered username %s\n", jwtData.Username)
+		username = jwtData.Username
+	}
 
 	// upgrade the connection
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
@@ -104,7 +112,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// validate client metadata
-	if !isValidInput(username) {
+	if !success && !isValidInput(username) {
 		fmt.Println("Invalid username " + username)
 		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "Invalid username."))
 		conn.Close()

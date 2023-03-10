@@ -2,7 +2,8 @@
 	<div class="panel left-panel">
 		<mat-form-field class="username-input">
 			<mat-label>Username</mat-label>
-			<input disabled="{{isConnected()  | async}}" matInput [(ngModel)]="username">
+			<input disabled="{{(isConnected() | async) || (authenticationService.isAuthenticated)}}"
+				matInput [(ngModel)]="username">
 		</mat-form-field>
 		<mat-form-field class="username-input">
 			<mat-label>Channel</mat-label>

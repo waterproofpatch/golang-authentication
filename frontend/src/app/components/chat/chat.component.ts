@@ -2,12 +2,13 @@ import { Component } from '@angular/core';
 import { WebsocketService } from 'src/app/services/websocket.service';
 import { AfterViewInit } from '@angular/core';
 import { Message, MessageType, User } from 'src/app/services/websocket.service';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map } from 'rxjs';
 import { DialogService } from 'src/app/services/dialog.service';
 import { ActivatedRoute } from '@angular/router';
 import { ViewChild } from '@angular/core';
 import { ElementRef } from '@angular/core';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 
 @Component({
   selector: 'app-root',
@@ -24,10 +25,10 @@ export class ChatComponent implements AfterViewInit {
   messages: Message[] = [];
   users: User[] = [];
 
-  constructor(private route: ActivatedRoute, private chatService: WebsocketService, private dialogService: DialogService) { }
+  constructor(private route: ActivatedRoute, private chatService: WebsocketService, private dialogService: DialogService, public authenticationService: AuthenticationService) { }
 
   ngOnInit(): void {
-    this.username = localStorage.getItem("username") || ""
+    this.username = this.authenticationService.username() || localStorage.getItem("username") || ""
     this.channel = localStorage.getItem("channel") || "public"
     this.subscribeToGetMessages()
     this.route.queryParams.subscribe((params) => {
@@ -123,7 +124,7 @@ export class ChatComponent implements AfterViewInit {
 
   // whether or not the socket is connected
   isConnected(): Observable<boolean> {
-    return this.chatService.isConnected
+    return this.chatService.isConnected || of(this.authenticationService.isAuthenticated)
   }
 
   // whether or not the socket is connected

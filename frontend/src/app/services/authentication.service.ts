@@ -58,6 +58,21 @@ export class AuthenticationService extends BaseService {
 
   /**
    *
+   * @returns The username we're logged in with.
+   */
+  username(): string {
+    if (!this.token) {
+      return '';
+    }
+    try {
+      return (jwt_decode(this.token) as JWTData).username;
+    } catch (Error) {
+      console.log('error decoding token');
+      return '';
+    }
+  }
+  /**
+   *
    * @returns The email address we're logged in with.
    */
   email(): string {

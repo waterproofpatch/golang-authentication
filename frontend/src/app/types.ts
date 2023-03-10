@@ -1,5 +1,6 @@
 export interface JWTData {
   email: string;
+  username: string;
 }
 
 export interface User {
