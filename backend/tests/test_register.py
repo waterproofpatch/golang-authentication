@@ -9,9 +9,7 @@ def test_create_new_user(guest_user: User):
     payload = dict(
         email="test@gmail.com",
         password="password",
-        firstName="firstName",
-        lastName="lastName",
-        phone="phone",
+        username="username",
     )
     res = guest_user.post("/api/register", json=payload)
     assert (
@@ -24,9 +22,7 @@ def test_create_duplicate_user(guest_user: User):
     payload = dict(
         email=constants.GUEST_EMAIL,  # duplicate
         password=constants.GUEST_PASSWORD,
-        firstName="firstName2",
-        lastName="lastName2",
-        phone="phone2",
+        username="username2", # don't dupe
     )
     res = guest_user.post("/api/register", json=payload)
     assert res.status_code == 400, "Registration succeeded"
@@ -37,9 +33,7 @@ def test_invalid_password(guest_user: User):
     payload = dict(
         email="test123@gmail.com",  # duplicate
         password="",
-        firstName="firstName2",
-        lastName="lastName2",
-        phone="phone2",
+        username="username", 
     )
     res = guest_user.post("/api/register", json=payload)
     assert res.status_code == 400, "Registration succeeded"

@@ -11,15 +11,15 @@ class User:
         self.port = port
         self.session = requests.Session()
 
-    def register(self, email: str, password: str):
-        res = self.post("/api/register", {"email": email, "password": password})
+    def register(self, email: str, username: str, password: str):
+        res = self.post("/api/register", {"email": email, "username": username, "password": password})
         assert res.status_code == 200, f"Failed loging in: {res.text}"
         self.session.headers = {
             "Authorization": f"Bearer {json.loads(res.text)['token']}"
         }
 
-    def login(self, email: str, password: str):
-        res = self.post("/api/login", {"email": email, "password": password})
+    def login(self, email: str, username: str, password: str):
+        res = self.post("/api/login", {"email": email, "password": password, "username": username})
         assert res.status_code == 200, f"Failed loging in: {res.text}"
         self.session.headers = {
             "Authorization": f"Bearer {json.loads(res.text)['token']}"
