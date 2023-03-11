@@ -43,8 +43,8 @@ def port() -> int:
     return constants.PORT
 
 
-@pytest.fixture(scope="function")
-def wait_for_api(function_scoped_container_getter, port: int):
+@pytest.fixture(scope="function", autouse=True)
+def wait_for_api(function_scoped_container_getter, port: int, admin_username: str, admin_email: str, admin_password: str):
     """Wait for the api from my_api_service to become responsive"""
     request_session = requests.Session()
     retries = Retry(total=5,
@@ -52,8 +52,8 @@ def wait_for_api(function_scoped_container_getter, port: int):
                     status_forcelist=[500, 502, 503, 504])
     request_session.mount('http://', HTTPAdapter(max_retries=retries))
 
-    service = function_scoped_container_getter.get("db").network_info[0]
-    time.sleep(5)
+    service = function_scoped_container_getter.get("db")
+    time.sleep(3)
     client = docker.from_env()
     container = client.containers.run(
         "pointinsertion.azurecr.io/backend-prod",
@@ -78,13 +78,6 @@ def wait_for_api(function_scoped_container_getter, port: int):
     finally:
         container.stop()
     return
-
-@pytest.fixture(scope="function", autouse=True)
-def start_server(wait_for_api, admin_email: str, admin_password: str, port: int):
-
-    time.sleep(1)
-    yield
-
 
 @pytest.fixture(scope="function")
 def create_user(guest_user: User):
