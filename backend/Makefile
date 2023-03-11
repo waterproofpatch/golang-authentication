@@ -12,5 +12,5 @@ prod:
 python_venv:
 	@python3 -m venv --prompt venv venv
 
-tests: prod
-	@source venv/bin/activate && python3 -m pip install -r requirements.txt && python -m pytest
+tests: setup prod
+	@venv/bin/python -m pytest --docker-compose ../docker-compose.yml -s
