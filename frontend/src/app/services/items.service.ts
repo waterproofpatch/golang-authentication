@@ -36,9 +36,7 @@ export class ItemsService extends BaseService {
     private itemsApiService: ItemsApiService,
   ) {
     super()
-    this.getItems()
   }
-
 
   deleteItem(id: number) {
     this.itemsApiService

@@ -26,6 +26,10 @@ export class DashboardComponent {
     });
   }
 
+  ngOnInit(): void {
+    this.itemsService.getItems()
+  }
+
   addItem() {
     // Perform actions when the form is submitted
     console.log(this.form.value);
