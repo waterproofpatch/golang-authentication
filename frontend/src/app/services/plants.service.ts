@@ -3,48 +3,48 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject, throwError, Observable } from 'rxjs';
 
-import { ItemsApiService } from '../apis/items-api.service';
+import { PlantsApiService } from '../apis/plants-api.service';
 import { BaseService } from './base.service';
 
 export default interface Plant {
   id: number;
   name: string;
-  type: number;
+  wateringFrequency: number;
   imageId: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
-export class ItemsService extends BaseService {
+export class PlantsService extends BaseService {
 
-  public static ItemFactory = class {
-    public static makeItem(name: string, type: number): Plant {
-      const item: Plant = {
+  public static PlantsFactory = class {
+    public static makePlant(name: string, wateringFrequency: number): Plant {
+      const plant: Plant = {
         name: name,
-        type: type,
+        wateringFrequency: wateringFrequency,
         id: 0,
         imageId: 0,
       }
-      return item;
+      return plant;
     }
   }
   // this error string is for modals to display login or registration errors.
   error$ = new Subject<string>();
 
-  items = new Subject<Plant[]>();
+  plants = new Subject<Plant[]>();
 
   constructor(
-    private itemsApiService: ItemsApiService,
+    private plantsApiService: PlantsApiService,
   ) {
     super()
   }
 
-  getItemImage(imageId: number) {
-    return this.itemsApiService.getImage(imageId)
+  getPlantImage(imageId: number) {
+    return this.plantsApiService.getImage(imageId)
   }
-  deleteItem(id: number) {
-    this.itemsApiService
+  deletePlant(id: number) {
+    this.plantsApiService
       .delete(id)
       .pipe(
         catchError((error: any) => {
@@ -57,15 +57,15 @@ export class ItemsService extends BaseService {
         })
       )
       .subscribe((x) => {
-        console.log('Got items ' + x);
-        this.items.next(x)
+        console.log('Got plants ' + x);
+        this.plants.next(x)
         this.error$.next(''); // send a benign event so observers can close modals
       });
   }
 
-  updateItem(item: Plant): void {
-    this.itemsApiService
-      .put(item)
+  updatePlant(plant: Plant): void {
+    this.plantsApiService
+      .put(plant)
       .pipe(
         catchError((error: any) => {
           if (error instanceof HttpErrorResponse) {
@@ -77,19 +77,19 @@ export class ItemsService extends BaseService {
         })
       )
       .subscribe((x) => {
-        console.log('Got items ' + x);
-        this.items.next(x)
+        console.log('Got plants ' + x);
+        this.plants.next(x)
         this.error$.next(''); // send a benign event so observers can close modals
       });
   }
-  addItem(item: Plant, image: File | null): void {
+  addPlant(plant: Plant, image: File | null): void {
     const formData = new FormData();
     if (image) {
       formData.append('image', image, image.name);
     }
-    formData.append('nameOfPlant', item.name)
-    formData.append('wateringFrequency', item.type.toString())
-    this.itemsApiService
+    formData.append('nameOfPlant', plant.name)
+    formData.append('wateringFrequency', plant.wateringFrequency.toString())
+    this.plantsApiService
       .postFormData(formData)
       .pipe(
         catchError((error: any) => {
@@ -102,14 +102,14 @@ export class ItemsService extends BaseService {
         })
       )
       .subscribe((x) => {
-        console.log('Got items ' + x);
-        this.items.next(x)
+        console.log('Got plants ' + x);
+        this.plants.next(x)
         this.error$.next(''); // send a benign event so observers can close modals
       });
   }
 
-  getItems(): void {
-    this.itemsApiService
+  getPlants(): void {
+    this.plantsApiService
       .get()
       .pipe(
         catchError((error: any) => {
@@ -122,8 +122,8 @@ export class ItemsService extends BaseService {
         })
       )
       .subscribe((x) => {
-        console.log('Got items ' + x);
-        this.items.next(x)
+        console.log('Got plants ' + x);
+        this.plants.next(x)
         this.error$.next(''); // send a benign event so observers can close modals
       });
   }

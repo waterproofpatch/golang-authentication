@@ -1,20 +1,8 @@
-<!-- <form [formGroup]="form" (ngSubmit)="addItem()">
-	<mat-form-field>
-		<input matInput placeholder="Name" formControlName="name" type="string">
-	</mat-form-field>
-
-	<mat-form-field>
-		<input matInput placeholder="Type" formControlName="type" type="number">
-	</mat-form-field>
-	<mat-label>Image</mat-label>
-	<input type="file" name="image" (change)="onImageSelected($event)">
-	<button mat-raised-button type="submit">Add</button>
-</form> -->
 <div class="container">
 
 	<div class="form-container">
 
-		<form (ngSubmit)="addItem()" [formGroup]="form">
+		<form (ngSubmit)="addPlant()" [formGroup]="form">
 			<mat-form-field>
 				<mat-label>Name of Plant</mat-label>
 				<input matInput formControlName="nameOfPlant">
@@ -36,7 +24,7 @@
 
 
 
-	<div class="item" *ngFor="let item of getItems() | async">
-		<app-item [item]="item"></app-item>
+	<div class="plant" *ngFor="let plant of getPlants() | async">
+		<app-plant [plant]="plant"></app-plant>
 	</div>
 </div>

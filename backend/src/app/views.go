@@ -79,7 +79,7 @@ func images(w http.ResponseWriter, r *http.Request) {
 				authentication.WriteError(w, "Failed loading image", http.StatusBadRequest)
 				return
 			}
-			w.Header().Set("Content-Type", "image/jpeg")
+			w.Header().Set("Content-WateringFrequency", "image/jpeg")
 			w.Write(img.Data)
 			return
 		} else {
@@ -88,65 +88,65 @@ func images(w http.ResponseWriter, r *http.Request) {
 		break
 	}
 }
-func items(w http.ResponseWriter, r *http.Request) {
+func plants(w http.ResponseWriter, r *http.Request) {
 	db := authentication.GetDb()
-	var items []ItemModel
-	var item ItemModel
+	var plants []PlantModel
+	var plant PlantModel
 	vars := mux.Vars(r)
-	id, hasItemId := vars["id"]
+	id, hasPlantId := vars["id"]
 	switch r.Method {
 	case "GET":
-		if hasItemId {
-			db.Find(&item, id)
-			json.NewEncoder(w).Encode(item)
+		if hasPlantId {
+			db.Find(&plant, id)
+			json.NewEncoder(w).Encode(plant)
 		} else {
-			db.Find(&items)
-			json.NewEncoder(w).Encode(items)
+			db.Find(&plants)
+			json.NewEncoder(w).Encode(plants)
 		}
 		break
 	case "DELETE":
-		if !hasItemId {
+		if !hasPlantId {
 			authentication.WriteError(w, "Must provide id!", http.StatusBadRequest)
 			break
 		}
-		db.Delete(&ItemModel{}, id)
-		db.Find(&items)
-		json.NewEncoder(w).Encode(items)
+		db.Delete(&PlantModel{}, id)
+		db.Find(&plants)
+		json.NewEncoder(w).Encode(plants)
 		break
 	case "POST":
 		var imageId = uploadHandler(w, r)
-		var newItem ItemModel
-		newItem.ImageId = imageId
-		newItem.Name = r.FormValue("nameOfPlant")
+		var newPlant PlantModel
+		newPlant.ImageId = imageId
+		newPlant.Name = r.FormValue("nameOfPlant")
 		wateringFrequencyNo, err := strconv.Atoi(r.FormValue("wateringFrequency"))
 		if err != nil {
 			fmt.Println("Failed to parse integer")
 			authentication.WriteError(w, "Invalid wateringFrequency", http.StatusBadRequest)
 			return
 		}
-		newItem.Type = wateringFrequencyNo
-		err = AddItem(db, newItem.Name, newItem.Type, newItem.ImageId)
+		newPlant.WateringFrequency = wateringFrequencyNo
+		err = AddPlant(db, newPlant.Name, newPlant.WateringFrequency, newPlant.ImageId)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			break
 		}
-		db.Find(&items)
-		json.NewEncoder(w).Encode(items)
+		db.Find(&plants)
+		json.NewEncoder(w).Encode(plants)
 		break
 	case "PUT":
-		var newItem ItemModel
-		err := json.NewDecoder(r.Body).Decode(&newItem)
+		var newPlant PlantModel
+		err := json.NewDecoder(r.Body).Decode(&newPlant)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			break
 		}
-		err = UpdateItem(db, newItem.Id, newItem.Name, newItem.Type)
+		err = UpdatePlant(db, newPlant.Id, newPlant.Name, newPlant.WateringFrequency)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			break
 		}
-		db.Find(&items)
-		json.NewEncoder(w).Encode(items)
+		db.Find(&plants)
+		json.NewEncoder(w).Encode(plants)
 		break
 	}
 
@@ -251,8 +251,8 @@ func InitViews(router *mux.Router) {
 	// router.HandleFunc("/api/upload", uploadHandler)
 	router.HandleFunc("/api/dashboard/{id:[0-9]+}", authentication.VerifiedOnly(dashboard)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	router.HandleFunc("/api/dashboard", dashboard).Methods("GET", "POST", "PUT", "OPTIONS")
-	router.HandleFunc("/api/items", items).Methods("GET", "POST", "PUT", "OPTIONS")
-	router.HandleFunc("/api/items/{id:[0-9]+}", items).Methods("GET", "POST", "DELETE", "PUT", "OPTIONS")
+	router.HandleFunc("/api/plants", plants).Methods("GET", "POST", "PUT", "OPTIONS")
+	router.HandleFunc("/api/plants/{id:[0-9]+}", plants).Methods("GET", "POST", "DELETE", "PUT", "OPTIONS")
 	router.HandleFunc("/api/images/{id:[0-9]+}", images).Methods("GET", "OPTIONS")
 	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)

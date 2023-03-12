@@ -14,12 +14,12 @@ type ImageModel struct {
 	Data []byte
 }
 
-type ItemModel struct {
+type PlantModel struct {
 	gorm.Model
-	Id      int    `json:"id"`
-	Name    string `json:"name"`
-	Type    int    `json:"type"`
-	ImageId uint   `json:"imageId"`
+	Id                int    `json:"id"`
+	Name              string `json:"name"`
+	WateringFrequency int    `json:"type"`
+	ImageId           uint   `json:"imageId"`
 }
 type MessageModel struct {
 	gorm.Model
@@ -32,8 +32,8 @@ type MessageModel struct {
 	Authenticated bool   `json:"authenticated"`
 }
 
-func (i ItemModel) String() string {
-	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name: %s, type: %d", i.ID, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name, i.Type)
+func (i PlantModel) String() string {
+	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name: %s, type: %d", i.ID, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name, i.WateringFrequency)
 }
 
 func AddMessage(db *gorm.DB, message *Message) error {
@@ -61,36 +61,36 @@ func AddMessage(db *gorm.DB, message *Message) error {
 	db.Save(newDbMessage)
 	return nil
 }
-func UpdateItem(db *gorm.DB, id int, name string, itemType int) error {
-	var existingItem ItemModel
-	existingItem.Id = id
-	db.First(&existingItem)
-	existingItem.Name = name
-	existingItem.Type = itemType
-	db.Save(existingItem)
+func UpdatePlant(db *gorm.DB, id int, name string, wateringFrequency int) error {
+	var existingplant PlantModel
+	existingplant.Id = id
+	db.First(&existingplant)
+	existingplant.Name = name
+	existingplant.WateringFrequency = wateringFrequency
+	db.Save(existingplant)
 	return nil
 }
 
-func AddItem(db *gorm.DB, name string, itemType int, imageId uint) error {
-	var item = ItemModel{
-		Name:    name,
-		Type:    itemType,
-		ImageId: imageId,
+func AddPlant(db *gorm.DB, name string, wateringFrequency int, imageId uint) error {
+	var plant = PlantModel{
+		Name:              name,
+		WateringFrequency: wateringFrequency,
+		ImageId:           imageId,
 	}
 
-	log.Printf("Adding item %s", item)
+	log.Printf("Adding plant %s", plant)
 
-	err := db.Create(&item).Error
+	err := db.Create(&plant).Error
 	if err != nil {
 		return err
 	}
-	db.Save(item)
+	db.Save(plant)
 	return nil
 }
 
 func InitModels(db *gorm.DB) {
 	log.Printf("Initializing models...\n")
-	db.AutoMigrate(&ItemModel{})
+	db.AutoMigrate(&PlantModel{})
 	db.AutoMigrate(&MessageModel{})
 	db.AutoMigrate(&ImageModel{})
 }

@@ -3,26 +3,26 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { BaseService } from '../services/base.service';
-import Plant from '../services/items.service';
+import Plant from '../services/plants.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ItemsApiService extends BaseService {
-  itemsApiUrl = '/api/items';
+export class PlantsApiService extends BaseService {
+  plantsApiUrl = '/api/plants';
   imagesApiUrl = '/api/images';
   constructor(private http: HttpClient) {
     super();
   }
 
   postFormData(formData: any): Observable<any> {
-    return this.http.post(this.getUrlBase() + this.itemsApiUrl, formData, this.httpOptionsNonJson);
+    return this.http.post(this.getUrlBase() + this.plantsApiUrl, formData, this.httpOptionsNonJson);
   }
-  post(item: Plant): Observable<any> {
-    return this.http.post(this.getUrlBase() + this.itemsApiUrl, item, this.httpOptions);
+  post(plant: Plant): Observable<any> {
+    return this.http.post(this.getUrlBase() + this.plantsApiUrl, plant, this.httpOptions);
   }
-  put(item: Plant): Observable<any> {
-    return this.http.put(this.getUrlBase() + this.itemsApiUrl, item, this.httpOptions);
+  put(plant: Plant): Observable<any> {
+    return this.http.put(this.getUrlBase() + this.plantsApiUrl, plant, this.httpOptions);
   }
   getImage(id: number): Observable<any> {
     return this.http.get(this.getUrlBase() + this.imagesApiUrl + '/' + id, { responseType: 'blob', headers: { 'Access-Control-Allow-Origin': '*' } })
@@ -32,12 +32,12 @@ export class ItemsApiService extends BaseService {
   ): Observable<any> {
     if (id) {
       return this.http.get(
-        this.getUrlBase() + this.itemsApiUrl + "?id=" + id,
+        this.getUrlBase() + this.plantsApiUrl + "?id=" + id,
         this.httpOptions
       );
     } else {
       return this.http.get(
-        this.getUrlBase() + this.itemsApiUrl,
+        this.getUrlBase() + this.plantsApiUrl,
         this.httpOptions
       );
     }
@@ -46,7 +46,7 @@ export class ItemsApiService extends BaseService {
     id: number,
   ): Observable<any> {
     return this.http.delete(
-      this.getUrlBase() + this.itemsApiUrl + "/" + id,
+      this.getUrlBase() + this.plantsApiUrl + "/" + id,
       this.httpOptions);
   }
 }

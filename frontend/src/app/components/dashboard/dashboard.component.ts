@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Subject, throwError, Observable } from 'rxjs';
-import { ItemsService } from 'src/app/services/items.service';
-import Plant from 'src/app/services/items.service';
+import { PlantsService } from 'src/app/services/plants.service';
+import Plant from 'src/app/services/plants.service';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
@@ -18,7 +18,7 @@ export class DashboardComponent {
   });
 
   constructor(
-    private itemsService: ItemsService,
+    private plantsService: PlantsService,
     private formBuilder: FormBuilder,
   ) {
     this.form = this.formBuilder.group({
@@ -28,19 +28,19 @@ export class DashboardComponent {
   }
 
   ngOnInit(): void {
-    this.itemsService.getItems()
+    this.plantsService.getPlants()
   }
   onImageSelected(event: any) {
     this.selectedImage = event.target.files[0];
   }
 
-  addItem() {
+  addPlant() {
     // Perform actions when the form is submitted
     console.log(this.form.value);
-    var item = ItemsService.ItemFactory.makeItem(this.form.controls.nameOfPlant.value || '', this.form.controls.wateringFrequency.value || 0)
-    this.itemsService.addItem(item, this.selectedImage)
+    var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.nameOfPlant.value || '', this.form.controls.wateringFrequency.value || 0)
+    this.plantsService.addPlant(plant, this.selectedImage)
   }
-  getItems(): Subject<Plant[]> {
-    return this.itemsService.items
+  getPlants(): Subject<Plant[]> {
+    return this.plantsService.plants
   }
 }

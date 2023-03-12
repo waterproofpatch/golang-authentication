@@ -30,7 +30,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { ItemComponent } from './components/item/item.component';
+import { PlantComponent } from './components/item/plant.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { MessageComponent } from './components/message/message.component';
@@ -45,7 +45,7 @@ import { UserComponent } from './components/user/user.component';
     AppComponent,
     BaseComponent,
     DashboardComponent,
-    ItemComponent,
+    PlantComponent,
     ChatComponent,
     ProfileComponent,
     MessageComponent,
