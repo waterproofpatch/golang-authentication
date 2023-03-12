@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject, throwError } from 'rxjs';
+import { Observable, Subject, BehaviorSubject, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -30,24 +30,38 @@ export class AuthenticationService extends BaseService {
   // this status string is for modals to display login or registration status messages.
   status$ = new Subject<string>();
 
+  // UI can subscribe to this to reflect authentication state
+  isAuthenticated$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  // for models to show progress of registration
   registrationState$ = new Subject<IRegistrationState>();
 
   constructor(
-    private location: Location,
     private authenticationApiService: AuthenticationApiService,
     private router: Router,
     private dialogService: DialogService
   ) {
     super();
-    if (this.isAuthenticated && this.isTokenExpired()) {
-      this.clearToken();
-      this.dialogService.displayErrorDialog("Token exipred. Log in again.")
+    if (this.token) {
+      if (this.isTokenExpired()) {
+        this.clearToken();
+        this.dialogService.displayErrorDialog("Token exipred. Log in again.")
+      } else {
+        this.isAuthenticated$.next(true);
+      }
     }
   }
 
-  clearToken(): void {
-    localStorage.removeItem(this.TOKEN_KEY)
+  private clearToken(): void {
+    sessionStorage.removeItem(this.TOKEN_KEY)
+    this.isAuthenticated$.next(false)
   }
+
+  private setToken(token: string): void {
+    sessionStorage.setItem(this.TOKEN_KEY, token);
+    this.isAuthenticated$.next(true)
+  }
+
 
   /**
    * Reset registration state.
@@ -120,18 +134,18 @@ export class AuthenticationService extends BaseService {
   }
 
   get token() {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return sessionStorage.getItem(this.TOKEN_KEY);
   }
 
   /**
    * Check with '.isAuthenticated' (no parens).
    */
-  get isAuthenticated() {
-    return !!localStorage.getItem(this.TOKEN_KEY);
-  }
+  // get isAuthenticated() {
+  //   return !!sessionStorage.getItem(this.TOKEN_KEY);
+  // }
 
   logout(showModal?: boolean, redirectToLogin?: boolean) {
-    localStorage.removeItem(this.TOKEN_KEY);
+    this.clearToken()
     if (showModal) {
       this.dialogService.displayLogDialog('Logged out successfully.');
     }
@@ -182,7 +196,7 @@ export class AuthenticationService extends BaseService {
       )
       .subscribe((x) => {
         console.log('Setting token to ' + x.token);
-        localStorage.setItem(this.TOKEN_KEY, x.token);
+        this.setToken(x.token)
         this.error$.next(''); // send a benign event so observers can close modals
         this.router.navigateByUrl('/');
       });

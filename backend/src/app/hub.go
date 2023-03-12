@@ -7,6 +7,7 @@ package app
 import (
 	"fmt"
 
+	"github.com/gorilla/websocket"
 	"github.com/waterproofpatch/go_authentication/authentication"
 )
 
@@ -105,11 +106,7 @@ func (h *Hub) broadcastClientJoin(client *Client) {
 		if _client == client {
 			continue
 		}
-		// don't tell clients in other channels about this client
-		if _client.channel != client.channel {
-			continue
-		}
-		fmt.Printf("Broadcasting message to client %s\n", _client.username)
+		fmt.Printf("Broadcasting USER_JOIN (%s) message to client %s\n", client.username, _client.username)
 		select {
 		case _client.send <- &message:
 		default:
@@ -140,7 +137,9 @@ func (h *Hub) run() {
 			success, _, errorMsg := authentication.ParseToken(messageTuple.Message.Token)
 			if !success {
 				fmt.Printf("Failed parsing token from message: %s\n", errorMsg)
-				messageTuple.Message.Authenticated = false
+				messageTuple.Client.conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "Please login or create an account."))
+				messageTuple.Client.conn.Close()
+				return
 			} else {
 				fmt.Printf("Message is from an authenticated user.")
 				messageTuple.Message.Authenticated = true

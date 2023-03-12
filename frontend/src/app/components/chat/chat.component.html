@@ -1,11 +1,6 @@
 <div class="container">
 	<div class="panel left-panel">
 		<mat-form-field class="username-input">
-			<mat-label>Username</mat-label>
-			<input disabled="{{(isConnected() | async) || (authenticationService.isAuthenticated)}}"
-				matInput [(ngModel)]="username">
-		</mat-form-field>
-		<mat-form-field class="username-input">
 			<mat-label>Channel</mat-label>
 			<input disabled="{{isConnected() | async}}" matInput [(ngModel)]="channel">
 		</mat-form-field>
@@ -14,7 +9,7 @@
 		<button mat-raised-button color="warn" *ngIf="isConnected() | async"
 			(click)="leaveChannel()">Leave</button>
 		<mat-divider></mat-divider>
-		<app-user (click)="pmUser(user.username)" [username]="username" [user]="user" class="user-list"
+		<app-user (click)="pmUser(user.username)" [user]="user" class="user-list"
 			*ngFor="let user of users"></app-user>
 	</div>
 	<div class="panel right-panel">

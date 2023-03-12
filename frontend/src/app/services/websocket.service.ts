@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AuthenticationService } from './authentication.service';
+import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { DialogService } from './dialog.service';
 
@@ -35,29 +36,34 @@ export class WebsocketService {
   public currentChannel: BehaviorSubject<string> = new BehaviorSubject<string>("")
   public isConnected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
 
-  constructor(private dialogService: DialogService, private authenticationService: AuthenticationService) {
+  constructor(private dialogService: DialogService, private authenticationService: AuthenticationService, private router: Router) {
   }
 
-  public joinChannel(channel: string, username: string): void {
+  public joinChannel(channel: string): void {
     if (this.socket) {
       this.leaveChannel()
     }
     var token = this.authenticationService.token
     var url = ""
     if (token) {
-      url = `${environment.wsUrl}?channel=${channel}&username=${username}&token=Bearer ${token}`
+      url = `${environment.wsUrl}?channel=${channel}&token=Bearer ${token}`
     } else {
-      url = `${environment.wsUrl}?channel=${channel}&username=${username}`
+      this.dialogService.displayErrorDialog("Must login before we can join chat.");
+      this.router.navigateByUrl('/authentication?mode=login');
+      return
     }
     this.socket = new WebSocket(url);
     this.socket.onerror = (event) => {
       // this.dialogService.displayErrorDialog("Error: " + event)
       console.log(`Error in websocket: ${event}`)
+      this.isConnected.next(false);
     };
     this.socket.onopen = (event) => {
+      console.log("onopen!")
       this.isConnected.next(true);
     }
     this.socket.onclose = (event) => {
+      console.log("onclose!")
       this.isConnected.next(false);
       // 1000 is normal closure; e.g. triggered by the frontend client
       if (event.code != 1000) {
@@ -70,17 +76,17 @@ export class WebsocketService {
   public leaveChannel(): void {
     console.log("Closing socket...")
     if (!this.socket) {
-      this.dialogService.displayErrorDialog("Not in a channel. Join a channel first.")
       return;
     }
     this.socket.close(1000, "Voluntary disconnect")
     this.socket = null;
+    this.isConnected.next(false)
     this.currentChannel.next("")
   }
 
   public sendMessage(message: Message): void {
     // send an authenticated message
-    if (this.authenticationService.isAuthenticated && this.authenticationService.token) {
+    if (this.authenticationService.isAuthenticated$.value && this.authenticationService.token) {
       message.token = "Bearer " + this.authenticationService.token
     }
     if (!this.socket) {
@@ -97,6 +103,7 @@ export class WebsocketService {
           observer.next(event.data);
         });
       } else {
+        this.isConnected.next(false)
         observer.error('WebSocket is not connected');
       }
     });

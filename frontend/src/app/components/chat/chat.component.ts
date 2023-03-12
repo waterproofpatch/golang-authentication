@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { WebsocketService } from 'src/app/services/websocket.service';
 import { AfterViewInit } from '@angular/core';
 import { Message, MessageType, User } from 'src/app/services/websocket.service';
@@ -19,30 +20,41 @@ export class ChatComponent implements AfterViewInit {
   @ViewChild('scrollMe') private scrollContainer: ElementRef | undefined;
   channel: string = '';
   message: string = '';
-  username: string = '';
   pmUsername: string = '';
   selectedUsernames: string[] = [];
   messages: Message[] = [];
   users: User[] = [];
 
-  constructor(private route: ActivatedRoute, private chatService: WebsocketService, private dialogService: DialogService, public authenticationService: AuthenticationService) { }
+  constructor(private route: ActivatedRoute, private chatService: WebsocketService, private dialogService: DialogService, public authenticationService: AuthenticationService, private router: Router) { }
 
   ngOnInit(): void {
-    this.username = this.authenticationService.username() || localStorage.getItem("username") || ""
-    this.channel = localStorage.getItem("channel") || "public"
+    if (!this.authenticationService.isAuthenticated$.value) {
+      this.router.navigateByUrl('/authentication?mode=login');
+      return
+    }
     this.subscribeToGetMessages()
+    this.channel = sessionStorage.getItem("channel") || "public"
     this.route.queryParams.subscribe((params) => {
       if (params['channel'] != '' && params['channel'] != undefined) {
         this.channel = params['channel']
       }
     });
-    if (this.channel != "" && this.username != "") {
-
-      this.joinChannel()
-    }
     this.chatService.isConnected.subscribe((isConnected: boolean) => {
       if (!isConnected) {
         this.users = []
+        this.messages = []
+        this.selectedUsernames = []
+      }
+    })
+    if (this.channel != "") {
+      this.joinChannel()
+    }
+    this.authenticationService.isAuthenticated$.subscribe((x) => {
+      if (!x) {
+        console.log("No longer authenticated, leaving channel!")
+        this.leaveChannel();
+        this.router.navigateByUrl('/authentication?mode=login');
+        setTimeout(() => this.router.navigateByUrl('/authentication?mode=login'), 0)
       }
     })
   }
@@ -62,10 +74,14 @@ export class ChatComponent implements AfterViewInit {
     } catch (err) { }
   }
 
+  get username() {
+    return this.authenticationService.username()
+  }
   // add a new tab for PMing another user
   pmUser(username: string) {
     // don't add self to tab list
-    if (username == this.username) {
+    if (username == this.authenticationService.username()) {
+      console.log("User is you!")
       return;
     }
     const existingUsername = this.selectedUsernames.find(name => name === username);
@@ -124,7 +140,7 @@ export class ChatComponent implements AfterViewInit {
 
   // whether or not the socket is connected
   isConnected(): Observable<boolean> {
-    return this.chatService.isConnected || of(this.authenticationService.isAuthenticated)
+    return this.chatService.isConnected || this.authenticationService.isAuthenticated$
   }
 
   // whether or not the socket is connected
@@ -138,9 +154,8 @@ export class ChatComponent implements AfterViewInit {
       this.dialogService.displayErrorDialog("Invalid channel.")
       return;
     }
-    localStorage.setItem("channel", this.channel)
-    localStorage.setItem("username", this.username)
-    this.chatService.joinChannel(this.channel, this.username)
+    sessionStorage.setItem("channel", this.channel)
+    this.chatService.joinChannel(this.channel)
     this.subscribeToGetMessages()
   }
 
@@ -160,12 +175,12 @@ export class ChatComponent implements AfterViewInit {
     const message: Message = {
       pmUsername: this.pmUsername,
       id: 0,
-      from: '',
+      from: "",
       content: this.message,
       timestamp: "",
       type: MessageType.USER,
       channel: this.getCurrentChannel().getValue(),
-      token: "TBD",
+      token: "",
       authenticated: false, // filled by server before broadcasting to clients
     };
     this.chatService.sendMessage(message);

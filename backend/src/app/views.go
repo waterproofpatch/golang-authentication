@@ -90,11 +90,10 @@ func dashboard(w http.ResponseWriter, r *http.Request) {
 // serveWs handles websocket requests from the peer.
 func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
-	username := q.Get("username")
 	channel := q.Get("channel")
 	token := q.Get("token")
 
-	log.Printf("Starting client for channel=%s, user=%s", channel, username)
+	log.Printf("Processing new client for channel=%s", channel)
 	success, jwtData, errorMsg := authentication.ParseToken(token)
 
 	// upgrade the connection
@@ -108,43 +107,20 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 
 	if !success {
 		fmt.Printf("Client is not authenticated: %s.\n", errorMsg)
-		// make sure they don't pick a username that a registered user
-		// is already using
-		var user authentication.User
-		result := authentication.GetDb().First(&user, "username = ?", username)
-		if result.RowsAffected > 0 {
-
-			conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "Username taken by registered user."))
-			conn.Close()
-			return
-		}
-	} else {
-		fmt.Printf("Client is authenticated, using their registered username %s\n", jwtData.Username)
-		username = jwtData.Username
-	}
-
-	// validate client metadata
-	if !success && !isValidInput(username) {
-		fmt.Println("Invalid username " + username)
-		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "Invalid username."))
+		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "Please login or create an account."))
 		conn.Close()
 		return
 	}
+
 	if !isValidInput(channel) {
 		fmt.Println("Invalid channel " + channel)
 		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "Invalid channel."))
 		conn.Close()
 		return
 	}
-	existing_client := hub.getClientByName(username)
-	if existing_client != nil {
-		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "Username taken."))
-		conn.Close()
-		return
-	}
 
 	// client looks legit, let them in
-	client := &Client{hub: hub, conn: conn, send: make(chan *Message), channel: channel, username: username}
+	client := &Client{hub: hub, conn: conn, send: make(chan *Message), channel: channel, username: jwtData.Username}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in
@@ -184,6 +160,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		message.Timestamp = formattedTime()
 		message.From = "Server"
 		message.Channel = "Broadcast"
+		fmt.Printf("Sending USER_JOIN (%s) message to %s\n", connectedClient.username, client.username)
 		client.send <- &message
 	}
 }
