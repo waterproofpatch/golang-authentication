@@ -9,7 +9,7 @@ import { BaseService } from './base.service';
 export default interface Plant {
   id: number;
   name: string;
-  wateringFrequency: number;
+  wateringFrequency: string;
   imageId: number;
 }
 
@@ -19,7 +19,7 @@ export default interface Plant {
 export class PlantsService extends BaseService {
 
   public static PlantsFactory = class {
-    public static makePlant(name: string, wateringFrequency: number): Plant {
+    public static makePlant(name: string, wateringFrequency: string): Plant {
       const plant: Plant = {
         name: name,
         wateringFrequency: wateringFrequency,

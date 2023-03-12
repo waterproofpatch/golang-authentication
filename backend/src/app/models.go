@@ -18,7 +18,7 @@ type PlantModel struct {
 	gorm.Model
 	Id                int    `json:"id"`
 	Name              string `json:"name"`
-	WateringFrequency int    `json:"type"`
+	WateringFrequency string `json:"wateringFrequency"`
 	ImageId           uint   `json:"imageId"`
 }
 type MessageModel struct {
@@ -61,7 +61,7 @@ func AddMessage(db *gorm.DB, message *Message) error {
 	db.Save(newDbMessage)
 	return nil
 }
-func UpdatePlant(db *gorm.DB, id int, name string, wateringFrequency int) error {
+func UpdatePlant(db *gorm.DB, id int, name string, wateringFrequency string) error {
 	var existingplant PlantModel
 	existingplant.Id = id
 	db.First(&existingplant)
@@ -71,7 +71,7 @@ func UpdatePlant(db *gorm.DB, id int, name string, wateringFrequency int) error 
 	return nil
 }
 
-func AddPlant(db *gorm.DB, name string, wateringFrequency int, imageId uint) error {
+func AddPlant(db *gorm.DB, name string, wateringFrequency string, imageId uint) error {
 	var plant = PlantModel{
 		Name:              name,
 		WateringFrequency: wateringFrequency,

@@ -118,14 +118,8 @@ func plants(w http.ResponseWriter, r *http.Request) {
 		var newPlant PlantModel
 		newPlant.ImageId = imageId
 		newPlant.Name = r.FormValue("nameOfPlant")
-		wateringFrequencyNo, err := strconv.Atoi(r.FormValue("wateringFrequency"))
-		if err != nil {
-			fmt.Println("Failed to parse integer")
-			authentication.WriteError(w, "Invalid wateringFrequency", http.StatusBadRequest)
-			return
-		}
-		newPlant.WateringFrequency = wateringFrequencyNo
-		err = AddPlant(db, newPlant.Name, newPlant.WateringFrequency, newPlant.ImageId)
+		newPlant.WateringFrequency = r.FormValue("wateringFrequency")
+		err := AddPlant(db, newPlant.Name, newPlant.WateringFrequency, newPlant.ImageId)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			break

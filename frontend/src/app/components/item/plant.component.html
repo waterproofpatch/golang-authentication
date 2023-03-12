@@ -1,10 +1,32 @@
-<div *ngIf="editMode && plant; else displayMode">
+<!-- <div *ngIf="editMode && plant; else displayMode">
 	Plant Name: <input type="text" [(ngModel)]="plant.name" />
 	Watering Freuency: <input type="number" [(ngModel)]="plant.wateringFrequency" />
 	Image ID: <input type="number" disabled=true [(ngModel)]="plant.imageId" />
 	<button (click)="save()">Save</button>
 	<button (click)="cancel()">Cancel</button>
+</div> -->
+<div *ngIf="editMode && plant; else displayMode" class="example-container">
+	<mat-form-field hintLabel="Max 30 characters" appearance="fill">
+		<mat-label>Plant Name:</mat-label>
+		<input matInput [(ngModel)]="plant.name" #input maxlength="30" placeholder="Blue Juniper">
+		<mat-hint align="end">{{input.value.length}}/10</mat-hint>
+	</mat-form-field>
+
+	<mat-form-field appearance="fill">
+		<mat-label>Watering Frequency</mat-label>
+		<mat-select [(ngModel)]="plant.wateringFrequency">
+			<mat-option value=1>1 day</mat-option>
+			<mat-option value=2>2 days</mat-option>
+			<mat-option value=3>3 days</mat-option>
+			<mat-option value=4>4 days</mat-option>
+			<mat-option value=5>5 days</mat-option>
+		</mat-select>
+		<mat-hint align="end">How frequently should you water this plant</mat-hint>
+	</mat-form-field>
+	<button mat-button (click)="save()">Save</button>
+	<button mat-button (click)="cancel()">Cancel</button>
 </div>
+
 <ng-template #displayMode>
 	<mat-card *ngIf="plant != null" class="example-card">
 		<mat-card-header>
