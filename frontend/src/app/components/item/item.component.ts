@@ -12,10 +12,31 @@ export class ItemComponent {
   }
   @Input() item?: Item
   editMode: boolean = false
+  imageUrl: string | null = null
 
   editItem() {
     this.editMode = true;
     return;
+  }
+
+  ngOnInit() {
+    console.log("onInit")
+    this.getImage()
+  }
+
+  getImage() {
+    if (!this.item) {
+      return
+    }
+    console.log("Getting image for imageId=" + this.item.imageId)
+    this.itemService.getItemImage(this.item.imageId)
+      .subscribe(blob => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          this.imageUrl = reader.result as string;
+        };
+        reader.readAsDataURL(blob);
+      });
   }
 
   leaveEditMode() {

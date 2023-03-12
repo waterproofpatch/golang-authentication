@@ -11,9 +11,10 @@ import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms'
 })
 export class DashboardComponent {
 
+  selectedImage: File | null = null;
   form = new FormGroup({
-    name: new FormControl('', Validators.required),
-    type: new FormControl(0, [Validators.required, Validators.min(0)])
+    nameOfPlant: new FormControl('', Validators.required),
+    wateringFrequency: new FormControl(0, [Validators.required, Validators.min(0)])
   });
 
   constructor(
@@ -21,20 +22,23 @@ export class DashboardComponent {
     private formBuilder: FormBuilder,
   ) {
     this.form = this.formBuilder.group({
-      name: ['Some Name'],
-      type: [123]
+      nameOfPlant: ['Plant Name'],
+      wateringFrequency: [5]
     });
   }
 
   ngOnInit(): void {
     this.itemsService.getItems()
   }
+  onImageSelected(event: any) {
+    this.selectedImage = event.target.files[0];
+  }
 
   addItem() {
     // Perform actions when the form is submitted
     console.log(this.form.value);
-    var item = ItemsService.ItemFactory.makeItem(this.form.controls.name.value || '', this.form.controls.type.value || 0)
-    this.itemsService.addItem(item)
+    var item = ItemsService.ItemFactory.makeItem(this.form.controls.nameOfPlant.value || '', this.form.controls.wateringFrequency.value || 0)
+    this.itemsService.addItem(item, this.selectedImage)
   }
   getItems(): Subject<Item[]> {
     return this.itemsService.items

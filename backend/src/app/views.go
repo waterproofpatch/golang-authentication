@@ -5,23 +5,98 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/waterproofpatch/go_authentication/authentication"
+
+	"io/ioutil"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
 
+func uploadHandler(w http.ResponseWriter, r *http.Request) uint {
+	// Parse the multipart form in the request
+	err := r.ParseMultipartForm(10 << 20) // 10 MB maximum file size
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return 0
+	}
+
+	// Get the image file from the form data
+	file, _, err := r.FormFile("image")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return 0
+	}
+	defer file.Close()
+
+	// Read the file data into a byte slice
+	fileData, err := ioutil.ReadAll(file)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return 0
+	}
+
+	// Open a connection to the database
+	db := authentication.GetDb()
+
+	// Create a new Image instance and set its fields
+	image := ImageModel{
+		Name: "image.jpg",
+		Data: fileData,
+	}
+
+	// Insert the record into the database
+	result := db.Create(&image)
+	if result.Error != nil {
+		panic(result.Error)
+	}
+
+	// Return a success message
+	fmt.Println("Stored image successfully.")
+	return image.ID
+}
+
+func images(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	imageId, hasImageId := vars["id"]
+	db := authentication.GetDb()
+	fmt.Printf("imageId=%s\n", imageId)
+	switch r.Method {
+	case "GET":
+		if hasImageId {
+			imageIdNo, err := strconv.Atoi(imageId)
+			if err != nil {
+				authentication.WriteError(w, "Invalid image ID", http.StatusBadRequest)
+				return
+			}
+			fmt.Printf("Handling request for imageId=%d\n", imageIdNo)
+
+			var img ImageModel
+			img.ID = uint(imageIdNo)
+			if err := db.First(&img, img.ID).Error; err != nil {
+				authentication.WriteError(w, "Failed loading image", http.StatusBadRequest)
+				return
+			}
+			w.Header().Set("Content-Type", "image/jpeg")
+			w.Write(img.Data)
+			return
+		} else {
+			authentication.WriteError(w, "Must supply image ID!", http.StatusBadRequest)
+		}
+		break
+	}
+}
 func items(w http.ResponseWriter, r *http.Request) {
 	db := authentication.GetDb()
 	var items []ItemModel
 	var item ItemModel
 	vars := mux.Vars(r)
-	id, hasLessonId := vars["id"]
-
+	id, hasItemId := vars["id"]
 	switch r.Method {
 	case "GET":
-		if hasLessonId {
+		if hasItemId {
 			db.Find(&item, id)
 			json.NewEncoder(w).Encode(item)
 		} else {
@@ -30,7 +105,7 @@ func items(w http.ResponseWriter, r *http.Request) {
 		}
 		break
 	case "DELETE":
-		if !hasLessonId {
+		if !hasItemId {
 			authentication.WriteError(w, "Must provide id!", http.StatusBadRequest)
 			break
 		}
@@ -39,13 +114,18 @@ func items(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(items)
 		break
 	case "POST":
+		var imageId = uploadHandler(w, r)
 		var newItem ItemModel
-		err := json.NewDecoder(r.Body).Decode(&newItem)
+		newItem.ImageId = imageId
+		newItem.Name = r.FormValue("nameOfPlant")
+		wateringFrequencyNo, err := strconv.Atoi(r.FormValue("wateringFrequency"))
 		if err != nil {
-			authentication.WriteError(w, err.Error(), 400)
-			break
+			fmt.Println("Failed to parse integer")
+			authentication.WriteError(w, "Invalid wateringFrequency", http.StatusBadRequest)
+			return
 		}
-		err = AddItem(db, newItem.Name, newItem.Type)
+		newItem.Type = wateringFrequencyNo
+		err = AddItem(db, newItem.Name, newItem.Type, newItem.ImageId)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			break
@@ -70,7 +150,6 @@ func items(w http.ResponseWriter, r *http.Request) {
 		break
 	}
 
-	return
 }
 func dashboard(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
@@ -169,10 +248,12 @@ func InitViews(router *mux.Router) {
 	hub := newHub()
 	go hub.run()
 
+	// router.HandleFunc("/api/upload", uploadHandler)
 	router.HandleFunc("/api/dashboard/{id:[0-9]+}", authentication.VerifiedOnly(dashboard)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	router.HandleFunc("/api/dashboard", dashboard).Methods("GET", "POST", "PUT", "OPTIONS")
 	router.HandleFunc("/api/items", items).Methods("GET", "POST", "PUT", "OPTIONS")
 	router.HandleFunc("/api/items/{id:[0-9]+}", items).Methods("GET", "POST", "DELETE", "PUT", "OPTIONS")
+	router.HandleFunc("/api/images/{id:[0-9]+}", images).Methods("GET", "OPTIONS")
 	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)
 	})

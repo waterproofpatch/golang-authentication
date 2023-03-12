@@ -10,6 +10,7 @@ export interface Item {
   id: number;
   name: string;
   type: number;
+  imageId: number;
 }
 
 @Injectable({
@@ -23,6 +24,7 @@ export class ItemsService extends BaseService {
         name: name,
         type: type,
         id: 0,
+        imageId: 0,
       }
       return item;
     }
@@ -38,6 +40,9 @@ export class ItemsService extends BaseService {
     super()
   }
 
+  getItemImage(imageId: number) {
+    return this.itemsApiService.getImage(imageId)
+  }
   deleteItem(id: number) {
     this.itemsApiService
       .delete(id)
@@ -77,9 +82,15 @@ export class ItemsService extends BaseService {
         this.error$.next(''); // send a benign event so observers can close modals
       });
   }
-  addItem(item: Item): void {
+  addItem(item: Item, image: File | null): void {
+    const formData = new FormData();
+    if (image) {
+      formData.append('image', image, image.name);
+    }
+    formData.append('nameOfPlant', item.name)
+    formData.append('wateringFrequency', item.type.toString())
     this.itemsApiService
-      .post(item)
+      .postFormData(formData)
       .pipe(
         catchError((error: any) => {
           if (error instanceof HttpErrorResponse) {

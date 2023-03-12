@@ -1,25 +1,32 @@
 <div *ngIf="editMode && item; else displayMode">
-	<input type="text" [(ngModel)]="item.name" />
-	<input type="number" [(ngModel)]="item.type" />
+	Plant Name: <input type="text" [(ngModel)]="item.name" />
+	Watering Freuency: <input type="number" [(ngModel)]="item.type" />
+	Image: <input type="number" disabled=true [(ngModel)]="item.imageId" />
 	<button (click)="save()">Save</button>
 	<button (click)="cancel()">Cancel</button>
 </div>
 <ng-template #displayMode>
-	<mat-card>
+	<mat-card *ngIf="item != null" class="example-card">
 		<mat-card-header>
-			<mat-card-title>{{item?.name}}</mat-card-title>
-			<mat-card-subtitle>{{item?.type}}</mat-card-subtitle>
-			<div class="card-actions">
-				<button mat-icon-button (click)="editItem()">
-					<mat-icon>edit</mat-icon>
-				</button>
-				<button mat-icon-button (click)="deleteItem()">
-					<mat-icon>delete</mat-icon>
-				</button>
-			</div>
+			<div mat-card-avatar class="example-header-image"></div>
+			<mat-card-title>{{item.name}}</mat-card-title>
+			<mat-card-subtitle>Water every {{item.type}} days</mat-card-subtitle>
 		</mat-card-header>
+		<!-- <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu"> -->
+		<img *ngIf="imageUrl != null" mat-card-image [src]="imageUrl" alt="Photo">
 		<mat-card-content>
-			<!-- Your card content here -->
+			<p>
+				Some text here
+			</p>
 		</mat-card-content>
+		<mat-card-actions>
+			<button mat-icon-button (click)="editItem()">
+				<mat-icon>edit</mat-icon>
+			</button>
+			<button mat-icon-button (click)="deleteItem()">
+				<mat-icon>delete</mat-icon>
+			</button>
+		</mat-card-actions>
 	</mat-card>
+
 </ng-template>

@@ -10,15 +10,22 @@ import { Item } from '../services/items.service';
 })
 export class ItemsApiService extends BaseService {
   itemsApiUrl = '/api/items';
+  imagesApiUrl = '/api/images';
   constructor(private http: HttpClient) {
     super();
   }
 
+  postFormData(formData: any): Observable<any> {
+    return this.http.post(this.getUrlBase() + this.itemsApiUrl, formData, this.httpOptionsNonJson);
+  }
   post(item: Item): Observable<any> {
     return this.http.post(this.getUrlBase() + this.itemsApiUrl, item, this.httpOptions);
   }
   put(item: Item): Observable<any> {
     return this.http.put(this.getUrlBase() + this.itemsApiUrl, item, this.httpOptions);
+  }
+  getImage(id: number): Observable<any> {
+    return this.http.get(this.getUrlBase() + this.imagesApiUrl + '/' + id, { responseType: 'blob', headers: { 'Access-Control-Allow-Origin': '*' } })
   }
   get(
     id?: number,

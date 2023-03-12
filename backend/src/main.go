@@ -77,11 +77,5 @@ func main() {
 	app.InitViews(router)
 	app.InitModels(db)
 
-	err = app.AddItem(db, "some name", 32)
-	if err != nil {
-		log.Printf("Error adding item: %s", err)
-		return
-	}
-
 	startServing(port, router)
 }

@@ -7,11 +7,19 @@ import (
 	"gorm.io/gorm"
 )
 
+type ImageModel struct {
+	gorm.Model
+	ID   uint
+	Name string
+	Data []byte
+}
+
 type ItemModel struct {
 	gorm.Model
-	Id   int    `json:"id"`
-	Name string `json:"name"`
-	Type int    `json:"type"`
+	Id      int    `json:"id"`
+	Name    string `json:"name"`
+	Type    int    `json:"type"`
+	ImageId uint   `json:"imageId"`
 }
 type MessageModel struct {
 	gorm.Model
@@ -63,10 +71,11 @@ func UpdateItem(db *gorm.DB, id int, name string, itemType int) error {
 	return nil
 }
 
-func AddItem(db *gorm.DB, name string, itemType int) error {
+func AddItem(db *gorm.DB, name string, itemType int, imageId uint) error {
 	var item = ItemModel{
-		Name: name,
-		Type: itemType,
+		Name:    name,
+		Type:    itemType,
+		ImageId: imageId,
 	}
 
 	log.Printf("Adding item %s", item)
@@ -83,4 +92,5 @@ func InitModels(db *gorm.DB) {
 	log.Printf("Initializing models...\n")
 	db.AutoMigrate(&ItemModel{})
 	db.AutoMigrate(&MessageModel{})
+	db.AutoMigrate(&ImageModel{})
 }
