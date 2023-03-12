@@ -6,7 +6,7 @@ import { Subject, throwError, Observable } from 'rxjs';
 import { ItemsApiService } from '../apis/items-api.service';
 import { BaseService } from './base.service';
 
-export interface Item {
+export default interface Plant {
   id: number;
   name: string;
   type: number;
@@ -19,8 +19,8 @@ export interface Item {
 export class ItemsService extends BaseService {
 
   public static ItemFactory = class {
-    public static makeItem(name: string, type: number): Item {
-      const item: Item = {
+    public static makeItem(name: string, type: number): Plant {
+      const item: Plant = {
         name: name,
         type: type,
         id: 0,
@@ -32,7 +32,7 @@ export class ItemsService extends BaseService {
   // this error string is for modals to display login or registration errors.
   error$ = new Subject<string>();
 
-  items = new Subject<Item[]>();
+  items = new Subject<Plant[]>();
 
   constructor(
     private itemsApiService: ItemsApiService,
@@ -63,7 +63,7 @@ export class ItemsService extends BaseService {
       });
   }
 
-  updateItem(item: Item): void {
+  updateItem(item: Plant): void {
     this.itemsApiService
       .put(item)
       .pipe(
@@ -82,7 +82,7 @@ export class ItemsService extends BaseService {
         this.error$.next(''); // send a benign event so observers can close modals
       });
   }
-  addItem(item: Item, image: File | null): void {
+  addItem(item: Plant, image: File | null): void {
     const formData = new FormData();
     if (image) {
       formData.append('image', image, image.name);

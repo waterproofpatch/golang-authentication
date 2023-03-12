@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Subject, throwError, Observable } from 'rxjs';
 import { ItemsService } from 'src/app/services/items.service';
-import { Item } from 'src/app/services/items.service';
+import Plant from 'src/app/services/items.service';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
@@ -40,7 +40,7 @@ export class DashboardComponent {
     var item = ItemsService.ItemFactory.makeItem(this.form.controls.nameOfPlant.value || '', this.form.controls.wateringFrequency.value || 0)
     this.itemsService.addItem(item, this.selectedImage)
   }
-  getItems(): Subject<Item[]> {
+  getItems(): Subject<Plant[]> {
     return this.itemsService.items
   }
 }

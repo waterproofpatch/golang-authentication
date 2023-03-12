@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { BaseService } from '../services/base.service';
-import { Item } from '../services/items.service';
+import Plant from '../services/items.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,10 +18,10 @@ export class ItemsApiService extends BaseService {
   postFormData(formData: any): Observable<any> {
     return this.http.post(this.getUrlBase() + this.itemsApiUrl, formData, this.httpOptionsNonJson);
   }
-  post(item: Item): Observable<any> {
+  post(item: Plant): Observable<any> {
     return this.http.post(this.getUrlBase() + this.itemsApiUrl, item, this.httpOptions);
   }
-  put(item: Item): Observable<any> {
+  put(item: Plant): Observable<any> {
     return this.http.put(this.getUrlBase() + this.itemsApiUrl, item, this.httpOptions);
   }
   getImage(id: number): Observable<any> {

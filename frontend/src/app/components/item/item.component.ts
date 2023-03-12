@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Item, ItemsService } from 'src/app/services/items.service';
+import Plant, { ItemsService } from 'src/app/services/items.service';
 
 @Component({
   selector: 'app-item',
@@ -10,7 +10,7 @@ export class ItemComponent {
   constructor(private itemService: ItemsService) {
 
   }
-  @Input() item?: Item
+  @Input() item?: Plant
   editMode: boolean = false
   imageUrl: string | null = null
 
