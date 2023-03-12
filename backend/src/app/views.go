@@ -15,18 +15,19 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// returns 0 on failure, ImageModel.ID stored in database on success
 func uploadHandler(w http.ResponseWriter, r *http.Request) uint {
 	// Parse the multipart form in the request
 	err := r.ParseMultipartForm(10 << 20) // 10 MB maximum file size
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		authentication.WriteError(w, "Invalid file size", http.StatusBadRequest)
 		return 0
 	}
 
 	// Get the image file from the form data
 	file, _, err := r.FormFile("image")
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		authentication.WriteError(w, "Failed finding image in request.", http.StatusBadRequest)
 		return 0
 	}
 	defer file.Close()
@@ -34,7 +35,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) uint {
 	// Read the file data into a byte slice
 	fileData, err := ioutil.ReadAll(file)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		authentication.WriteError(w, "Failed reading image.", http.StatusBadRequest)
 		return 0
 	}
 
@@ -50,7 +51,8 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) uint {
 	// Insert the record into the database
 	result := db.Create(&image)
 	if result.Error != nil {
-		panic(result.Error)
+		authentication.WriteError(w, "Failed writing image to db", http.StatusBadRequest)
+		return 0
 	}
 
 	// Return a success message
@@ -115,6 +117,9 @@ func plants(w http.ResponseWriter, r *http.Request) {
 		break
 	case "POST":
 		var imageId = uploadHandler(w, r)
+		if imageId == 0 {
+			return
+		}
 		var newPlant PlantModel
 		newPlant.ImageId = imageId
 		newPlant.Name = r.FormValue("nameOfPlant")
