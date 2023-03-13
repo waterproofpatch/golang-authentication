@@ -1,5 +1,6 @@
 .plant-card {
-	max-width: 400px;
+	max-width: 700px;
+	min-width: 700px;
 	margin: 10px;
 }
 
@@ -10,4 +11,17 @@ img {
 
 .plant-container mat-form-field+mat-form-field {
 	margin-left: 8px;
+}
+
+.water-times {
+	display: flex;
+	justify-content: space-between;
+}
+
+.left {
+	text-align: left;
+}
+
+.right {
+	text-align: right;
 }
