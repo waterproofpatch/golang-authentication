@@ -45,6 +45,7 @@ export class PlantsService extends BaseService {
   getPlantImage(imageId: number) {
     return this.plantsApiService.getImage(imageId)
   }
+
   deletePlant(id: number) {
     this.plantsApiService
       .delete(id)

@@ -24,6 +24,14 @@ export class PlantComponent {
     return;
   }
 
+  waterPlant() {
+    if (!this.plant) {
+      return
+    }
+    this.plant.lastWaterDate = new Date().toDateString()
+    this.plantService.updatePlant(this.plant)
+  }
+
   transformLastWaterDate(): string {
     if (!this.plant) {
       return "N/A"
