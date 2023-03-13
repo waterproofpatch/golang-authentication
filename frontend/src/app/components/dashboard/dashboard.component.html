@@ -2,8 +2,8 @@
 
 	<form (ngSubmit)="addPlant()" [formGroup]="form">
 		<mat-form-field hintLabel="Max 30 characters" appearance="fill">
-			<mat-label>Plant Name:</mat-label>
-			<input matInput formControlName="name" #input maxlength="30" placeholder="Blue Juniper">
+			<mat-label>Plant Name</mat-label>
+			<input matInput formControlName="name" #input maxlength="30">
 			<mat-hint align="end">{{input.value.length}}/30</mat-hint>
 		</mat-form-field>
 
@@ -15,6 +15,15 @@
 				<mat-option value=3>3 days</mat-option>
 				<mat-option value=4>4 days</mat-option>
 				<mat-option value=5>5 days</mat-option>
+				<mat-option value=6>6 days</mat-option>
+				<mat-option value=7>7 days</mat-option>
+				<mat-option value=8>8 days</mat-option>
+				<mat-option value=9>9 days</mat-option>
+				<mat-option value=10>10 days</mat-option>
+				<mat-option value=11>11 days</mat-option>
+				<mat-option value=12>12 days</mat-option>
+				<mat-option value=13>13 days</mat-option>
+				<mat-option value=14>14 days</mat-option>
 			</mat-select>
 			<!-- <mat-hint align="end">How frequently should you water this plant</mat-hint> -->
 		</mat-form-field>

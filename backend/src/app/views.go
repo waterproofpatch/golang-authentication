@@ -124,7 +124,8 @@ func plants(w http.ResponseWriter, r *http.Request) {
 		newPlant.ImageId = imageId
 		newPlant.Name = r.FormValue("nameOfPlant")
 		newPlant.WateringFrequency = r.FormValue("wateringFrequency")
-		err := AddPlant(db, newPlant.Name, newPlant.WateringFrequency, newPlant.ImageId)
+		newPlant.LastWaterDate = r.FormValue("lastWaterDate")
+		err := AddPlant(db, newPlant.Name, newPlant.WateringFrequency, newPlant.ImageId, newPlant.LastWaterDate)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			break

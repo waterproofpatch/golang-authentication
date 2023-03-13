@@ -72,11 +72,12 @@ func UpdatePlant(db *gorm.DB, id int, name string, wateringFrequency string) err
 	return nil
 }
 
-func AddPlant(db *gorm.DB, name string, wateringFrequency string, imageId uint) error {
+func AddPlant(db *gorm.DB, name string, wateringFrequency string, imageId uint, lastWaterDate string) error {
 	var plant = PlantModel{
 		Name:              name,
 		WateringFrequency: wateringFrequency,
 		ImageId:           imageId,
+		LastWaterDate:     lastWaterDate,
 	}
 
 	log.Printf("Adding plant %s", plant)

@@ -91,6 +91,7 @@ export class PlantsService extends BaseService {
     }
     formData.append('nameOfPlant', plant.name)
     formData.append('wateringFrequency', plant.wateringFrequency.toString())
+    formData.append('lastWateredDate', "never")
     this.plantsApiService
       .postFormData(formData)
       .pipe(
