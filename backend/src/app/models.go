@@ -81,7 +81,7 @@ func AddPlant(db *gorm.DB, name string, wateringFrequency string, imageId uint, 
 		return errors.New("Invalid watering frequency.")
 	}
 	if lastWaterDate == "" {
-		return errors.New("Invalid last watering date frequency.")
+		return errors.New("Invalid last watering date.")
 	}
 	var plant = PlantModel{
 		Name:              name,

@@ -1,6 +1,6 @@
 <div class="container">
 
-	<form (ngSubmit)="addPlant()" [formGroup]="form">
+	<form (ngSubmit)="addPlant()" [formGroup]="form" *ngIf="form">
 		<mat-form-field hintLabel="Max 30 characters" appearance="fill">
 			<mat-label>Plant Name</mat-label>
 			<input matInput formControlName="name" #input maxlength="30">

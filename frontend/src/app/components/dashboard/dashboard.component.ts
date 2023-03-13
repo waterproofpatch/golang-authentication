@@ -13,7 +13,7 @@ export class DashboardComponent {
 
   selectedImage: File | null = null;
   form = new FormGroup({
-    name: new FormControl('', Validators.required),
+    name: new FormControl('', [Validators.required, Validators.min(3), Validators.max(30)]),
     wateringFrequency: new FormControl('', [Validators.required])
   });
 
@@ -33,6 +33,8 @@ export class DashboardComponent {
   onImageSelected(event: any) {
     this.selectedImage = event.target.files[0];
   }
+  get name() { return this.form.get('name'); }
+  get wateringFrequency() { return this.form.get('wateringFrequency'); }
 
   addPlant() {
     // Perform actions when the form is submitted
