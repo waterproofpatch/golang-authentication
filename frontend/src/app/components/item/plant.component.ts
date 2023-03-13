@@ -14,14 +14,41 @@ export class PlantComponent {
   editMode: boolean = false
   imageUrl: string | null = null
 
+  ngOnInit() {
+    console.log("onInit")
+    this.getImage()
+  }
+
   editPlant() {
     this.editMode = true;
     return;
   }
 
-  ngOnInit() {
-    console.log("onInit")
-    this.getImage()
+  transformLastWaterDate(): string {
+    if (!this.plant) {
+      return "N/A"
+    }
+    const myDate = new Date(this.plant.lastWaterDate);
+    return this.formatDate(myDate)
+  }
+
+  private formatDate(date: Date): string {
+
+    const day = date.getDate().toString().padStart(2, '0'); // Get the day of the month (1-31) and pad it with a leading zero if necessary
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Get the month (0-11), add 1 to get the month as a number (1-12), and pad it with a leading zero if necessary
+    const year = date.getFullYear().toString(); // Get the year (4 digits)
+
+    const formattedDate = `${month}/${day}/${year}`;
+    return formattedDate
+  }
+  getNextWaterDate(): string {
+    if (!this.plant) {
+      return "N/A"
+    }
+    var nextWaterDate = new Date()
+    var lastWaterDate = new Date(this.plant.lastWaterDate)
+    nextWaterDate.setDate(lastWaterDate.getDate() + parseInt(this.plant.wateringFrequency))
+    return this.formatDate(nextWaterDate)
   }
 
   getImage() {

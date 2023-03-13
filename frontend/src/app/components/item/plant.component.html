@@ -26,13 +26,11 @@
 			<div mat-card-avatar class="example-header-image"></div>
 			<mat-card-title>{{plant.name}}</mat-card-title>
 			<mat-card-subtitle>Water every {{plant.wateringFrequency}} days</mat-card-subtitle>
-			<mat-card-subtitle>Last watered on {{plant.lastWaterDate}}</mat-card-subtitle>
 		</mat-card-header>
 		<img *ngIf="imageUrl != null" mat-card-image [src]="imageUrl" alt="Photo">
 		<mat-card-content>
-			<p>
-				Some text here
-			</p>
+			<mat-card-subtitle>Last watered on {{transformLastWaterDate()}}</mat-card-subtitle>
+			<mat-card-subtitle>Next watering on {{getNextWaterDate()}}</mat-card-subtitle>
 		</mat-card-content>
 		<mat-card-actions>
 			<button mat-icon-button (click)="editPlant()">

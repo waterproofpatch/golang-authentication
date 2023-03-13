@@ -20,12 +20,12 @@ export default interface Plant {
 export class PlantsService extends BaseService {
 
   public static PlantsFactory = class {
-    public static makePlant(name: string, wateringFrequency: string): Plant {
+    public static makePlant(name: string, wateringFrequency: string, lastWateredDate: string): Plant {
       const plant: Plant = {
         name: name,
         wateringFrequency: wateringFrequency,
         id: 0,
-        lastWaterDate: "",
+        lastWaterDate: lastWateredDate,
         imageId: 0,
       }
       return plant;
@@ -91,7 +91,7 @@ export class PlantsService extends BaseService {
     }
     formData.append('nameOfPlant', plant.name)
     formData.append('wateringFrequency', plant.wateringFrequency.toString())
-    formData.append('lastWateredDate', "never")
+    formData.append('lastWateredDate', plant.lastWaterDate)
     this.plantsApiService
       .postFormData(formData)
       .pipe(

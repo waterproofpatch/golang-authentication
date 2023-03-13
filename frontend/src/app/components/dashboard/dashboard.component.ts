@@ -14,7 +14,8 @@ export class DashboardComponent {
   selectedImage: File | null = null;
   form = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.min(3), Validators.max(30)]),
-    wateringFrequency: new FormControl('', [Validators.required])
+    wateringFrequency: new FormControl('', [Validators.required]),
+    lastWateredDate: new FormControl('', [Validators.required])
   });
 
   constructor(
@@ -23,7 +24,8 @@ export class DashboardComponent {
   ) {
     this.form = this.formBuilder.group({
       name: [''],
-      wateringFrequency: ['']
+      wateringFrequency: [''],
+      lastWateredDate: ['']
     });
   }
 
@@ -39,7 +41,7 @@ export class DashboardComponent {
   addPlant() {
     // Perform actions when the form is submitted
     console.log(this.form.value);
-    var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '', this.form.controls.wateringFrequency.value || '')
+    var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '', this.form.controls.wateringFrequency.value || '', this.form.controls.lastWateredDate.value || '')
     this.plantsService.addPlant(plant, this.selectedImage)
   }
   getPlants(): Subject<Plant[]> {
