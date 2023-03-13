@@ -1,48 +1,52 @@
 <div class="container">
+	<button mat-button mat-raised-button color="primary" *ngIf="!addMode" (click)="addMode=true">Add Plant</button>
+	<div *ngIf="addMode">
 
-	<form (ngSubmit)="addPlant()" [formGroup]="form" *ngIf="form">
-		<mat-form-field hintLabel="Max 30 characters" appearance="fill">
-			<mat-label>Plant Name</mat-label>
-			<input matInput formControlName="name" #input maxlength="30">
-			<mat-hint align="end">{{input.value.length}}/30</mat-hint>
-		</mat-form-field>
+		<form (ngSubmit)="addPlant()" [formGroup]="form" *ngIf="form">
+			<mat-form-field hintLabel="Max 30 characters" appearance="fill">
+				<mat-label>Plant Name</mat-label>
+				<input matInput formControlName="name" #input maxlength="30">
+				<mat-hint align="end">{{input.value.length}}/30</mat-hint>
+			</mat-form-field>
 
-		<mat-form-field appearance="fill">
-			<mat-label>Watering Frequency</mat-label>
-			<mat-select formControlName="wateringFrequency">
-				<mat-option value=1>1 day</mat-option>
-				<mat-option value=2>2 days</mat-option>
-				<mat-option value=3>3 days</mat-option>
-				<mat-option value=4>4 days</mat-option>
-				<mat-option value=5>5 days</mat-option>
-				<mat-option value=6>6 days</mat-option>
-				<mat-option value=7>7 days</mat-option>
-				<mat-option value=8>8 days</mat-option>
-				<mat-option value=9>9 days</mat-option>
-				<mat-option value=10>10 days</mat-option>
-				<mat-option value=11>11 days</mat-option>
-				<mat-option value=12>12 days</mat-option>
-				<mat-option value=13>13 days</mat-option>
-				<mat-option value=14>14 days</mat-option>
-			</mat-select>
-			<!-- <mat-hint align="end">How frequently should you water this plant</mat-hint> -->
-		</mat-form-field>
-		<mat-form-field appearance="fill">
-			<mat-label>Last Watered Date</mat-label>
-			<input matInput formControlName="lastWateredDate" [matDatepicker]="picker">
-			<mat-hint>MM/DD/YYYY</mat-hint>
-			<mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-			<mat-datepicker #picker></mat-datepicker>
-		</mat-form-field>
+			<mat-form-field appearance="fill">
+				<mat-label>Watering Frequency</mat-label>
+				<mat-select formControlName="wateringFrequency">
+					<mat-option value=1>1 day</mat-option>
+					<mat-option value=2>2 days</mat-option>
+					<mat-option value=3>3 days</mat-option>
+					<mat-option value=4>4 days</mat-option>
+					<mat-option value=5>5 days</mat-option>
+					<mat-option value=6>6 days</mat-option>
+					<mat-option value=7>7 days</mat-option>
+					<mat-option value=8>8 days</mat-option>
+					<mat-option value=9>9 days</mat-option>
+					<mat-option value=10>10 days</mat-option>
+					<mat-option value=11>11 days</mat-option>
+					<mat-option value=12>12 days</mat-option>
+					<mat-option value=13>13 days</mat-option>
+					<mat-option value=14>14 days</mat-option>
+				</mat-select>
+				<!-- <mat-hint align="end">How frequently should you water this plant</mat-hint> -->
+			</mat-form-field>
+			<mat-form-field appearance="fill">
+				<mat-label>Last Watered Date</mat-label>
+				<input matInput formControlName="lastWateredDate" [matDatepicker]="picker">
+				<mat-hint>MM/DD/YYYY</mat-hint>
+				<mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+				<mat-datepicker #picker></mat-datepicker>
+			</mat-form-field>
 
-		<!-- <input class="input-upload" type="file" (change)="onImageSelected($event)" accept="image/*"> -->
-		<button type="button" mat-raised-button (click)="fileInput.click()">Plant Picture</button>
-		<input hidden (change)="onImageSelected($event)" #fileInput type="file" id="file">
-		<button mat-button mat-raised-button type="submit">Add</button>
+			<!-- <input class="input-upload" type="file" (change)="onImageSelected($event)" accept="image/*"> -->
+			<button type="button" mat-raised-button (click)="fileInput.click()">Plant Picture</button>
+			<input hidden (change)="onImageSelected($event)" #fileInput type="file" id="file">
+			<button mat-button mat-raised-button color="primary" type="submit">Add</button>
+			<button mat-button mat-raised-button color="warn" *ngIf="addMode"
+				(click)="addMode=false; $event.preventDefault()">Cancel</button>
 
-	</form>
-
+		</form>
+	</div>
 	<div class="plant" *ngFor="let plant of getPlants() | async">
-		<app-plant [plant]="plant"></app-plant>
+		<app-plant *ngIf="!addMode" [plant]="plant"></app-plant>
 	</div>
 </div>

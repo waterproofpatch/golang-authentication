@@ -14,4 +14,5 @@ form {
 mat-form-field,
 button {
 	margin-top: 8px;
+	margin-bottom: 8px;
 }

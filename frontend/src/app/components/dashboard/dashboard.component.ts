@@ -12,6 +12,7 @@ import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms'
 export class DashboardComponent {
 
   selectedImage: File | null = null;
+  addMode: boolean = false
   form = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.min(3), Validators.max(30)]),
     wateringFrequency: new FormControl('', [Validators.required]),
