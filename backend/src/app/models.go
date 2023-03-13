@@ -1,6 +1,7 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"log"
 
@@ -73,6 +74,15 @@ func UpdatePlant(db *gorm.DB, id int, name string, wateringFrequency string) err
 }
 
 func AddPlant(db *gorm.DB, name string, wateringFrequency string, imageId uint, lastWaterDate string) error {
+	if name == "" {
+		return errors.New("Invalid plant name.")
+	}
+	if wateringFrequency == "" {
+		return errors.New("Invalid watering frequency.")
+	}
+	if lastWaterDate == "" {
+		return errors.New("Invalid last watering date frequency.")
+	}
 	var plant = PlantModel{
 		Name:              name,
 		WateringFrequency: wateringFrequency,
