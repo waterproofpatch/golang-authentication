@@ -60,7 +60,7 @@ export class PlantComponent {
   }
 
   getImage() {
-    if (!this.plant) {
+    if (!this.plant || this.plant.imageId == 0) {
       return
     }
     console.log("Getting image for imageId=" + this.plant.imageId)

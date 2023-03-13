@@ -35,7 +35,7 @@ type MessageModel struct {
 }
 
 func (i PlantModel) String() string {
-	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name: %s, type: %d, lastWateringDate=%s", i.ID, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name, i.WateringFrequency, i.LastWaterDate)
+	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name=%s, waterFrequency:=%s, lastWateringDate=%s", i.ID, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name, i.WateringFrequency, i.LastWaterDate)
 }
 
 func AddMessage(db *gorm.DB, message *Message) error {
@@ -63,12 +63,13 @@ func AddMessage(db *gorm.DB, message *Message) error {
 	db.Save(newDbMessage)
 	return nil
 }
-func UpdatePlant(db *gorm.DB, id int, name string, wateringFrequency string) error {
+func UpdatePlant(db *gorm.DB, id int, name string, wateringFrequency string, lastWaterDate string) error {
 	var existingplant PlantModel
 	existingplant.Id = id
 	db.First(&existingplant)
 	existingplant.Name = name
 	existingplant.WateringFrequency = wateringFrequency
+	existingplant.LastWaterDate = lastWaterDate
 	db.Save(existingplant)
 	return nil
 }

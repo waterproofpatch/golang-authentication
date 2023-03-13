@@ -27,7 +27,8 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) uint {
 	// Get the image file from the form data
 	file, _, err := r.FormFile("image")
 	if err != nil {
-		authentication.WriteError(w, "Failed finding image in request.", http.StatusBadRequest)
+		// not critical, images are optional
+		// authentication.WriteError(w, "Failed finding image in request.", http.StatusBadRequest)
 		return 0
 	}
 	defer file.Close()
@@ -118,13 +119,14 @@ func plants(w http.ResponseWriter, r *http.Request) {
 	case "POST":
 		var imageId = uploadHandler(w, r)
 		if imageId == 0 {
-			return
+			fmt.Println("Upload did not contain an image.")
 		}
 		var newPlant PlantModel
 		newPlant.ImageId = imageId
 		newPlant.Name = r.FormValue("nameOfPlant")
 		newPlant.WateringFrequency = r.FormValue("wateringFrequency")
 		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
+		fmt.Printf("Updating plant to: %s", newPlant)
 		err := AddPlant(db, newPlant.Name, newPlant.WateringFrequency, newPlant.ImageId, newPlant.LastWaterDate)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
@@ -140,7 +142,7 @@ func plants(w http.ResponseWriter, r *http.Request) {
 			authentication.WriteError(w, err.Error(), 400)
 			break
 		}
-		err = UpdatePlant(db, newPlant.Id, newPlant.Name, newPlant.WateringFrequency)
+		err = UpdatePlant(db, newPlant.Id, newPlant.Name, newPlant.WateringFrequency, newPlant.LastWaterDate)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			break

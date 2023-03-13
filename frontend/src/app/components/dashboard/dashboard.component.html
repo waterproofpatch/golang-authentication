@@ -46,7 +46,7 @@
 
 		</form>
 	</div>
-	<div class="plant" *ngFor="let plant of getPlants() | async">
+	<div class="plants" *ngFor="let plant of getPlants() | async">
 		<app-plant *ngIf="!addMode" [plant]="plant"></app-plant>
 	</div>
 </div>

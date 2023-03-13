@@ -1,4 +1,4 @@
-<div *ngIf="editMode && plant; else displayMode" class="example-container">
+<div *ngIf="editMode && plant; else displayMode" class="plant-container">
 	<mat-form-field hintLabel="Max 30 characters" appearance="fill">
 		<mat-label>Plant Name:</mat-label>
 		<input matInput [(ngModel)]="plant.name" #input maxlength="30" placeholder="Blue Juniper">
@@ -21,9 +21,9 @@
 </div>
 
 <ng-template #displayMode>
-	<mat-card *ngIf="plant != null" class="example-card">
+	<mat-card *ngIf="plant != null" class="plant-card">
 		<mat-card-header>
-			<div mat-card-avatar class="example-header-image"></div>
+			<div mat-card-avatar class="plant-header-image"></div>
 			<mat-card-title>{{plant.name}}</mat-card-title>
 			<mat-card-subtitle>Water every {{plant.wateringFrequency}} days</mat-card-subtitle>
 		</mat-card-header>

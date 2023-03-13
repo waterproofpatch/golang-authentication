@@ -44,6 +44,7 @@ export class DashboardComponent {
     console.log(this.form.value);
     var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '', this.form.controls.wateringFrequency.value || '', this.form.controls.lastWateredDate.value || '')
     this.plantsService.addPlant(plant, this.selectedImage)
+    this.addMode = false;
   }
   getPlants(): Subject<Plant[]> {
     return this.plantsService.plants

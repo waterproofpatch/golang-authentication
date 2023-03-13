@@ -1,5 +1,6 @@
-.example-card {
+.plant-card {
 	max-width: 400px;
+	margin: 10px;
 }
 
 img {
@@ -7,6 +8,6 @@ img {
 	margin-bottom: 10px;
 }
 
-.example-container mat-form-field+mat-form-field {
+.plant-container mat-form-field+mat-form-field {
 	margin-left: 8px;
 }
