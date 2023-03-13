@@ -10,6 +10,7 @@ export default interface Plant {
   id: number;
   name: string;
   wateringFrequency: string;
+  lastWaterDate: string;
   imageId: number;
 }
 
@@ -24,6 +25,7 @@ export class PlantsService extends BaseService {
         name: name,
         wateringFrequency: wateringFrequency,
         id: 0,
+        lastWaterDate: "",
         imageId: 0,
       }
       return plant;

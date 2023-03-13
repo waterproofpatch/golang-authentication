@@ -19,6 +19,7 @@ type PlantModel struct {
 	Id                int    `json:"id"`
 	Name              string `json:"name"`
 	WateringFrequency string `json:"wateringFrequency"`
+	LastWaterDate     string `json:"lastWaterDate"`
 	ImageId           uint   `json:"imageId"`
 }
 type MessageModel struct {
@@ -33,7 +34,7 @@ type MessageModel struct {
 }
 
 func (i PlantModel) String() string {
-	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name: %s, type: %d", i.ID, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name, i.WateringFrequency)
+	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name: %s, type: %d, lastWateringDate=%s", i.ID, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name, i.WateringFrequency, i.LastWaterDate)
 }
 
 func AddMessage(db *gorm.DB, message *Message) error {

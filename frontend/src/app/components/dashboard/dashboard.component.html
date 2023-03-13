@@ -1,28 +1,29 @@
 <div class="container">
 
-	<div class="form-container">
+	<form (ngSubmit)="addPlant()" [formGroup]="form">
+		<mat-form-field hintLabel="Max 30 characters" appearance="fill">
+			<mat-label>Plant Name:</mat-label>
+			<input matInput formControlName="name" #input maxlength="30" placeholder="Blue Juniper">
+			<mat-hint align="end">{{input.value.length}}/30</mat-hint>
+		</mat-form-field>
 
-		<form (ngSubmit)="addPlant()" [formGroup]="form">
-			<mat-form-field>
-				<mat-label>Name of Plant</mat-label>
-				<input matInput formControlName="nameOfPlant">
-			</mat-form-field>
+		<mat-form-field appearance="fill">
+			<mat-label>Watering Frequency</mat-label>
+			<mat-select formControlName="wateringFrequency">
+				<mat-option value=1>1 day</mat-option>
+				<mat-option value=2>2 days</mat-option>
+				<mat-option value=3>3 days</mat-option>
+				<mat-option value=4>4 days</mat-option>
+				<mat-option value=5>5 days</mat-option>
+			</mat-select>
+			<!-- <mat-hint align="end">How frequently should you water this plant</mat-hint> -->
+		</mat-form-field>
+		<!-- <input class="input-upload" type="file" (change)="onImageSelected($event)" accept="image/*"> -->
+		<button type="button" mat-raised-button (click)="fileInput.click()">Plant Picture</button>
+		<input hidden (change)="onImageSelected($event)" #fileInput type="file" id="file">
+		<button mat-button mat-raised-button type="submit">Add</button>
 
-			<mat-form-field>
-				<mat-label>Watering Frequency (in days)</mat-label>
-				<input matInput type="number" formControlName="wateringFrequency">
-			</mat-form-field>
-
-			<!-- <mat-form-field> -->
-			<mat-label>Picture of Plant</mat-label>
-			<input class="input-upload" type="file" (change)="onImageSelected($event)" accept="image/*">
-			<!-- </mat-form-field> -->
-
-			<button mat-raised-button type="submit" [disabled]="form.invalid">Submit</button>
-		</form>
-	</div>
-
-
+	</form>
 
 	<div class="plant" *ngFor="let plant of getPlants() | async">
 		<app-plant [plant]="plant"></app-plant>
