@@ -11,17 +11,11 @@ export class PlantComponent {
 
   }
   @Input() plant?: Plant
-  editMode: boolean = false
   imageUrl: string | null = null
 
   ngOnInit() {
     console.log("onInit")
     this.getImage()
-  }
-
-  editPlant() {
-    this.editMode = true;
-    return;
   }
 
   waterPlant() {
@@ -72,21 +66,6 @@ export class PlantComponent {
         };
         reader.readAsDataURL(blob);
       });
-  }
-
-  leaveEditMode() {
-    this.editMode = false;
-  }
-  save() {
-    if (this.plant) {
-      console.log("Sending plant name " + this.plant.name)
-      this.plantService.updatePlant(this.plant)
-    }
-    this.leaveEditMode();
-  }
-
-  cancel() {
-    this.leaveEditMode();
   }
 
   deletePlant() {

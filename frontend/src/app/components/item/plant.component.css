@@ -1,16 +1,35 @@
 .plant-card {
-	max-width: 700px;
-	min-width: 700px;
-	margin: 10px;
+	max-width: 250px;
+	min-width: 250px;
+	/* height: auto; */
+	max-height: 250px;
+	min-height: 250px;
 }
 
-img {
-	margin-top: 10px;
-	margin-bottom: 10px;
+mat-card img {
+	object-fit: cover;
+	/*this makes the image in src fit to the size specified below*/
+	width: 100%;
+	/* Here you can use wherever you want to specify the width and also the height of the <img>*/
+	height: 80%;
 }
 
-.plant-container mat-form-field+mat-form-field {
+/* .img-container {
+	max-width: 500px;
+	max-height: 500px;
+}
+
+.img-container img {
+	max-width: 100%;
+	max-height: 100%;
+} */
+
+/* .plant-container mat-form-field+mat-form-field {
 	margin-left: 8px;
+} */
+
+mat-card-actions button {
+	margin-right: 10px;
 }
 
 .water-times {

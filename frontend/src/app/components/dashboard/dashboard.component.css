@@ -1,6 +1,9 @@
 .plants {
 	display: flex;
 	flex-direction: row;
+	flex-wrap: wrap;
+	margin: 10px;
+	padding: 10px;
 }
 
 .container {
