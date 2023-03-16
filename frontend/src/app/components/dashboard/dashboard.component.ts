@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 export class DashboardComponent {
 
   selectedImage: File | null = null;
+  isLoading: boolean = false;
   addMode: boolean = false
   form = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.min(3), Validators.max(30)]),
@@ -45,6 +46,8 @@ export class DashboardComponent {
         setTimeout(() => this.router.navigateByUrl('/authentication?mode=login'), 0)
       }
     })
+    this.plantsService.isLoading.subscribe((x) => { if (x) { this.isLoading = true } else { this.isLoading = false } })
+
     this.plantsService.getPlants()
   }
   onImageSelected(event: any) {

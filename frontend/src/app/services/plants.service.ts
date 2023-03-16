@@ -1,7 +1,7 @@
 import { catchError } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Subject, throwError, Observable } from 'rxjs';
+import { Subject, throwError, Observable, BehaviorSubject } from 'rxjs';
 
 import { PlantsApiService } from '../apis/plants-api.service';
 import { BaseService } from './base.service';
@@ -18,6 +18,7 @@ export default interface Plant {
   providedIn: 'root'
 })
 export class PlantsService extends BaseService {
+  isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
 
   public static PlantsFactory = class {
     public static makePlant(name: string, wateringFrequency: string, lastWateredDate: string): Plant {
@@ -47,6 +48,7 @@ export class PlantsService extends BaseService {
   }
 
   deletePlant(id: number) {
+    this.isLoading.next(true)
     this.plantsApiService
       .delete(id)
       .pipe(
@@ -64,10 +66,12 @@ export class PlantsService extends BaseService {
         x = x.sort((a: any, b: any) => a.id - b.id)
         this.plants.next(x)
         this.error$.next(''); // send a benign event so observers can close modals
+        this.isLoading.next(false)
       });
   }
 
   updatePlant(plant: Plant): void {
+    this.isLoading.next(true)
     this.plantsApiService
       .put(plant)
       .pipe(
@@ -85,9 +89,11 @@ export class PlantsService extends BaseService {
         x = x.sort((a: any, b: any) => a.id - b.id)
         this.plants.next(x)
         this.error$.next(''); // send a benign event so observers can close modals
+        this.isLoading.next(false)
       });
   }
   addPlant(plant: Plant, image: File | null): void {
+    this.isLoading.next(true)
     const formData = new FormData();
     if (image) {
       formData.append('image', image, image.name);
@@ -112,10 +118,12 @@ export class PlantsService extends BaseService {
         x = x.sort((a: any, b: any) => a.id - b.id)
         this.plants.next(x)
         this.error$.next(''); // send a benign event so observers can close modals
+        this.isLoading.next(false)
       });
   }
 
   getPlants(): void {
+    this.isLoading.next(true)
     this.plantsApiService
       .get()
       .pipe(
@@ -133,6 +141,7 @@ export class PlantsService extends BaseService {
         x = x.sort((a: any, b: any) => a.id - b.id)
         this.plants.next(x)
         this.error$.next(''); // send a benign event so observers can close modals
+        this.isLoading.next(false)
       });
   }
 }
