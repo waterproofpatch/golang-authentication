@@ -30,8 +30,23 @@ export class PlantComponent {
     if (!this.plant) {
       return
     }
-    this.plant.lastWaterDate = new Date().toDateString()
-    this.plantService.updatePlant(this.plant)
+    var dialogRef = this.dialogService.displayConfirmationDialog("Did you water plant: " + this.plant.name + "?")
+    if (this.plant == null) {
+      console.log("Unexpected plant is NULL");
+      return;
+    }
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        if (!this.plant) {
+          return;
+        }
+        this.plant.lastWaterDate = new Date().toDateString()
+        this.plantService.updatePlant(this.plant)
+      } else {
+        console.log("Dialog declined.")
+      }
+    })
+
   }
 
   transformLastWaterDate(): string {
@@ -77,7 +92,10 @@ export class PlantComponent {
   }
 
   deletePlant() {
-    var dialogRef = this.dialogService.displayConfirmationDialog("Are you sure you want to delete this plant?")
+    if (!this.plant) {
+      return;
+    }
+    var dialogRef = this.dialogService.displayConfirmationDialog("Are you sure you want to delete plant: " + this.plant.name + "?")
     if (this.plant == null) {
       console.log("Unexpected plant is NULL");
       return;
