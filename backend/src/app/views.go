@@ -253,8 +253,8 @@ func InitViews(router *mux.Router) {
 	// router.HandleFunc("/api/upload", uploadHandler)
 	router.HandleFunc("/api/dashboard/{id:[0-9]+}", authentication.VerifiedOnly(dashboard)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	router.HandleFunc("/api/dashboard", dashboard).Methods("GET", "POST", "PUT", "OPTIONS")
-	router.HandleFunc("/api/plants", plants).Methods("GET", "POST", "PUT", "OPTIONS")
-	router.HandleFunc("/api/plants/{id:[0-9]+}", plants).Methods("GET", "POST", "DELETE", "PUT", "OPTIONS")
+	router.HandleFunc("/api/plants", authentication.VerifiedOnly(plants)).Methods("GET", "POST", "PUT", "OPTIONS")
+	router.HandleFunc("/api/plants/{id:[0-9]+}", authentication.VerifiedOnly(plants)).Methods("GET", "POST", "DELETE", "PUT", "OPTIONS")
 	router.HandleFunc("/api/images/{id:[0-9]+}", images).Methods("GET", "OPTIONS")
 	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)
