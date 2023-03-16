@@ -18,6 +18,7 @@ type ImageModel struct {
 type PlantModel struct {
 	gorm.Model
 	Id                int    `json:"id"`
+	Email             string `json:"email"`
 	Name              string `json:"name"`
 	WateringFrequency string `json:"wateringFrequency"`
 	LastWaterDate     string `json:"lastWaterDate"`
@@ -74,7 +75,7 @@ func UpdatePlant(db *gorm.DB, id int, name string, wateringFrequency string, las
 	return nil
 }
 
-func AddPlant(db *gorm.DB, name string, wateringFrequency string, imageId uint, lastWaterDate string) error {
+func AddPlant(db *gorm.DB, name string, wateringFrequency string, imageId uint, lastWaterDate string, email string) error {
 	if name == "" {
 		return errors.New("Invalid plant name.")
 	}
@@ -88,6 +89,7 @@ func AddPlant(db *gorm.DB, name string, wateringFrequency string, imageId uint, 
 		Name:              name,
 		WateringFrequency: wateringFrequency,
 		ImageId:           imageId,
+		Email:             email,
 		LastWaterDate:     lastWaterDate,
 	}
 

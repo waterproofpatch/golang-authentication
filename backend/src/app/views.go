@@ -91,19 +91,22 @@ func images(w http.ResponseWriter, r *http.Request) {
 		break
 	}
 }
-func plants(w http.ResponseWriter, r *http.Request) {
+func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
 	db := authentication.GetDb()
 	var plants []PlantModel
 	var plant PlantModel
 	vars := mux.Vars(r)
 	id, hasPlantId := vars["id"]
+
+	fmt.Printf("Handling plants request for %s\n", claims.Email)
+
 	switch r.Method {
 	case "GET":
 		if hasPlantId {
-			db.Find(&plant, id)
+			db.Where("email = ? AND id = ?", claims.Email, id).Find(&plant)
 			json.NewEncoder(w).Encode(plant)
 		} else {
-			db.Find(&plants)
+			db.Where("email = ?", claims.Email).Find(&plants)
 			json.NewEncoder(w).Encode(plants)
 		}
 		break
@@ -117,7 +120,7 @@ func plants(w http.ResponseWriter, r *http.Request) {
 		db.Delete(&ImageModel{}, plant.ImageId)
 		fmt.Printf("Deleting plant id=%d\n", plant.Id)
 		db.Delete(&PlantModel{}, id)
-		db.Find(&plants)
+		db.Where("email = ?", claims.Email).Find(&plants)
 		json.NewEncoder(w).Encode(plants)
 		break
 	case "POST":
@@ -131,12 +134,12 @@ func plants(w http.ResponseWriter, r *http.Request) {
 		newPlant.WateringFrequency = r.FormValue("wateringFrequency")
 		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
 		fmt.Printf("Updating plant to: %s", newPlant)
-		err := AddPlant(db, newPlant.Name, newPlant.WateringFrequency, newPlant.ImageId, newPlant.LastWaterDate)
+		err := AddPlant(db, newPlant.Name, newPlant.WateringFrequency, newPlant.ImageId, newPlant.LastWaterDate, claims.Email)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			break
 		}
-		db.Find(&plants)
+		db.Where("email = ?", claims.Email).Find(&plants)
 		json.NewEncoder(w).Encode(plants)
 		break
 	case "PUT":
@@ -151,13 +154,13 @@ func plants(w http.ResponseWriter, r *http.Request) {
 			authentication.WriteError(w, err.Error(), 400)
 			break
 		}
-		db.Find(&plants)
+		db.Where("email = ?", claims.Email).Find(&plants)
 		json.NewEncoder(w).Encode(plants)
 		break
 	}
 
 }
-func dashboard(w http.ResponseWriter, r *http.Request) {
+func dashboard(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
 	switch r.Method {
 	case "GET":
 		break
@@ -256,7 +259,7 @@ func InitViews(router *mux.Router) {
 
 	// router.HandleFunc("/api/upload", uploadHandler)
 	router.HandleFunc("/api/dashboard/{id:[0-9]+}", authentication.VerifiedOnly(dashboard)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-	router.HandleFunc("/api/dashboard", dashboard).Methods("GET", "POST", "PUT", "OPTIONS")
+	router.HandleFunc("/api/dashboard", authentication.VerifiedOnly(dashboard)).Methods("GET", "POST", "PUT", "OPTIONS")
 	router.HandleFunc("/api/plants", authentication.VerifiedOnly(plants)).Methods("GET", "POST", "PUT", "OPTIONS")
 	router.HandleFunc("/api/plants/{id:[0-9]+}", authentication.VerifiedOnly(plants)).Methods("GET", "POST", "DELETE", "PUT", "OPTIONS")
 	router.HandleFunc("/api/images/{id:[0-9]+}", images).Methods("GET", "OPTIONS")
