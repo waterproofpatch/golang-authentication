@@ -12,10 +12,17 @@ export class PlantComponent {
   }
   @Input() plant?: Plant
   imageUrl: string | null = null
+  backgroundColor: string = 'black'; // Set the default background color here
 
   ngOnInit() {
     console.log("onInit")
     this.getImage()
+    if (new Date(this.getNextWaterDate()) < new Date()) {
+      if (this.plant) {
+        console.log("plant " + this.plant.id + " is due for watering!")
+        this.backgroundColor = "red"
+      }
+    }
   }
 
   waterPlant() {
