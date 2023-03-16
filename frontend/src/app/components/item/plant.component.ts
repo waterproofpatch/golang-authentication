@@ -10,12 +10,13 @@ import Plant, { PlantsService } from 'src/app/services/plants.service';
   styleUrls: ['./plant.component.css']
 })
 export class PlantComponent {
+  @Input() plant?: Plant
+  isImageLoading: boolean = false
+  imageUrl: string | null = null
+  backgroundColor: string = 'black'; // Set the default background color here
   constructor(private router: Router, private plantService: PlantsService, private dialogService: DialogService, private authenticationService: AuthenticationService) {
 
   }
-  @Input() plant?: Plant
-  imageUrl: string | null = null
-  backgroundColor: string = 'black'; // Set the default background color here
 
   ngOnInit() {
     if (!this.authenticationService.isAuthenticated$.value) {
@@ -86,6 +87,7 @@ export class PlantComponent {
       return
     }
     console.log("Getting image for imageId=" + this.plant.imageId)
+    this.isImageLoading = true;
     this.plantService.getPlantImage(this.plant.imageId)
       .subscribe(blob => {
         const reader = new FileReader();
@@ -93,6 +95,7 @@ export class PlantComponent {
           this.imageUrl = reader.result as string;
         };
         reader.readAsDataURL(blob);
+        this.isImageLoading = false;
       });
   }
 

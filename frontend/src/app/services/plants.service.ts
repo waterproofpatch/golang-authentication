@@ -43,7 +43,7 @@ export class PlantsService extends BaseService {
     super()
   }
 
-  getPlantImage(imageId: number) {
+  getPlantImage(imageId: number): Observable<any> {
     return this.plantsApiService.getImage(imageId)
   }
 

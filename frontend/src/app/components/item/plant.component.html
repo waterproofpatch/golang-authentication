@@ -4,8 +4,9 @@
 		<mat-card-title>{{plant.name}}</mat-card-title>
 		<mat-card-subtitle>Water every {{plant.wateringFrequency}} days</mat-card-subtitle>
 	</mat-card-header>
-	<img *ngIf="imageUrl != null" mat-card-image [src]="imageUrl" alt="Photo">
-	<img *ngIf="imageUrl == null" [src]="'/assets/placeholder.jpg'" alt="Image">
+	<img *ngIf="isImageLoading" mat-card-image [src]="'/assets/loading.gif'" alt="Photo">
+	<img *ngIf="!isImageLoading && imageUrl != null" mat-card-image [src]="imageUrl" alt="Photo">
+	<img *ngIf="!isImageLoading && imageUrl == null" [src]="'/assets/placeholder.jpg'" alt="Image">
 	<mat-card-content>
 		<div class="water-times">
 
