@@ -4,6 +4,7 @@
 	/* height: auto; */
 	max-height: 250px;
 	min-height: 250px;
+	margin: 10px;
 }
 
 mat-card img {
@@ -13,20 +14,6 @@ mat-card img {
 	/* Here you can use wherever you want to specify the width and also the height of the <img>*/
 	height: 80%;
 }
-
-/* .img-container {
-	max-width: 500px;
-	max-height: 500px;
-}
-
-.img-container img {
-	max-width: 100%;
-	max-height: 100%;
-} */
-
-/* .plant-container mat-form-field+mat-form-field {
-	margin-left: 8px;
-} */
 
 mat-card-actions button {
 	margin-right: 10px;
