@@ -3,6 +3,8 @@ import { Subject, throwError, Observable } from 'rxjs';
 import { PlantsService } from 'src/app/services/plants.service';
 import Plant from 'src/app/services/plants.service';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { AuthenticationService } from 'src/app/services/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,6 +24,8 @@ export class DashboardComponent {
   constructor(
     private plantsService: PlantsService,
     private formBuilder: FormBuilder,
+    private authenticationService: AuthenticationService,
+    private router: Router
   ) {
     this.form = this.formBuilder.group({
       name: [''],
@@ -31,6 +35,10 @@ export class DashboardComponent {
   }
 
   ngOnInit(): void {
+    if (!this.authenticationService.isAuthenticated$.value) {
+      this.router.navigateByUrl('/authentication?mode=login');
+      return
+    }
     this.plantsService.getPlants()
   }
   onImageSelected(event: any) {

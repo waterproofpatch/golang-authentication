@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 import { DialogService } from 'src/app/services/dialog.service';
 import Plant, { PlantsService } from 'src/app/services/plants.service';
 
@@ -8,7 +10,7 @@ import Plant, { PlantsService } from 'src/app/services/plants.service';
   styleUrls: ['./plant.component.css']
 })
 export class PlantComponent {
-  constructor(private plantService: PlantsService, private dialogService: DialogService) {
+  constructor(private router: Router, private plantService: PlantsService, private dialogService: DialogService, private authenticationService: AuthenticationService) {
 
   }
   @Input() plant?: Plant
@@ -16,7 +18,10 @@ export class PlantComponent {
   backgroundColor: string = 'black'; // Set the default background color here
 
   ngOnInit() {
-    console.log("onInit")
+    if (!this.authenticationService.isAuthenticated$.value) {
+      this.router.navigateByUrl('/authentication?mode=login');
+      return
+    }
     this.getImage()
     if (new Date(this.getNextWaterDate()) < new Date()) {
       if (this.plant) {
