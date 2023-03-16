@@ -61,6 +61,7 @@ export class PlantsService extends BaseService {
       )
       .subscribe((x) => {
         console.log('Got plants ' + x);
+        x = x.sort((a: any, b: any) => a.id - b.id)
         this.plants.next(x)
         this.error$.next(''); // send a benign event so observers can close modals
       });
@@ -81,6 +82,7 @@ export class PlantsService extends BaseService {
       )
       .subscribe((x) => {
         console.log('Got plants ' + x);
+        x = x.sort((a: any, b: any) => a.id - b.id)
         this.plants.next(x)
         this.error$.next(''); // send a benign event so observers can close modals
       });
@@ -107,6 +109,7 @@ export class PlantsService extends BaseService {
       )
       .subscribe((x) => {
         console.log('Got plants ' + x);
+        x = x.sort((a: any, b: any) => a.id - b.id)
         this.plants.next(x)
         this.error$.next(''); // send a benign event so observers can close modals
       });
@@ -127,6 +130,7 @@ export class PlantsService extends BaseService {
       )
       .subscribe((x) => {
         console.log('Got plants ' + x);
+        x = x.sort((a: any, b: any) => a.id - b.id)
         this.plants.next(x)
         this.error$.next(''); // send a benign event so observers can close modals
       });

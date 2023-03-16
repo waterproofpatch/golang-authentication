@@ -22,6 +22,7 @@ export class PlantsApiService extends BaseService {
     return this.http.post(this.getUrlBase() + this.plantsApiUrl, plant, this.httpOptions);
   }
   put(plant: Plant): Observable<any> {
+    console.log("Updating plant " + plant.id)
     return this.http.put(this.getUrlBase() + this.plantsApiUrl, plant, this.httpOptions);
   }
   getImage(id: number): Observable<any> {
