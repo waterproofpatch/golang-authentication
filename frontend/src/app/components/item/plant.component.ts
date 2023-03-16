@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { DialogService } from 'src/app/services/dialog.service';
 import Plant, { PlantsService } from 'src/app/services/plants.service';
 
 @Component({
@@ -7,7 +8,7 @@ import Plant, { PlantsService } from 'src/app/services/plants.service';
   styleUrls: ['./plant.component.css']
 })
 export class PlantComponent {
-  constructor(private plantService: PlantsService) {
+  constructor(private plantService: PlantsService, private dialogService: DialogService) {
 
   }
   @Input() plant?: Plant
@@ -76,11 +77,21 @@ export class PlantComponent {
   }
 
   deletePlant() {
+    var dialogRef = this.dialogService.displayConfirmationDialog("Are you sure you want to delete this plant?")
     if (this.plant == null) {
       console.log("Unexpected plant is NULL");
       return;
     }
-    this.plantService.deletePlant(this.plant.id);
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        if (!this.plant) {
+          return;
+        }
+        this.plantService.deletePlant(this.plant.id);
+      } else {
+        console.log("Dialog declined.")
+      }
+    })
 
   }
 }

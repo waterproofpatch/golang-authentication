@@ -8,6 +8,7 @@ import { AuthenticationComponent } from './components/authentication/authenticat
 import { AuthenticationService } from './services/authentication.service';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
 import { LogDialogComponent } from './components/log-dialog/log-dialog.component';
+import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 import { ErrorDialogComponent } from './components/error-dialog/error-dialog.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
@@ -41,6 +42,7 @@ import { UserComponent } from './components/user/user.component';
   declarations: [
     AuthenticationComponent,
     LogDialogComponent,
+    ConfirmationDialogComponent,
     ErrorDialogComponent,
     AppComponent,
     BaseComponent,

@@ -112,6 +112,10 @@ func plants(w http.ResponseWriter, r *http.Request) {
 			authentication.WriteError(w, "Must provide id!", http.StatusBadRequest)
 			break
 		}
+		db.Find(&plant, id)
+		fmt.Printf("Deleting plant imageId=%d\n", plant.ImageId)
+		db.Delete(&ImageModel{}, plant.ImageId)
+		fmt.Printf("Deleting plant id=%d\n", plant.Id)
 		db.Delete(&PlantModel{}, id)
 		db.Find(&plants)
 		json.NewEncoder(w).Encode(plants)

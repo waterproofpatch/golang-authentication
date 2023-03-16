@@ -10,7 +10,7 @@ const routes: Routes = [
   { path: 'home', component: DashboardComponent },
   { path: 'chat', component: ChatComponent },
   { path: 'profile', component: ProfileComponent },
-  { path: '', redirectTo: '/chat', pathMatch: 'full' },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
 ];
 
 @NgModule({
