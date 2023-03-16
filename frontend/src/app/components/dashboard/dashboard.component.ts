@@ -39,6 +39,12 @@ export class DashboardComponent {
       this.router.navigateByUrl('/authentication?mode=login');
       return
     }
+    this.authenticationService.isAuthenticated$.subscribe((x) => {
+      if (!x) {
+        this.router.navigateByUrl('/authentication?mode=login');
+        setTimeout(() => this.router.navigateByUrl('/authentication?mode=login'), 0)
+      }
+    })
     this.plantsService.getPlants()
   }
   onImageSelected(event: any) {
