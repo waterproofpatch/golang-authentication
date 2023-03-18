@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { DialogService } from 'src/app/services/dialog.service';
 import Plant, { PlantsService } from 'src/app/services/plants.service';
+import { EventEmitter } from '@angular/core';
+import { Output } from '@angular/core';
 
 @Component({
   selector: 'app-plant',
@@ -13,7 +15,9 @@ export class PlantComponent {
   @Input() plant?: Plant
   isImageLoading: boolean = false
   imageUrl: string | null = null
+  @Output() editModeEmitter = new EventEmitter<Plant>()
   backgroundColor: string = 'black'; // Set the default background color here
+
   constructor(private router: Router, private plantService: PlantsService, private dialogService: DialogService, private authenticationService: AuthenticationService) {
 
   }
@@ -32,6 +36,12 @@ export class PlantComponent {
     }
   }
 
+  editPlant() {
+    if (!this.plant) {
+      return;
+    }
+    this.editModeEmitter.emit(this.plant)
+  }
   waterPlant() {
     if (!this.plant) {
       return

@@ -16,6 +16,7 @@ export class DashboardComponent {
   selectedImage: File | null = null;
   isLoading: boolean = false;
   addMode: boolean = false
+  editingPlant: Plant | null = null
   form = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.min(3), Validators.max(30)]),
     wateringFrequency: new FormControl('', [Validators.required]),
@@ -50,6 +51,16 @@ export class DashboardComponent {
 
     this.plantsService.getPlants()
   }
+
+  editPlant(plant: Plant) {
+    console.log("Plant ID " + plant.id + " wants edit")
+    this.editingPlant = plant
+    this.form.controls.name.setValue(plant.name)
+    this.form.controls.wateringFrequency.setValue(plant.wateringFrequency)
+    this.form.controls.lastWateredDate.setValue(plant.lastWaterDate)
+    this.addMode = true
+  }
+
   onImageSelected(event: any) {
     this.selectedImage = event.target.files[0];
   }
@@ -57,6 +68,9 @@ export class DashboardComponent {
   get wateringFrequency() { return this.form.get('wateringFrequency'); }
 
   addPlant() {
+    if (this.editingPlant) {
+      console.log("A plant has been edited (not added)")
+    }
     // Perform actions when the form is submitted
     console.log(this.form.value);
     var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '', this.form.controls.wateringFrequency.value || '', this.form.controls.lastWateredDate.value || '')

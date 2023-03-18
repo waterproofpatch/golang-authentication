@@ -1,4 +1,4 @@
-<mat-card *ngIf="plant != null" class="plant-card">
+<mat-card (click)="editPlant()" *ngIf="plant != null" class="plant-card">
 	<mat-card-header>
 		<div mat-card-avatar class="plant-header-image"></div>
 		<mat-card-title>{{plant.name}}</mat-card-title>
