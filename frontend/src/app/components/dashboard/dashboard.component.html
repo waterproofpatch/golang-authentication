@@ -56,13 +56,13 @@
 				<button *ngIf="!editingPlant" mat-button mat-raised-button color="primary"
 					type="submit">Add</button>
 				<button mat-button mat-raised-button color="warn" *ngIf="addMode"
-					(click)="addMode=false; $event.preventDefault()">Cancel</button>
+					(click)="addMode=false; getPlants(); $event.preventDefault()">Cancel</button>
 
 			</form>
 		</div>
 	</div>
 </div>
 <div class="plants" *ngIf="!addMode">
-	<app-plant (editModeEmitter)="editPlant($event)" *ngFor="let plant of getPlants() | async"
+	<app-plant (editModeEmitter)="editPlant($event)" *ngFor="let plant of plants | async"
 		[plant]="plant"></app-plant>
 </div>

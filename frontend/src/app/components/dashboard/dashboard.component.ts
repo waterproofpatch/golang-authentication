@@ -49,7 +49,7 @@ export class DashboardComponent {
     })
     this.plantsService.isLoading.subscribe((x) => { if (x) { this.isLoading = true } else { this.isLoading = false } })
 
-    this.plantsService.getPlants()
+    this.getPlants()
   }
 
   editPlant(plant: Plant) {
@@ -77,7 +77,11 @@ export class DashboardComponent {
     this.plantsService.addPlant(plant, this.selectedImage)
     this.addMode = false;
   }
-  getPlants(): Subject<Plant[]> {
+  getPlants(): void {
+    this.plantsService.getPlants()
+  }
+
+  get plants(): Subject<Plant[]> {
     return this.plantsService.plants
   }
 }
