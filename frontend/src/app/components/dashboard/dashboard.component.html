@@ -51,12 +51,14 @@
 				<button type="button" mat-raised-button (click)="fileInput.click()">Plant
 					Picture</button>
 				<input hidden (change)="onImageSelected($event)" #fileInput type="file" id="file">
+				{{selectedImagePreview}}
+				<img id="preview" [src]="selectedImagePreview_safe" />
 				<button *ngIf="editingPlant" mat-button mat-raised-button color="primary"
 					type="submit">Update</button>
 				<button *ngIf="!editingPlant" mat-button mat-raised-button color="primary"
 					type="submit">Add</button>
 				<button mat-button mat-raised-button color="warn" *ngIf="addMode"
-					(click)="addMode=false; getPlants(); $event.preventDefault()">Cancel</button>
+					(click)="cancelAddMode(); $event.preventDefault()">Cancel</button>
 
 			</form>
 		</div>

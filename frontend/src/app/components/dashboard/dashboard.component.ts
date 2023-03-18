@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { Subject, throwError, Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 import { PlantsService } from 'src/app/services/plants.service';
 import Plant from 'src/app/services/plants.service';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router } from '@angular/router';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,6 +15,8 @@ import { Router } from '@angular/router';
 export class DashboardComponent {
 
   selectedImage: File | null = null;
+  selectedImagePreview_safe: SafeUrl | null = null;
+  selectedImagePreview: string = "/assets/placeholder.jpg"
   isLoading: boolean = false;
   addMode: boolean = false
   editingPlant: Plant | null = null
@@ -24,6 +27,7 @@ export class DashboardComponent {
   });
 
   constructor(
+    private sanitizer: DomSanitizer,
     private plantsService: PlantsService,
     private formBuilder: FormBuilder,
     private authenticationService: AuthenticationService,
@@ -48,6 +52,7 @@ export class DashboardComponent {
       }
     })
     this.plantsService.isLoading.subscribe((x) => { if (x) { this.isLoading = true } else { this.isLoading = false } })
+    this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
 
     this.getPlants()
   }
@@ -61,8 +66,18 @@ export class DashboardComponent {
     this.addMode = true
   }
 
+  cancelAddMode() {
+    this.addMode = false;
+    this.selectedImagePreview = "/assets/placeholder.jpg"
+    this.getPlants()
+  }
+
   onImageSelected(event: any) {
     this.selectedImage = event.target.files[0];
+    if (this.selectedImage) {
+      this.selectedImagePreview = URL.createObjectURL(this.selectedImage)
+      this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
+    }
   }
   get name() { return this.form.get('name'); }
   get wateringFrequency() { return this.form.get('wateringFrequency'); }
