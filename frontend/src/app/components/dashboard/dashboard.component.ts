@@ -69,6 +69,7 @@ export class DashboardComponent {
   cancelAddMode() {
     this.addMode = false;
     this.selectedImagePreview = "/assets/placeholder.jpg"
+    this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
     this.getPlants()
   }
 

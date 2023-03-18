@@ -25,3 +25,9 @@ button {
 	margin-top: 8px;
 	margin-bottom: 8px;
 }
+
+img {
+	width: 100%;
+	max-width: 250px;
+	height: auto;
+}
