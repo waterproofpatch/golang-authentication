@@ -72,7 +72,7 @@ func newHub() *Hub {
 }
 
 func (h *Hub) broadcastMessage(message *Message) {
-	for client, _ := range h.clients {
+	for client := range h.clients {
 		fmt.Printf("Broadcasting message to client %s\n", client.username)
 		select {
 		case client.send <- message:
