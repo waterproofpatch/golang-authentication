@@ -38,6 +38,11 @@
 						<mat-option value=20>20 days</mat-option>
 					</mat-select>
 				</mat-form-field>
+				<button mat-button mat-raised-button
+					(click)="getSuggestedWateringFrequency(); $event.preventDefault()">Get Suggested
+					Watering Frequency
+				</button>
+				<p>Suggested Frequency: {{suggestedWateringFrequency | async}}</p>
 				<mat-form-field appearance="fill">
 					<mat-label>Last Watered Date</mat-label>
 					<input matInput formControlName="lastWateredDate" [matDatepicker]="picker">

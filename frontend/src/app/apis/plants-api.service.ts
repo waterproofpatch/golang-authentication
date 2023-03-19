@@ -9,12 +9,16 @@ import Plant from '../services/plants.service';
   providedIn: 'root',
 })
 export class PlantsApiService extends BaseService {
+  plantsInfoApiUrl = '/api/plantsInfo';
   plantsApiUrl = '/api/plants';
   imagesApiUrl = '/api/images';
   constructor(private http: HttpClient) {
     super();
   }
-
+  postPlantInfoData(plantName: string): Observable<any> {
+    // return this.http.post(this.getUrlBase() + this.plantsInfoApiUrl, formData, this.httpOptionsNonJson);
+    return this.http.post(this.getUrlBase() + this.plantsInfoApiUrl, { "plantName": plantName }, this.httpOptions);
+  }
   postFormData(formData: any): Observable<any> {
     return this.http.post(this.getUrlBase() + this.plantsApiUrl, formData, this.httpOptionsNonJson);
   }

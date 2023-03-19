@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { PlantsService } from 'src/app/services/plants.service';
 import Plant from 'src/app/services/plants.service';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -14,6 +14,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 })
 export class DashboardComponent {
 
+  suggestedWateringFrequency: BehaviorSubject<number> = new BehaviorSubject<number>(0)
   selectedImage: File | null = null;
   selectedImagePreview_safe: SafeUrl | null = null;
   selectedImagePreview: string = "/assets/placeholder.jpg"
@@ -51,12 +52,22 @@ export class DashboardComponent {
         setTimeout(() => this.router.navigateByUrl('/authentication?mode=login'), 0)
       }
     })
+    this.plantsService.suggestedWateringFrequency.subscribe((x) => {
+      console.log("Updated watering frequency: " + x)
+      this.suggestedWateringFrequency.next(x)
+    })
     this.plantsService.isLoading.subscribe((x) => { if (x) { this.isLoading = true } else { this.isLoading = false } })
     this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
 
     this.getPlants()
   }
 
+  getSuggestedWateringFrequency() {
+    let plantName = this.form.controls.name.value
+    if (plantName) {
+      this.plantsService.getPlantWateringFrequency(plantName)
+    }
+  }
   editPlant(event: any) {
     let plant = event.plant
     let imageUrl = event.imageUrl

@@ -23,7 +23,7 @@ func getApiKey() string {
 	return apiKey
 }
 
-func getChatGptInfo(name string) {
+func chatgptGetWateringFruencyByPlantName(name string) float64 {
 	chat := chatgpt.New(getApiKey(), "user_id(not required)", 30*time.Second)
 	defer chat.Close()
 	//
@@ -31,13 +31,20 @@ func getChatGptInfo(name string) {
 	//case <-chat.GetDoneChan():
 	//	fmt.Println("time out/finish")
 	//}
-	question := "How often should I water a ZZ plant"
+	// question := "How often should I water a ZZ plant"
+	question := fmt.Sprintf("How often shuld I water a %s plant? Answer in JSON, and include a single integer representing the number of days between watering in the JSON key 'waterFrequency'.", name)
 	fmt.Printf("Q: %s\n", question)
 	answer, err := chat.Chat(question)
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Printf("A: %s\n", answer)
+	var jsonObject map[string]interface{}
+	err = json.Unmarshal([]byte(answer), &jsonObject)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return jsonObject["waterFrequency"].(float64)
 
 }
 
@@ -119,6 +126,33 @@ func images(w http.ResponseWriter, r *http.Request) {
 		break
 	}
 }
+func plantsInfo(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
+	// ask chatgpt a question
+	// name := r.FormValue("nameOfPlant")
+	var jsonObject map[string]interface{}
+	err := json.NewDecoder(r.Body).Decode(&jsonObject)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	plantName, ok := jsonObject["plantName"].(string)
+	if !ok {
+		// jsonObject["plantName"] is not a string
+		// handle the error appropriately
+	}
+	var wateringFrequency = chatgptGetWateringFruencyByPlantName(plantName)
+	response := map[string]interface{}{
+		"wateringFrequency": wateringFrequency,
+	}
+	jsonResponse, err := json.Marshal(response)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("JSON response is %s", jsonResponse)
+	json.NewEncoder(w).Encode(wateringFrequency)
+}
+
 func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
 	db := authentication.GetDb()
 	var plants []PlantModel
@@ -168,9 +202,6 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			break
 		}
 		db.Where("email = ?", claims.Email).Find(&plants)
-
-		// ask chatgpt a question
-		getChatGptInfo(newPlant.Name)
 
 		json.NewEncoder(w).Encode(plants)
 		break
@@ -314,6 +345,7 @@ func InitViews(router *mux.Router) {
 	router.HandleFunc("/api/dashboard/{id:[0-9]+}", authentication.VerifiedOnly(dashboard)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	router.HandleFunc("/api/dashboard", authentication.VerifiedOnly(dashboard)).Methods("GET", "POST", "PUT", "OPTIONS")
 	router.HandleFunc("/api/plants", authentication.VerifiedOnly(plants)).Methods("GET", "POST", "PUT", "OPTIONS")
+	router.HandleFunc("/api/plantsInfo", authentication.VerifiedOnly(plantsInfo)).Methods("POST", "OPTIONS")
 	router.HandleFunc("/api/plants/{id:[0-9]+}", authentication.VerifiedOnly(plants)).Methods("GET", "POST", "DELETE", "PUT", "OPTIONS")
 	router.HandleFunc("/api/images/{id:[0-9]+}", images).Methods("GET", "OPTIONS")
 	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {

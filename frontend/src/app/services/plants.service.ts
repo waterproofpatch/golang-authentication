@@ -19,6 +19,8 @@ export default interface Plant {
 })
 export class PlantsService extends BaseService {
   isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  suggestedWateringFrequency: BehaviorSubject<number> = new BehaviorSubject<number>(0)
+
 
   public static PlantsFactory = class {
     public static makePlant(name: string, wateringFrequency: string, lastWateredDate: string): Plant {
@@ -45,6 +47,14 @@ export class PlantsService extends BaseService {
 
   getPlantImage(imageId: number): Observable<any> {
     return this.plantsApiService.getImage(imageId)
+  }
+
+  getPlantWateringFrequency(plantName: string) {
+    return this.plantsApiService.postPlantInfoData(plantName).subscribe((x) => {
+      console.log("Got watering frequency " + x.wateringFrequency)
+      console.log("Got watering frequency (raw) " + x)
+      this.suggestedWateringFrequency.next(x)
+    })
   }
 
   deletePlant(id: number) {
