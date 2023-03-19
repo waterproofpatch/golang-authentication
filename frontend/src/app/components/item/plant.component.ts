@@ -57,7 +57,8 @@ export class PlantComponent {
           return;
         }
         this.plant.lastWaterDate = new Date().toDateString()
-        this.plantService.updatePlant(this.plant)
+        // not updating the image for this plant
+        this.plantService.updatePlant(this.plant, null)
       } else {
         console.log("Dialog declined.")
       }

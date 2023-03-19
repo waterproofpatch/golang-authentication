@@ -86,9 +86,12 @@ export class DashboardComponent {
   addPlant() {
     if (this.editingPlant) {
       console.log("A plant has been edited (not added)")
+      var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '', this.form.controls.wateringFrequency.value || '', this.form.controls.lastWateredDate.value || '')
+      plant.id = this.editingPlant.id
+      this.plantsService.updatePlant(plant, this.selectedImage)
+      return
     }
     // Perform actions when the form is submitted
-    console.log(this.form.value);
     var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '', this.form.controls.wateringFrequency.value || '', this.form.controls.lastWateredDate.value || '')
     this.plantsService.addPlant(plant, this.selectedImage)
     this.addMode = false;

@@ -64,16 +64,25 @@ func AddMessage(db *gorm.DB, message *Message) error {
 	db.Save(newDbMessage)
 	return nil
 }
-func UpdatePlant(db *gorm.DB, id int, name string, wateringFrequency string, lastWaterDate string) error {
+
+func UpdatePlant(db *gorm.DB, id int, name string, wateringFrequency string, imageId uint, lastWaterDate string, email string) error {
 	var existingplant PlantModel
 	existingplant.Id = id
 	db.First(&existingplant)
+	if existingplant.ImageId != 0 {
+		fmt.Printf("Must first remove old plant image ID=%d\n", existingplant.ImageId)
+		db.Delete(&ImageModel{}, existingplant.ImageId)
+	}
+
+	// imageId exists by now since we process the image before calling this function to update the plant
+	existingplant.ImageId = imageId
 	existingplant.Name = name
 	existingplant.WateringFrequency = wateringFrequency
 	existingplant.LastWaterDate = lastWaterDate
 	db.Save(existingplant)
 	return nil
 }
+
 
 func AddPlant(db *gorm.DB, name string, wateringFrequency string, imageId uint, lastWaterDate string, email string) error {
 	if name == "" {

@@ -70,10 +70,18 @@ export class PlantsService extends BaseService {
       });
   }
 
-  updatePlant(plant: Plant): void {
+  updatePlant(plant: Plant, image: File | null): void {
     this.isLoading.next(true)
+    const formData = new FormData();
+    if (image) {
+      formData.append('image', image, image.name);
+    }
+    formData.append('id', plant.id.toString())
+    formData.append('nameOfPlant', plant.name)
+    formData.append('wateringFrequency', plant.wateringFrequency.toString())
+    formData.append('lastWateredDate', plant.lastWaterDate)
     this.plantsApiService
-      .put(plant)
+      .putFormData(formData)
       .pipe(
         catchError((error: any) => {
           if (error instanceof HttpErrorResponse) {

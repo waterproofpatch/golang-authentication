@@ -18,6 +18,9 @@ export class PlantsApiService extends BaseService {
   postFormData(formData: any): Observable<any> {
     return this.http.post(this.getUrlBase() + this.plantsApiUrl, formData, this.httpOptionsNonJson);
   }
+  putFormData(formData: any): Observable<any> {
+    return this.http.put(this.getUrlBase() + this.plantsApiUrl, formData, this.httpOptionsNonJson);
+  }
   post(plant: Plant): Observable<any> {
     return this.http.post(this.getUrlBase() + this.plantsApiUrl, plant, this.httpOptions);
   }

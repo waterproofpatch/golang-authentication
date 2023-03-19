@@ -66,6 +66,8 @@ func images(w http.ResponseWriter, r *http.Request) {
 	imageId, hasImageId := vars["id"]
 	db := authentication.GetDb()
 	fmt.Printf("imageId=%s\n", imageId)
+
+	// frontend can request this when they get a plant with an imageId nonzero
 	switch r.Method {
 	case "GET":
 		if hasImageId {
@@ -143,13 +145,23 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		json.NewEncoder(w).Encode(plants)
 		break
 	case "PUT":
-		var newPlant PlantModel
-		err := json.NewDecoder(r.Body).Decode(&newPlant)
-		if err != nil {
-			authentication.WriteError(w, err.Error(), 400)
-			break
+		var imageId = uploadHandler(w, r)
+		if imageId == 0 {
+			fmt.Println("Upload did not contain an image.")
 		}
-		err = UpdatePlant(db, newPlant.Id, newPlant.Name, newPlant.WateringFrequency, newPlant.LastWaterDate)
+		var newPlant PlantModel
+		newPlant.ImageId = imageId
+		newPlant.Name = r.FormValue("nameOfPlant")
+		newPlant.WateringFrequency = r.FormValue("wateringFrequency")
+		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
+		plantId, err := strconv.Atoi(r.FormValue("id"))
+		if err != nil {
+			authentication.WriteError(w, "Invalid plant ID", http.StatusBadRequest)
+			return
+		}
+		newPlant.Id = plantId
+		fmt.Printf("Updating plant id=%d to: %s", newPlant.Id, newPlant)
+		err = UpdatePlant(db, newPlant.Id, newPlant.Name, newPlant.WateringFrequency, newPlant.ImageId, newPlant.LastWaterDate, claims.Email)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			break
