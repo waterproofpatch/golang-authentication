@@ -37,7 +37,6 @@
 						<mat-option value=19>19 days</mat-option>
 						<mat-option value=20>20 days</mat-option>
 					</mat-select>
-					<!-- <mat-hint align="end">How frequently should you water this plant</mat-hint> -->
 				</mat-form-field>
 				<mat-form-field appearance="fill">
 					<mat-label>Last Watered Date</mat-label>
@@ -47,7 +46,6 @@
 					<mat-datepicker #picker></mat-datepicker>
 				</mat-form-field>
 
-				<!-- <input class="input-upload" type="file" (change)="onImageSelected($event)" accept="image/*"> -->
 				<button type="button" mat-raised-button (click)="fileInput.click()">Plant
 					Picture</button>
 				<input hidden (change)="onImageSelected($event)" #fileInput type="file" id="file">
