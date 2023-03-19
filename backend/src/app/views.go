@@ -145,23 +145,34 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		json.NewEncoder(w).Encode(plants)
 		break
 	case "PUT":
-		var imageId = uploadHandler(w, r)
-		if imageId == 0 {
-			fmt.Println("Upload did not contain an image.")
-		}
-		var newPlant PlantModel
-		newPlant.ImageId = imageId
-		newPlant.Name = r.FormValue("nameOfPlant")
-		newPlant.WateringFrequency = r.FormValue("wateringFrequency")
-		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
 		plantId, err := strconv.Atoi(r.FormValue("id"))
+		var isNewImage = false
 		if err != nil {
 			authentication.WriteError(w, "Invalid plant ID", http.StatusBadRequest)
 			return
 		}
+		var existingPlant PlantModel
+		db.First(&existingPlant, plantId)
+		var newPlant PlantModel
+		var imageId = uploadHandler(w, r)
+		if imageId == 0 {
+			fmt.Println("Upload did not contain an image.")
+			newPlant.ImageId = existingPlant.ImageId
+		} else {
+		// only update imageId if the user changed the image. Otherwise, 
+		// they may have only updated non-image stuff. If they had the 
+		// default image before, they'll still have it. If they didn't update 
+		// their image, then their plant has the old imageId. 
+			newPlant.ImageId = imageId
+			isNewImage = true
+
+		}
+		newPlant.Name = r.FormValue("nameOfPlant")
+		newPlant.WateringFrequency = r.FormValue("wateringFrequency")
+		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
 		newPlant.Id = plantId
 		fmt.Printf("Updating plant id=%d to: %s", newPlant.Id, newPlant)
-		err = UpdatePlant(db, newPlant.Id, newPlant.Name, newPlant.WateringFrequency, newPlant.ImageId, newPlant.LastWaterDate, claims.Email)
+		err = UpdatePlant(db, newPlant.Id, newPlant.Name, newPlant.WateringFrequency, newPlant.ImageId, newPlant.LastWaterDate, claims.Email, isNewImage)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			break

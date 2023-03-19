@@ -15,7 +15,7 @@ export class PlantComponent {
   @Input() plant?: Plant
   isImageLoading: boolean = false
   imageUrl: string | null = null
-  @Output() editModeEmitter = new EventEmitter<Plant>()
+  @Output() editModeEmitter = new EventEmitter<{ plant: Plant, imageUrl: string | null }>()
   backgroundColor: string = 'black'; // Set the default background color here
 
   constructor(private router: Router, private plantService: PlantsService, private dialogService: DialogService, private authenticationService: AuthenticationService) {
@@ -40,7 +40,7 @@ export class PlantComponent {
     if (!this.plant) {
       return;
     }
-    this.editModeEmitter.emit(this.plant)
+    this.editModeEmitter.emit({ plant: this.plant, imageUrl: this.imageUrl })
   }
   waterPlant() {
     if (!this.plant) {

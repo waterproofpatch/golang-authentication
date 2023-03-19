@@ -65,12 +65,12 @@ func AddMessage(db *gorm.DB, message *Message) error {
 	return nil
 }
 
-func UpdatePlant(db *gorm.DB, id int, name string, wateringFrequency string, imageId uint, lastWaterDate string, email string) error {
+func UpdatePlant(db *gorm.DB, id int, name string, wateringFrequency string, imageId uint, lastWaterDate string, email string, isNewImage bool) error {
 	var existingplant PlantModel
 	existingplant.Id = id
 	db.First(&existingplant)
-	if existingplant.ImageId != 0 {
-		fmt.Printf("Must first remove old plant image ID=%d\n", existingplant.ImageId)
+	if existingplant.ImageId != 0 && isNewImage {
+		fmt.Printf("isNewImage=%d, Must first remove old plant image ID=%d\n", isNewImage, existingplant.ImageId)
 		db.Delete(&ImageModel{}, existingplant.ImageId)
 	}
 

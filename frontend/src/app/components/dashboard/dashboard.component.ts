@@ -57,12 +57,19 @@ export class DashboardComponent {
     this.getPlants()
   }
 
-  editPlant(plant: Plant) {
-    console.log("Plant ID " + plant.id + " wants edit")
+  editPlant(event: any) {
+    let plant = event.plant
+    let imageUrl = event.imageUrl
+    console.log("Plant ID " + plant.id + " wants edit. It has current image at " + imageUrl)
     this.editingPlant = plant
     this.form.controls.name.setValue(plant.name)
     this.form.controls.wateringFrequency.setValue(plant.wateringFrequency)
     this.form.controls.lastWateredDate.setValue(plant.lastWaterDate)
+    if (imageUrl) {
+
+      this.selectedImagePreview = imageUrl
+      this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
+    }
     this.addMode = true
   }
 
