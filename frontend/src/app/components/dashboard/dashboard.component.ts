@@ -89,6 +89,8 @@ export class DashboardComponent {
       var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '', this.form.controls.wateringFrequency.value || '', this.form.controls.lastWateredDate.value || '')
       plant.id = this.editingPlant.id
       this.plantsService.updatePlant(plant, this.selectedImage)
+      this.editingPlant = null
+      this.addMode = false;
       return
     }
     // Perform actions when the form is submitted
