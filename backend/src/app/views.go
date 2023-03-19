@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
+	"time"
 
+	"github.com/solywsh/chatgpt"
 	"github.com/waterproofpatch/go_authentication/authentication"
 
 	"io/ioutil"
@@ -14,6 +17,29 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
+
+func getApiKey() string {
+	apiKey := os.Getenv("OPENAI_API_KEY")
+	return apiKey
+}
+
+func getChatGptInfo(name string) {
+	chat := chatgpt.New(getApiKey(), "user_id(not required)", 30*time.Second)
+	defer chat.Close()
+	//
+	//select {
+	//case <-chat.GetDoneChan():
+	//	fmt.Println("time out/finish")
+	//}
+	question := "How often should I water a ZZ plant"
+	fmt.Printf("Q: %s\n", question)
+	answer, err := chat.Chat(question)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Printf("A: %s\n", answer)
+
+}
 
 // returns 0 on failure, ImageModel.ID stored in database on success
 func uploadHandler(w http.ResponseWriter, r *http.Request) uint {
@@ -142,6 +168,10 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			break
 		}
 		db.Where("email = ?", claims.Email).Find(&plants)
+
+		// ask chatgpt a question
+		getChatGptInfo(newPlant.Name)
+
 		json.NewEncoder(w).Encode(plants)
 		break
 	case "PUT":
@@ -159,10 +189,10 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			fmt.Println("Upload did not contain an image.")
 			newPlant.ImageId = existingPlant.ImageId
 		} else {
-		// only update imageId if the user changed the image. Otherwise, 
-		// they may have only updated non-image stuff. If they had the 
-		// default image before, they'll still have it. If they didn't update 
-		// their image, then their plant has the old imageId. 
+			// only update imageId if the user changed the image. Otherwise,
+			// they may have only updated non-image stuff. If they had the
+			// default image before, they'll still have it. If they didn't update
+			// their image, then their plant has the old imageId.
 			newPlant.ImageId = imageId
 			isNewImage = true
 
