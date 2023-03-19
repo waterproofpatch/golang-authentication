@@ -91,12 +91,18 @@ export class DashboardComponent {
       this.plantsService.updatePlant(plant, this.selectedImage)
       this.editingPlant = null
       this.addMode = false;
+      this.selectedImage = null
+      this.selectedImagePreview = "/assets/placeholder.jpg"
+      this.selectedImagePreview_safe = null
       return
     }
     // Perform actions when the form is submitted
     var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '', this.form.controls.wateringFrequency.value || '', this.form.controls.lastWateredDate.value || '')
     this.plantsService.addPlant(plant, this.selectedImage)
     this.addMode = false;
+    this.selectedImage = null
+    this.selectedImagePreview = "/assets/placeholder.jpg"
+    this.selectedImagePreview_safe = null
   }
   getPlants(): void {
     this.plantsService.getPlants()
