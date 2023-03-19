@@ -20,6 +20,7 @@ export default interface Plant {
 export class PlantsService extends BaseService {
   isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
   suggestedWateringFrequency: BehaviorSubject<number> = new BehaviorSubject<number>(0)
+  suggestedWateringFrequencyRaw: BehaviorSubject<string> = new BehaviorSubject<string>("")
 
 
   public static PlantsFactory = class {

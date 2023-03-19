@@ -23,7 +23,7 @@ func getApiKey() string {
 	return apiKey
 }
 
-func chatgptGetWateringFruencyByPlantName(name string) float64 {
+func chatgptGetWateringFruencyByPlantName(name string) float64, err {
 	chat := chatgpt.New(getApiKey(), "user_id(not required)", 30*time.Second)
 	defer chat.Close()
 	//
@@ -36,7 +36,8 @@ func chatgptGetWateringFruencyByPlantName(name string) float64 {
 	fmt.Printf("Q: %s\n", question)
 	answer, err := chat.Chat(question)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("Error: %s", err)
+		return 0, err
 	}
 	fmt.Printf("A: %s\n", answer)
 	var jsonObject map[string]interface{}
@@ -44,7 +45,7 @@ func chatgptGetWateringFruencyByPlantName(name string) float64 {
 	if err != nil {
 		fmt.Println(err)
 	}
-	return jsonObject["waterFrequency"].(float64)
+	return jsonObject["waterFrequency"].(float64), nil
 
 }
 
@@ -140,7 +141,12 @@ func plantsInfo(w http.ResponseWriter, r *http.Request, claims *authentication.J
 		// jsonObject["plantName"] is not a string
 		// handle the error appropriately
 	}
-	var wateringFrequency = chatgptGetWateringFruencyByPlantName(plantName)
+	var wateringFrequency, err = chatgptGetWateringFruencyByPlantName(plantName)
+	if err != nil {
+		fmt.Printf("Error: %s\n", err)
+		authentication.WriteError(w, "Unable to get watering frequency.", http.StatusBadRequest)
+		return
+	}
 	response := map[string]interface{}{
 		"wateringFrequency": wateringFrequency,
 	}
@@ -150,7 +156,7 @@ func plantsInfo(w http.ResponseWriter, r *http.Request, claims *authentication.J
 		return
 	}
 	fmt.Printf("JSON response is %s", jsonResponse)
-	json.NewEncoder(w).Encode(wateringFrequency)
+	json.NewEncoder(w).Encode(response)
 }
 
 func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
