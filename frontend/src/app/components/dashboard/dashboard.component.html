@@ -42,7 +42,10 @@
 					(click)="getSuggestedWateringFrequency(); $event.preventDefault()">Get Suggested
 					Watering Frequency
 				</button>
-				<p>Suggested Frequency: {{suggestedWateringFrequency | async}}</p>
+				<p *ngIf="!(isWaitingSuggestedWateringFrequency | async)">Suggested Frequency: every
+					{{suggestedWateringFrequency | async}} days.</p>
+				<p *ngIf="isWaitingSuggestedWateringFrequency | async">Hang
+					tight...</p>
 				<mat-form-field appearance="fill">
 					<mat-label>Last Watered Date</mat-label>
 					<input matInput formControlName="lastWateredDate" [matDatepicker]="picker">

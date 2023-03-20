@@ -16,6 +16,7 @@ export class DashboardComponent {
 
   suggestedWateringFrequency: BehaviorSubject<number> = new BehaviorSubject<number>(0)
   selectedImage: File | null = null;
+  isWaitingSuggestedWateringFrequency: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
   selectedImagePreview_safe: SafeUrl | null = null;
   selectedImagePreview: string = "/assets/placeholder.jpg"
   isLoading: boolean = false;
@@ -55,6 +56,7 @@ export class DashboardComponent {
     this.plantsService.suggestedWateringFrequency.subscribe((x) => {
       console.log("Updated watering frequency: " + x)
       this.suggestedWateringFrequency.next(x)
+      this.isWaitingSuggestedWateringFrequency.next(false)
     })
     this.plantsService.isLoading.subscribe((x) => { if (x) { this.isLoading = true } else { this.isLoading = false } })
     this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
@@ -65,6 +67,7 @@ export class DashboardComponent {
   getSuggestedWateringFrequency() {
     let plantName = this.form.controls.name.value
     if (plantName) {
+      this.isWaitingSuggestedWateringFrequency.next(true)
       this.plantsService.getPlantWateringFrequency(plantName)
     }
   }

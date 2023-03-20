@@ -54,7 +54,7 @@ export class PlantsService extends BaseService {
     return this.plantsApiService.postPlantInfoData(plantName).subscribe((x) => {
       console.log("Got watering frequency " + x.wateringFrequency)
       console.log("Got watering frequency (raw) " + x)
-      this.suggestedWateringFrequency.next(x)
+      this.suggestedWateringFrequency.next(x.wateringFrequency)
     })
   }
 
