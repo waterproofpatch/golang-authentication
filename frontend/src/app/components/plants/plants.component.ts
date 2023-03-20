@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { PlantsService } from 'src/app/services/plants.service';
 import Plant from 'src/app/services/plants.service';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -8,11 +8,11 @@ import { Router } from '@angular/router';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  selector: 'app-plants',
+  templateUrl: './plants.component.html',
+  styleUrls: ['./plants.component.css']
 })
-export class DashboardComponent {
+export class PlantsComponent {
 
   suggestedWateringFrequency: BehaviorSubject<number> = new BehaviorSubject<number>(0)
   selectedImage: File | null = null;
