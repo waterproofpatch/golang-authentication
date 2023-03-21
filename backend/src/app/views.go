@@ -7,9 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"time"
 
-	"github.com/solywsh/chatgpt"
 	"github.com/waterproofpatch/go_authentication/authentication"
 
 	"io/ioutil"
@@ -23,36 +21,10 @@ func getApiKey() string {
 	return apiKey
 }
 
-func chatgptGetWateringFruencyByPlantName(name string) (float64, error) {
-	chat := chatgpt.New(getApiKey(), "user_id(not required)", 30*time.Second)
-	defer chat.Close()
-	//
-	//select {
-	//case <-chat.GetDoneChan():
-	//	fmt.Println("time out/finish")
-	//}
-	// question := "How often should I water a ZZ plant"
-	question := fmt.Sprintf("How often shuld I water a %s plant? Answer in JSON, and include a single integer representing the number of days between watering in the JSON key 'waterFrequency'.", name)
-	fmt.Printf("Q: %s\n", question)
-	answer, err := chat.Chat(question)
-	if err != nil {
-		fmt.Printf("Error: %s", err)
-		return 0, err
-	}
-	fmt.Printf("A: %s\n", answer)
-	var jsonObject map[string]interface{}
-	err = json.Unmarshal([]byte(answer), &jsonObject)
-	if err != nil {
-		fmt.Println(err)
-		return 0, err
-	}
-	return jsonObject["waterFrequency"].(float64), nil
-
-}
-
 // returns 0 on failure, ImageModel.ID stored in database on success
 func uploadHandler(w http.ResponseWriter, r *http.Request) uint {
 	// Parse the multipart form in the request
+
 	err := r.ParseMultipartForm(10 << 20) // 10 MB maximum file size
 	if err != nil {
 		authentication.WriteError(w, "Invalid file size", http.StatusBadRequest)
@@ -143,7 +115,7 @@ func plantsInfo(w http.ResponseWriter, r *http.Request, claims *authentication.J
 		return
 	}
 
-	var wateringFrequency, err = chatgptGetWateringFruencyByPlantName(plantName)
+	wateringFrequency, err := chatgptGetWateringFruencyByPlantName(plantName)
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
 		authentication.WriteError(w, "Unable to get watering frequency.", http.StatusBadRequest)
