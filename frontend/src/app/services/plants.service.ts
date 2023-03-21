@@ -34,13 +34,14 @@ export class PlantsService extends BaseService {
       console.log(`wateringFrequency: ${plant.wateringFrequency}`);
       console.log(`lastWaterDate: ${plant.lastWaterDate}`);
       console.log(`imageId: ${plant.imageId}`);
-      console.log(`isPublic: ${plant.imageId}`);
+      console.log(`isPublic: ${plant.isPublic}`);
     }
 
     public static makePlant(name: string,
       wateringFrequency: string,
       lastWateredDate: string,
       isPublic: boolean): Plant {
+      console.log("makePlant: isPublic=" + isPublic)
       const plant: Plant = {
         name: name,
         wateringFrequency: wateringFrequency,
