@@ -5,6 +5,7 @@
 	max-height: 250px;
 	min-height: 250px;
 	margin: 10px;
+	color: blue;
 }
 
 .plant-mine {
@@ -14,7 +15,6 @@
 	max-height: 250px;
 	min-height: 250px;
 	margin: 10px;
-	color: blue;
 }
 
 mat-card img {
