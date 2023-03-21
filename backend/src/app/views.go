@@ -35,7 +35,6 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) uint {
 	file, _, err := r.FormFile("image")
 	if err != nil {
 		// not critical, images are optional
-		// authentication.WriteError(w, "Failed finding image in request.", http.StatusBadRequest)
 		return 0
 	}
 	defer file.Close()
@@ -101,6 +100,11 @@ func images(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func plantsInfo(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
+	if !isChatGptEnabled() {
+		authentication.WriteError(w, "Unable to handle this request at this time.", http.StatusBadRequest)
+		return
+	}
+
 	var jsonObject map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&jsonObject)
 	if err != nil {

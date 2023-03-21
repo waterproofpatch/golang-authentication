@@ -8,6 +8,12 @@ import (
 	"github.com/solywsh/chatgpt"
 )
 
+// test whether or not we can use chatgpt
+func isChatGptEnabled() bool {
+	return !(getApiKey() == "")
+}
+
+// given a plant name, ask chatgpt for its watering frequency
 func chatgptGetWateringFruencyByPlantName(name string) (float64, error) {
 	chat := chatgpt.New(getApiKey(), "user_id(not required)", 30*time.Second)
 	defer chat.Close()

@@ -10,4 +10,4 @@ build-errors.log
 # don't vc the local copy of externals
 backend/src/go_authentication
 workspace.code-workspace
-env.env
+*.env
