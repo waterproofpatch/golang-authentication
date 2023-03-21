@@ -15,6 +15,14 @@ type ImageModel struct {
 	Data []byte
 }
 
+type CommentModel struct {
+	gorm.Model
+	Id       int    `json:"id"`
+	PlantId  int    `json:"plantId"`
+	Email    string `json:"email"`
+	Username string `json:"username"`
+	Content  string `json:"content"`
+}
 type PlantModel struct {
 	gorm.Model
 	Id                int    `json:"id"`
@@ -132,9 +140,25 @@ func AddPlant(db *gorm.DB,
 	return nil
 }
 
+func AddComment(db *gorm.DB, content string, email string, username string, plantId int) error {
+	comment := &CommentModel{
+		Content:  content,
+		Username: username,
+		Email:    email,
+		PlantId:  plantId,
+	}
+	err := db.Create(&comment).Error
+	if err != nil {
+		return err
+	}
+	db.Save(comment)
+	return nil
+}
+
 func InitModels(db *gorm.DB) {
 	log.Printf("Initializing models...\n")
 	db.AutoMigrate(&PlantModel{})
 	db.AutoMigrate(&MessageModel{})
+	db.AutoMigrate(&CommentModel{})
 	db.AutoMigrate(&ImageModel{})
 }

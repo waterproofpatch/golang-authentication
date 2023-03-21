@@ -278,6 +278,41 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 	}
 
 }
+
+// comments by plant id
+func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
+	vars := mux.Vars(r)
+	// db := authentication.GetDb()
+	plantId, hasPlantId := vars["id"]
+	if !hasPlantId {
+		authentication.WriteError(w, "Invalid plant ID", http.StatusBadRequest)
+		return
+	}
+
+	switch r.Method {
+	case "GET":
+		break
+	case "DELETE":
+		break
+	case "POST":
+		// Declare a new Person struct.
+		var comment CommentModel
+
+		// Try to decode the request body into the struct. If there is an error,
+		// respond to the client with the error message and a 400 status code.
+		err := json.NewDecoder(r.Body).Decode(&comment)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		fmt.Printf("comment received: %v for plantId=%s", comment, plantId)
+		break
+	case "PUT":
+		break
+	}
+
+	return
+}
 func dashboard(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
 	switch r.Method {
 	case "GET":
@@ -378,6 +413,7 @@ func InitViews(router *mux.Router) {
 	// router.HandleFunc("/api/upload", uploadHandler)
 	router.HandleFunc("/api/dashboard/{id:[0-9]+}", authentication.VerifiedOnly(dashboard)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	router.HandleFunc("/api/dashboard", authentication.VerifiedOnly(dashboard)).Methods("GET", "POST", "PUT", "OPTIONS")
+	router.HandleFunc("/api/comments/{id:[0-9]+}", authentication.VerifiedOnly(comments)).Methods("GET", "POST", "PUT", "OPTIONS")
 	router.HandleFunc("/api/plants", authentication.VerifiedOnly(plants)).Methods("GET", "POST", "PUT", "OPTIONS")
 	router.HandleFunc("/api/plantsInfo", authentication.VerifiedOnly(plantsInfo)).Methods("POST", "OPTIONS")
 	router.HandleFunc("/api/plants/{id:[0-9]+}", authentication.VerifiedOnly(plants)).Methods("GET", "POST", "DELETE", "PUT", "OPTIONS")
