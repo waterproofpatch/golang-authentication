@@ -31,3 +31,11 @@ mat-card-actions button {
 .right {
 	text-align: right;
 }
+
+.lock-icon {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	font-size: 20px;
+	color: #ccc;
+}
