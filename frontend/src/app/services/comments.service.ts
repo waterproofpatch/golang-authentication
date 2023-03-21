@@ -46,6 +46,25 @@ export class CommentsService {
 
   constructor(private commentsApiService: CommentsApiService) { }
 
+  public deleteComment(comment: Comment): void {
+    this.isLoading$.next(true)
+    this.commentsApiService
+      .delete(comment)
+      .pipe(
+        catchError((error: any) => {
+          this.isLoading$.next(false)
+          if (error instanceof HttpErrorResponse) {
+            this.error$.next(error.error.error_message);
+          } else {
+            this.error$.next('Unexpected error');
+          }
+          return throwError(error);
+        })
+      )
+      .subscribe((x) => {
+        this.updateCommentsList(x)
+      });
+  }
   public postComment(comment: Comment): void {
     this.isLoading$.next(true)
     delete comment.CreatedAt;

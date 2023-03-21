@@ -297,6 +297,15 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 	case "GET":
 		break
 	case "DELETE":
+		q := r.URL.Query()
+		commentId := q.Get("commentId")
+		var comment CommentModel
+		db.Where("id = ?", commentId).First(&comment)
+		if comment.Email != claims.Email {
+			authentication.WriteError(w, "This isn't your comment!", http.StatusBadRequest)
+			return
+		}
+		db.Delete(&comment)
 		break
 	case "POST":
 		// Declare a new Person struct.
@@ -431,7 +440,7 @@ func InitViews(router *mux.Router) {
 	// router.HandleFunc("/api/upload", uploadHandler)
 	router.HandleFunc("/api/dashboard/{id:[0-9]+}", authentication.VerifiedOnly(dashboard)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	router.HandleFunc("/api/dashboard", authentication.VerifiedOnly(dashboard)).Methods("GET", "POST", "PUT", "OPTIONS")
-	router.HandleFunc("/api/comments/{id:[0-9]+}", authentication.VerifiedOnly(comments)).Methods("GET", "POST", "PUT", "OPTIONS")
+	router.HandleFunc("/api/comments/{id:[0-9]+}", authentication.VerifiedOnly(comments)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	router.HandleFunc("/api/plants", authentication.VerifiedOnly(plants)).Methods("GET", "POST", "PUT", "OPTIONS")
 	router.HandleFunc("/api/plantsInfo", authentication.VerifiedOnly(plantsInfo)).Methods("POST", "OPTIONS")
 	router.HandleFunc("/api/plants/{id:[0-9]+}", authentication.VerifiedOnly(plants)).Methods("GET", "POST", "DELETE", "PUT", "OPTIONS")

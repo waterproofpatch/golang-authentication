@@ -29,6 +29,9 @@ export class CommentsComponent {
     this.commentsService.comments$.subscribe((x) => this.comments = x)
   }
 
+  public deleteComment(comment: Comment) {
+    this.commentsService.deleteComment(comment)
+  }
   public addComment() {
     const comment = CommentsService.CommentsFactory.makeComment(this.commentContent, this.plantId)
     this.commentsService.postComment(comment)
