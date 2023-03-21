@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // <-- NgMode
 
 import { AuthenticationComponent } from './components/authentication/authentication.component';
 import { AuthenticationService } from './services/authentication.service';
+import { MatRadioModule } from '@angular/material/radio';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
 import { LogDialogComponent } from './components/log-dialog/log-dialog.component';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
@@ -75,6 +76,7 @@ import { UserComponent } from './components/user/user.component';
     MatListModule,
     MatInputModule,
     FormsModule,
+    MatRadioModule,
     ReactiveFormsModule,
   ],
   providers: [

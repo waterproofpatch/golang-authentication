@@ -54,6 +54,10 @@
 					<mat-datepicker #picker></mat-datepicker>
 				</mat-form-field>
 
+				<mat-radio-group formControlName="publicOrPrivate">
+					<mat-radio-button value="public">Public</mat-radio-button>
+					<mat-radio-button value="private">Private</mat-radio-button>
+				</mat-radio-group>
 				<button type="button" mat-raised-button (click)="fileInput.click()">Plant
 					Picture</button>
 				<input hidden (change)="onImageSelected($event)" #fileInput type="file" id="file">

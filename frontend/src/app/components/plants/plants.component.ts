@@ -40,6 +40,7 @@ export class PlantsComponent {
   // the plant edit/add form
   form = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.min(3), Validators.max(30)]),
+    publicOrPrivate: new FormControl(''),
     wateringFrequency: new FormControl('', [Validators.required]),
     lastWateredDate: new FormControl('', [Validators.required])
   });
@@ -52,6 +53,7 @@ export class PlantsComponent {
     private router: Router
   ) {
     this.form = this.formBuilder.group({
+      publicOrPrivate: [''],
       name: [''],
       wateringFrequency: [''],
       lastWateredDate: ['']
