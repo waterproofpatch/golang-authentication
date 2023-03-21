@@ -26,7 +26,10 @@
 			</span>
 		</div>
 	</mat-card-content>
-	<mat-card-actions *ngIf="plant.email == email">
+	<mat-card-header>
+		<a mat-button [routerLink]="['/comments', plant.id]">Comments</a>
+	</mat-card-header>
+	<mat-card-actions *ngIf=" plant.email==email">
 		<button mat-button mat-raised-button color="warn" (click)="deletePlant()">Delete</button>
 		<button mat-raised-button (click)="waterPlant()" color="primary">Water</button>
 		<button mat-raised-button (click)="editPlant()" color="primary">Edit</button>
