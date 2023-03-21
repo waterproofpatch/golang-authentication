@@ -19,6 +19,7 @@ type PlantModel struct {
 	gorm.Model
 	Id                int    `json:"id"`
 	Email             string `json:"email"`
+	Username          string `json:"username"`
 	Name              string `json:"name"`
 	WateringFrequency string `json:"wateringFrequency"`
 	LastWaterDate     string `json:"lastWaterDate"`
@@ -36,7 +37,7 @@ type MessageModel struct {
 }
 
 func (i PlantModel) String() string {
-	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name=%s, waterFrequency:=%s, lastWateringDate=%s", i.ID, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name, i.WateringFrequency, i.LastWaterDate)
+	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name=%s, waterFrequency:=%s, lastWateringDate=%s, username=%s", i.ID, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name, i.WateringFrequency, i.LastWaterDate, i.Username)
 }
 
 func AddMessage(db *gorm.DB, message *Message) error {
@@ -65,12 +66,19 @@ func AddMessage(db *gorm.DB, message *Message) error {
 	return nil
 }
 
-func UpdatePlant(db *gorm.DB, id int, name string, wateringFrequency string, imageId uint, lastWaterDate string, email string, isNewImage bool) error {
+func UpdatePlant(db *gorm.DB,
+	id int,
+	name string,
+	wateringFrequency string,
+	imageId uint,
+	lastWaterDate string,
+	isNewImage bool) error {
 	var existingplant PlantModel
 	existingplant.Id = id
 	db.First(&existingplant)
+	fmt.Printf("Existing plant: %s\n", existingplant)
 	if existingplant.ImageId != 0 && isNewImage {
-		fmt.Printf("isNewImage=%d, Must first remove old plant image ID=%d\n", isNewImage, existingplant.ImageId)
+		fmt.Printf("isNewImage=%t, Must first remove old plant image ID=%d\n", isNewImage, existingplant.ImageId)
 		db.Delete(&ImageModel{}, existingplant.ImageId)
 	}
 
@@ -83,8 +91,13 @@ func UpdatePlant(db *gorm.DB, id int, name string, wateringFrequency string, ima
 	return nil
 }
 
-
-func AddPlant(db *gorm.DB, name string, wateringFrequency string, imageId uint, lastWaterDate string, email string) error {
+func AddPlant(db *gorm.DB,
+	name string,
+	wateringFrequency string,
+	imageId uint,
+	lastWaterDate string,
+	email string,
+	username string) error {
 	if name == "" {
 		return errors.New("Invalid plant name.")
 	}
@@ -99,6 +112,7 @@ func AddPlant(db *gorm.DB, name string, wateringFrequency string, imageId uint, 
 		WateringFrequency: wateringFrequency,
 		ImageId:           imageId,
 		Email:             email,
+		Username:          username,
 		LastWaterDate:     lastWaterDate,
 	}
 

@@ -9,6 +9,7 @@ import { BaseService } from './base.service';
 export default interface Plant {
   id: number;
   name: string;
+  username: string;
   wateringFrequency: string;
   lastWaterDate: string;
   imageId: number;
@@ -28,9 +29,10 @@ export class PlantsService extends BaseService {
       const plant: Plant = {
         name: name,
         wateringFrequency: wateringFrequency,
-        id: 0,
         lastWaterDate: lastWateredDate,
-        imageId: 0,
+        id: 0, // authoritative
+        username: "", // authoritative
+        imageId: 0, // TODO improve how this is set.
       }
       return plant;
     }

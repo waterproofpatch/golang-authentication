@@ -181,7 +181,13 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		newPlant.WateringFrequency = r.FormValue("wateringFrequency")
 		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
 		fmt.Printf("Updating plant to: %s", newPlant)
-		err := AddPlant(db, newPlant.Name, newPlant.WateringFrequency, newPlant.ImageId, newPlant.LastWaterDate, claims.Email)
+		err := AddPlant(db,
+			newPlant.Name,
+			newPlant.WateringFrequency,
+			newPlant.ImageId,
+			newPlant.LastWaterDate,
+			claims.Email,
+			claims.Username)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			break
@@ -197,10 +203,16 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			authentication.WriteError(w, "Invalid plant ID", http.StatusBadRequest)
 			return
 		}
+		// get the existing plant so we can obtain its old imageId
 		var existingPlant PlantModel
 		db.First(&existingPlant, plantId)
+
+		// make a new plant based on form values
 		var newPlant PlantModel
+
+		// conditionally upload a new image. An imageId of 0 means no image provided
 		var imageId = uploadHandler(w, r)
+
 		if imageId == 0 {
 			fmt.Println("Upload did not contain an image.")
 			newPlant.ImageId = existingPlant.ImageId
@@ -213,15 +225,27 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			isNewImage = true
 
 		}
+		// update to new values
 		newPlant.Name = r.FormValue("nameOfPlant")
 		newPlant.WateringFrequency = r.FormValue("wateringFrequency")
 		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
-		newPlant.Id = plantId
+
+		// copy old values
+		newPlant.Id = existingPlant.Id
+		newPlant.Username = existingPlant.Username
+		newPlant.Email = existingPlant.Email
 		fmt.Printf("Updating plant id=%d to: %s", newPlant.Id, newPlant)
-		err = UpdatePlant(db, newPlant.Id, newPlant.Name, newPlant.WateringFrequency, newPlant.ImageId, newPlant.LastWaterDate, claims.Email, isNewImage)
+
+		err = UpdatePlant(db,
+			newPlant.Id,
+			newPlant.Name,
+			newPlant.WateringFrequency,
+			newPlant.ImageId,
+			newPlant.LastWaterDate,
+			isNewImage)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
-			break
+			return
 		}
 		db.Where("email = ?", claims.Email).Find(&plants)
 		json.NewEncoder(w).Encode(plants)
