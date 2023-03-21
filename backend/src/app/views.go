@@ -164,6 +164,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		}
 		db.Find(&plant, id)
 		if plant.Email != claims.Email {
+			fmt.Printf("User %s tried deleting plant belonging to %s\n", claims.Email, plant.Email)
 			authentication.WriteError(w, "This isn't your plant!", http.StatusBadRequest)
 			return
 		}
@@ -219,7 +220,8 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		// get the existing plant so we can obtain its old imageId
 		var existingPlant PlantModel
 		db.First(&existingPlant, plantId)
-		if plant.Email != claims.Email {
+		if existingPlant.Email != claims.Email {
+			fmt.Printf("User %s tried editing plant belonging to %s\n", claims.Email, existingPlant.Email)
 			authentication.WriteError(w, "This isn't your plant!", http.StatusBadRequest)
 			return
 		}
@@ -299,6 +301,7 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 	case "POST":
 		// Declare a new Person struct.
 		var comment CommentModel
+		var plant PlantModel
 
 		// Try to decode the request body into the struct. If there is an error,
 		// respond to the client with the error message and a 400 status code.
@@ -309,6 +312,14 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 			return
 		}
 		fmt.Printf("comment received: %v for plantId=%s", comment, plantId)
+
+		// make sure the plant is public
+		db.Where("id = ?", comment.PlantId).First(&plant)
+		if !plant.IsPublic {
+			authentication.WriteError(w, "This plant is not public, you cannot comment on it!", http.StatusBadRequest)
+			return
+		}
+
 		AddComment(db, comment.Content, claims.Email, claims.Username, comment.PlantId)
 		break
 	case "PUT":
