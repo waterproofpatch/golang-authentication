@@ -118,6 +118,7 @@ export class PlantsComponent {
     this.form.controls.name.setValue(plant.name)
     this.form.controls.wateringFrequency.setValue(plant.wateringFrequency)
     this.form.controls.lastWateredDate.setValue(plant.lastWaterDate)
+    this.form.controls.publicOrPrivate.setValue(plant.isPublic ? "public" : "private")
     if (imageUrl) {
 
       this.selectedImagePreview = imageUrl
