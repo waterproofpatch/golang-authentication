@@ -153,7 +153,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			db.Where("email = ? AND id = ?", claims.Email, id).Find(&plant)
 			json.NewEncoder(w).Encode(plant)
 		} else {
-			db.Where("email = ?", claims.Email).Find(&plants)
+			db.Where("email = ? OR is_public = ?", claims.Email, true).Find(&plants)
 			json.NewEncoder(w).Encode(plants)
 		}
 		break
@@ -167,7 +167,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		db.Delete(&ImageModel{}, plant.ImageId)
 		fmt.Printf("Deleting plant id=%d\n", plant.Id)
 		db.Delete(&PlantModel{}, id)
-		db.Where("email = ?", claims.Email).Find(&plants)
+		db.Where("email = ? OR is_public = ?", claims.Email, true).Find(&plants)
 		json.NewEncoder(w).Encode(plants)
 		break
 	case "POST":
@@ -201,7 +201,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			authentication.WriteError(w, err.Error(), 400)
 			break
 		}
-		db.Where("email = ?", claims.Email).Find(&plants)
+		db.Where("email = ? OR is_public = ?", claims.Email, true).Find(&plants)
 
 		json.NewEncoder(w).Encode(plants)
 		break
@@ -264,7 +264,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			authentication.WriteError(w, err.Error(), 400)
 			return
 		}
-		db.Where("email = ?", claims.Email).Find(&plants)
+		db.Where("email = ? OR is_public = ?", claims.Email, true).Find(&plants)
 		json.NewEncoder(w).Encode(plants)
 		break
 	}
