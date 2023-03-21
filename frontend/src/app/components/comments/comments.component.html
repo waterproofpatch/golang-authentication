@@ -1,2 +1,23 @@
-<p>comments works!</p>
-<div *ngFor="let comment of comments">{{comment.content}}</div>
+<div class="container">
+
+	<mat-form-field appearance="fill">
+		<mat-label>Comment</mat-label>
+		<textarea (keyup.enter)="addComment()" [(ngModel)]="commentContent" matInput></textarea>
+	</mat-form-field>
+	<button mat-button (click)="addComment()">Add Comment</button>
+
+	<mat-divider></mat-divider>
+
+	<mat-spinner *ngIf="isLoading"></mat-spinner>
+	<!-- <div *ngFor="let comment of comments">{{comment.username}}: {{comment.content}}</div> -->
+	<mat-card class="comment" *ngFor="let comment of comments">
+		<mat-card-header>
+			<mat-card-title>{{ comment.username }}</mat-card-title>
+			<mat-card-subtitle>{{ comment.CreatedAt | date:'MM/dd/yyyy' }}</mat-card-subtitle>
+		</mat-card-header>
+		<mat-card-content>
+			{{ comment.content }}
+		</mat-card-content>
+	</mat-card>
+
+</div>

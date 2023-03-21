@@ -14,7 +14,7 @@ export class CommentsApiService extends BaseService {
     super();
   }
   post(comment: Comment): Observable<any> {
-    return this.http.post(this.getUrlBase() + this.commentsApiUrl, comment, this.httpOptions);
+    return this.http.post(this.getUrlBase() + this.commentsApiUrl + "/" + comment.plantId, comment, this.httpOptions);
   }
   put(comment: Comment): Observable<any> {
     console.log("Updating comment " + comment.id)
@@ -36,10 +36,10 @@ export class CommentsApiService extends BaseService {
     }
   }
   delete(
-    id: number,
+    comment: Comment,
   ): Observable<any> {
     return this.http.delete(
-      this.getUrlBase() + this.commentsApiUrl + "/" + id,
+      this.getUrlBase() + this.commentsApiUrl + "/" + comment.plantId + "?commentId=" + comment.id,
       this.httpOptions);
   }
 }

@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // <-- NgMode
 
 
 import { AuthenticationComponent } from './components/authentication/authentication.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthenticationService } from './services/authentication.service';
 import { MatRadioModule } from '@angular/material/radio';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
@@ -58,6 +59,7 @@ import { CommentsComponent } from './components/comments/comments.component';
   ],
   imports: [
     HttpClientModule,
+    MatProgressSpinnerModule,
     BrowserModule,
     MatTabsModule,
     AppRoutingModule,

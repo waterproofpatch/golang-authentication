@@ -10,16 +10,28 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class CommentsComponent {
 
+  isLoading: boolean = false
   comments: Comment[] = []
-  constructor(private commentsService: CommentsService, private activatedRoute: ActivatedRoute) {
+  commentContent: string = ""
+  plantId: number = 0
+
+  constructor(
+    private commentsService: CommentsService,
+    private activatedRoute: ActivatedRoute) {
 
   }
-
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
-      const plantId = params['plantId'];
-      this.commentsService.getComments(plantId)
+      this.plantId = parseInt(params['plantId']);
+      this.commentsService.getComments(this.plantId)
     });
+    this.commentsService.isLoading$.subscribe((x) => this.isLoading = x)
     this.commentsService.comments$.subscribe((x) => this.comments = x)
+  }
+
+  public addComment() {
+    const comment = CommentsService.CommentsFactory.makeComment(this.commentContent, this.plantId)
+    this.commentsService.postComment(comment)
+    this.commentContent = ""
   }
 }

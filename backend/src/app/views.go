@@ -281,8 +281,10 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 
 // comments by plant id
 func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
+	w.Header().Set("Content-Type", "application/json")
+
 	vars := mux.Vars(r)
-	// db := authentication.GetDb()
+	db := authentication.GetDb()
 	plantId, hasPlantId := vars["id"]
 	if !hasPlantId {
 		authentication.WriteError(w, "Invalid plant ID", http.StatusBadRequest)
@@ -302,15 +304,20 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		// respond to the client with the error message and a 400 status code.
 		err := json.NewDecoder(r.Body).Decode(&comment)
 		if err != nil {
+			fmt.Printf("Error decoding comment: %v\n", err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 		fmt.Printf("comment received: %v for plantId=%s", comment, plantId)
+		AddComment(db, comment.Content, claims.Email, claims.Username, comment.PlantId)
 		break
 	case "PUT":
 		break
 	}
 
+	var comments []CommentModel
+	db.Where("plant_id = ?", plantId).Find(&comments)
+	json.NewEncoder(w).Encode(comments)
 	return
 }
 func dashboard(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {

@@ -1,0 +1,14 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	/* justify-content: center; */
+	/* align-content: center; */
+	align-items: center;
+}
+
+.comment {
+	width: 500px;
+	/* set the card width */
+	margin-bottom: 10px;
+	/* add space between the cards */
+}
