@@ -180,14 +180,23 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		newPlant.Name = r.FormValue("nameOfPlant")
 		newPlant.WateringFrequency = r.FormValue("wateringFrequency")
 		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
+		isPublic, err := strconv.ParseBool(r.FormValue("isPublic"))
+		if err != nil {
+			// handle error
+			authentication.WriteError(w, "Invalid public/private setting.", http.StatusBadRequest)
+			return
+		}
+		newPlant.IsPublic = isPublic
+
 		fmt.Printf("Updating plant to: %s", newPlant)
-		err := AddPlant(db,
+		err = AddPlant(db,
 			newPlant.Name,
 			newPlant.WateringFrequency,
 			newPlant.ImageId,
 			newPlant.LastWaterDate,
 			claims.Email,
-			claims.Username)
+			claims.Username,
+			newPlant.IsPublic)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			break
@@ -229,6 +238,13 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		newPlant.Name = r.FormValue("nameOfPlant")
 		newPlant.WateringFrequency = r.FormValue("wateringFrequency")
 		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
+		isPublic, err := strconv.ParseBool(r.FormValue("isPublic"))
+		if err != nil {
+			// handle error
+			authentication.WriteError(w, "Invalid public/private setting.", http.StatusBadRequest)
+			return
+		}
+		newPlant.IsPublic = isPublic
 
 		// copy old values
 		newPlant.Id = existingPlant.Id
@@ -242,7 +258,8 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			newPlant.WateringFrequency,
 			newPlant.ImageId,
 			newPlant.LastWaterDate,
-			isNewImage)
+			isNewImage,
+			newPlant.IsPublic)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			return

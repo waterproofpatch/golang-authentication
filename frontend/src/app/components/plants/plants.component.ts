@@ -154,7 +154,10 @@ export class PlantsComponent {
   addPlant() {
     if (this.editingPlant) {
       console.log("A plant has been edited (not added)")
-      var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '', this.form.controls.wateringFrequency.value || '', this.form.controls.lastWateredDate.value || '')
+      var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '',
+        this.form.controls.wateringFrequency.value || '',
+        this.form.controls.lastWateredDate.value || '',
+        this.form.controls.publicOrPrivate.value == "public" || false)
       plant.id = this.editingPlant.id
       this.plantsService.updatePlant(plant, this.selectedImage)
       this.editingPlant = null
@@ -165,18 +168,27 @@ export class PlantsComponent {
       return
     }
     // Perform actions when the form is submitted
-    var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '', this.form.controls.wateringFrequency.value || '', this.form.controls.lastWateredDate.value || '')
+    var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '',
+      this.form.controls.wateringFrequency.value || '',
+      this.form.controls.lastWateredDate.value || '',
+      this.form.controls.publicOrPrivate.value == "public" || false)
     this.plantsService.addPlant(plant, this.selectedImage)
     this.addMode = false;
     this.selectedImage = null
     this.selectedImagePreview = "/assets/placeholder.jpg"
     this.selectedImagePreview_safe = null
   }
-  getPlants(): void {
+
+  /**
+   * Obtain a list of plants from the plant service. Users can subscribe to 'plants' to 
+   * monitor for changes to the plant services plants list.
+   */
+  private getPlants(): void {
     this.plantsService.getPlants()
   }
 
-  get plants(): Subject<Plant[]> {
+  // html page subscribes to this via async
+  public get plants(): Subject<Plant[]> {
     return this.plantsService.plants
   }
 }

@@ -13,6 +13,7 @@ export default interface Plant {
   wateringFrequency: string;
   lastWaterDate: string;
   imageId: number;
+  isPublic: boolean;
 }
 
 @Injectable({
@@ -25,7 +26,21 @@ export class PlantsService extends BaseService {
 
 
   public static PlantsFactory = class {
-    public static makePlant(name: string, wateringFrequency: string, lastWateredDate: string): Plant {
+    public static printPlant(plant: Plant): void {
+      console.log("PLANT:")
+      console.log(`id: ${plant.id}`);
+      console.log(`name: ${plant.name}`);
+      console.log(`username: ${plant.username}`);
+      console.log(`wateringFrequency: ${plant.wateringFrequency}`);
+      console.log(`lastWaterDate: ${plant.lastWaterDate}`);
+      console.log(`imageId: ${plant.imageId}`);
+      console.log(`isPublic: ${plant.imageId}`);
+    }
+
+    public static makePlant(name: string,
+      wateringFrequency: string,
+      lastWateredDate: string,
+      isPublic: boolean): Plant {
       const plant: Plant = {
         name: name,
         wateringFrequency: wateringFrequency,
@@ -33,6 +48,7 @@ export class PlantsService extends BaseService {
         id: 0, // authoritative
         username: "", // authoritative
         imageId: 0, // TODO improve how this is set.
+        isPublic: isPublic,
       }
       return plant;
     }
@@ -48,19 +64,32 @@ export class PlantsService extends BaseService {
     super()
   }
 
-  getPlantImage(imageId: number): Observable<any> {
+  /**
+   * Make a request to the backend to get the image by imageId.
+   * @param imageId the imageId to obtain.
+   * @returns observable
+   */
+  public getPlantImage(imageId: number): Observable<any> {
     return this.plantsApiService.getImage(imageId)
   }
 
-  getPlantWateringFrequency(plantName: string) {
-    return this.plantsApiService.postPlantInfoData(plantName).subscribe((x) => {
+  /**
+   * Ask the backend for suggested watering frequency.
+   * @param plantName name of the plant
+   */
+  public getPlantWateringFrequency(plantName: string): void {
+    this.plantsApiService.postPlantInfoData(plantName).subscribe((x) => {
       console.log("Got watering frequency " + x.wateringFrequency)
       console.log("Got watering frequency (raw) " + x)
       this.suggestedWateringFrequency.next(x.wateringFrequency)
     })
   }
 
-  deletePlant(id: number) {
+  /**
+   * Delete an existing plant by its ID
+   * @param id ID of the plant to delete.
+   */
+  public deletePlant(id: number) {
     this.isLoading.next(true)
     this.plantsApiService
       .delete(id)
@@ -83,7 +112,12 @@ export class PlantsService extends BaseService {
       });
   }
 
-  updatePlant(plant: Plant, image: File | null): void {
+  /**
+   * Update an existing plant.
+   * @param plant the plant to update.
+   * @param image optional new image to use.
+   */
+  public updatePlant(plant: Plant, image: File | null): void {
     this.isLoading.next(true)
     const formData = new FormData();
     if (image) {
@@ -93,6 +127,7 @@ export class PlantsService extends BaseService {
     formData.append('nameOfPlant', plant.name)
     formData.append('wateringFrequency', plant.wateringFrequency.toString())
     formData.append('lastWateredDate', plant.lastWaterDate)
+    formData.append('isPublic', plant.isPublic.toString())
     this.plantsApiService
       .putFormData(formData)
       .pipe(
@@ -106,14 +141,16 @@ export class PlantsService extends BaseService {
         })
       )
       .subscribe((x) => {
-        console.log('Got plants ' + x);
-        x = x.sort((a: any, b: any) => a.id - b.id)
-        this.plants.next(x)
-        this.error$.next(''); // send a benign event so observers can close modals
-        this.isLoading.next(false)
+        this.updatePlantsList(x)
       });
   }
-  addPlant(plant: Plant, image: File | null): void {
+
+  /**
+   * Add a new plant.
+   * @param plant a new plant, from the factory method.
+   * @param image optional the image file
+   */
+  public addPlant(plant: Plant, image: File | null): void {
     this.isLoading.next(true)
     const formData = new FormData();
     if (image) {
@@ -122,6 +159,7 @@ export class PlantsService extends BaseService {
     formData.append('nameOfPlant', plant.name)
     formData.append('wateringFrequency', plant.wateringFrequency.toString())
     formData.append('lastWateredDate', plant.lastWaterDate)
+    formData.append('isPublic', plant.isPublic.toString())
     this.plantsApiService
       .postFormData(formData)
       .pipe(
@@ -135,15 +173,14 @@ export class PlantsService extends BaseService {
         })
       )
       .subscribe((x) => {
-        console.log('Got plants ' + x);
-        x = x.sort((a: any, b: any) => a.id - b.id)
-        this.plants.next(x)
-        this.error$.next(''); // send a benign event so observers can close modals
-        this.isLoading.next(false)
+        this.updatePlantsList(x)
       });
   }
 
-  getPlants(): void {
+  /**
+   * Get a list of plants.
+   */
+  public getPlants(): void {
     this.isLoading.next(true)
     this.plantsApiService
       .get()
@@ -158,11 +195,22 @@ export class PlantsService extends BaseService {
         })
       )
       .subscribe((x) => {
-        console.log('Got plants ' + x);
-        x = x.sort((a: any, b: any) => a.id - b.id)
-        this.plants.next(x)
-        this.error$.next(''); // send a benign event so observers can close modals
-        this.isLoading.next(false)
+        this.updatePlantsList(x)
       });
+  }
+
+  /**
+   * Handle updating the list of plants from the API service (put, post, get, etc.)
+   * @param plants new plants.
+   */
+  private updatePlantsList(plants: Plant[]): void {
+    console.log('Got plants ' + plants);
+    for (let p of plants) {
+      PlantsService.PlantsFactory.printPlant(p)
+    }
+    plants = plants.sort((a: any, b: any) => a.id - b.id)
+    this.plants.next(plants)
+    this.error$.next(''); // send a benign event so observers can close modals
+    this.isLoading.next(false)
   }
 }
