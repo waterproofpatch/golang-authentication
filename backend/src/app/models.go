@@ -120,6 +120,15 @@ func AddPlant(db *gorm.DB,
 	if lastWaterDate == "" {
 		return errors.New("Invalid last watering date.")
 	}
+	// Delete old records if the limit has been reached
+	var count int64
+	db.Model(&PlantModel{}).Count(&count)
+	if count > 50 {
+		fmt.Printf("DB has %d plants.", count)
+		var plants []PlantModel
+		db.Order("id asc").Limit(int(count) - 50).Find(&plants)
+		db.Delete(&plants)
+	}
 	var plant = PlantModel{
 		Name:              name,
 		WateringFrequency: wateringFrequency,
@@ -141,6 +150,15 @@ func AddPlant(db *gorm.DB,
 }
 
 func AddComment(db *gorm.DB, content string, email string, username string, plantId int) error {
+	// Delete old records if the limit has been reached
+	var count int64
+	db.Model(&CommentModel{}).Count(&count)
+	if count > 50 {
+		fmt.Printf("DB has %d plants.", count)
+		var comments []CommentModel
+		db.Order("id asc").Limit(int(count) - 50).Find(&comments)
+		db.Delete(&comments)
+	}
 	comment := &CommentModel{
 		Content:  content,
 		Username: username,
