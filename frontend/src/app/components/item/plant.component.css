@@ -1,10 +1,20 @@
-.plant-card {
+.plant-theirs {
 	max-width: 250px;
 	min-width: 250px;
 	/* height: auto; */
 	max-height: 250px;
 	min-height: 250px;
 	margin: 10px;
+}
+
+.plant-mine {
+	max-width: 250px;
+	min-width: 250px;
+	/* height: auto; */
+	max-height: 250px;
+	min-height: 250px;
+	margin: 10px;
+	color: blue;
 }
 
 mat-card img {

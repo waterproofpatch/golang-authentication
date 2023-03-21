@@ -15,6 +15,10 @@ export class PlantComponent {
   // passed from the parent component
   @Input() plant?: Plant
 
+  // the email for our user from the authentication service
+  // TODO make this something we subscribe to
+  email: string = ''
+
   // whether or not the image for this plant is in progress loading
   isImageLoading: boolean = false
 
@@ -36,6 +40,7 @@ export class PlantComponent {
   }
 
   ngOnInit() {
+    this.email = this.authenticationService.email()
     if (!this.authenticationService.isAuthenticated$.value) {
       this.router.navigateByUrl('/authentication?mode=login');
       return

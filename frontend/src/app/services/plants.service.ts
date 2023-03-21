@@ -10,6 +10,7 @@ export default interface Plant {
   id: number;
   name: string;
   username: string;
+  email: string;
   wateringFrequency: string;
   lastWaterDate: string;
   imageId: number;
@@ -31,6 +32,7 @@ export class PlantsService extends BaseService {
       console.log(`id: ${plant.id}`);
       console.log(`name: ${plant.name}`);
       console.log(`username: ${plant.username}`);
+      console.log(`email: ${plant.email}`);
       console.log(`wateringFrequency: ${plant.wateringFrequency}`);
       console.log(`lastWaterDate: ${plant.lastWaterDate}`);
       console.log(`imageId: ${plant.imageId}`);
@@ -48,6 +50,7 @@ export class PlantsService extends BaseService {
         lastWaterDate: lastWateredDate,
         id: 0, // authoritative
         username: "", // authoritative
+        email: "", // authoritative
         imageId: 0, // TODO improve how this is set.
         isPublic: isPublic,
       }

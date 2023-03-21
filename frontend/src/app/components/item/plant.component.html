@@ -1,4 +1,5 @@
-<mat-card *ngIf="plant != null" class="plant-card">
+<!-- <mat-card *ngIf="plant != null" class="plant-card"> -->
+<mat-card *ngIf="plant != null" [class.plant-mine]="plant.email==email" [class.plant-theirs]="plant.email != email">
 	<mat-card-header>
 		<div mat-card-avatar class="plant-header-image"></div>
 		<mat-card-title>{{plant.name}}</mat-card-title>
