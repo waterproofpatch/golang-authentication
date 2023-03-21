@@ -27,7 +27,7 @@
 		</div>
 	</mat-card-content>
 	<mat-card-actions>
-		<a mat-button [routerLink]="['/comments', plant.id]">Comments</a>
+		<a mat-button [routerLink]="['/comments', plant.id]">Comments ({{numComments | async}})</a>
 	</mat-card-actions>
 	<mat-card-actions *ngIf=" plant.email==email">
 		<button mat-button mat-raised-button color="warn" (click)="deletePlant()">Delete</button>

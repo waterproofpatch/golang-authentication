@@ -5,6 +5,8 @@ import { DialogService } from 'src/app/services/dialog.service';
 import Plant, { PlantsService } from 'src/app/services/plants.service';
 import { EventEmitter } from '@angular/core';
 import { Output } from '@angular/core';
+import { CommentsService } from 'src/app/services/comments.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-plant',
@@ -32,9 +34,12 @@ export class PlantComponent {
   // color for text for the 'next water date' - set to red for plants in need of watering
   backgroundColor: string = 'black'; // Set the default background color here
 
+  numComments: BehaviorSubject<number> = new BehaviorSubject<number>(0)
+
   constructor(private router: Router,
     private plantService: PlantsService,
     private dialogService: DialogService,
+    private commentsService: CommentsService,
     private authenticationService: AuthenticationService) {
 
   }
@@ -51,6 +56,19 @@ export class PlantComponent {
         console.log("plant " + this.plant.id + " is due for watering!")
         this.backgroundColor = "red"
       }
+    }
+    this.numComments.next(0)
+    this.commentsService.comments$.subscribe((x) => {
+      console.log("Got " + x.length + "comments");
+      for (let comment of x) {
+        if (comment.plantId == this.plant?.id) {
+
+          this.numComments.next(this.numComments.value + 1)
+        }
+      }
+    })
+    if (this.plant) {
+      this.commentsService.getComments(this.plant.id)
     }
   }
 
