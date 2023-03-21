@@ -12,13 +12,26 @@ import { Output } from '@angular/core';
   styleUrls: ['./plant.component.css']
 })
 export class PlantComponent {
+  // passed from the parent component
   @Input() plant?: Plant
+
+  // whether or not the image for this plant is in progress loading
   isImageLoading: boolean = false
+
+  // filled out by getImage when the image loads - this is the string to render 
+  // at the frontend with <img [src]="imageUrl">
   imageUrl: string | null = null
+
+  // when user clicks the "edit" button on this plant
   @Output() editModeEmitter = new EventEmitter<{ plant: Plant, imageUrl: string | null }>()
+
+  // color for text for the 'next water date' - set to red for plants in need of watering
   backgroundColor: string = 'black'; // Set the default background color here
 
-  constructor(private router: Router, private plantService: PlantsService, private dialogService: DialogService, private authenticationService: AuthenticationService) {
+  constructor(private router: Router,
+    private plantService: PlantsService,
+    private dialogService: DialogService,
+    private authenticationService: AuthenticationService) {
 
   }
 
@@ -36,13 +49,19 @@ export class PlantComponent {
     }
   }
 
+  /**
+   * handle user editing the plant
+   */
   editPlant() {
     if (!this.plant) {
       return;
     }
     this.editModeEmitter.emit({ plant: this.plant, imageUrl: this.imageUrl })
   }
-  waterPlant() {
+  /**
+   * handle user watering the plant
+   */
+  public waterPlant(): void {
     if (!this.plant) {
       return
     }
@@ -66,6 +85,10 @@ export class PlantComponent {
 
   }
 
+  /**
+   * format the last water date to a string.
+   * @returns formatted last water date
+   */
   transformLastWaterDate(): string {
     if (!this.plant) {
       return "N/A"
@@ -74,6 +97,10 @@ export class PlantComponent {
     return this.formatDate(myDate)
   }
 
+  /**
+   * @param date to format
+   * @returns formatted @c date
+   */
   private formatDate(date: Date): string {
 
     const day = date.getDate().toString().padStart(2, '0'); // Get the day of the month (1-31) and pad it with a leading zero if necessary
@@ -83,7 +110,12 @@ export class PlantComponent {
     const formattedDate = `${month}/${day}/${year}`;
     return formattedDate
   }
-  getNextWaterDate(): string {
+  /**
+   * obtain a formatted next-water-date from the difference between this plants last water date 
+   * and water frequency.
+   * @returns the date to next water this plant.
+   */
+  public getNextWaterDate(): string {
     if (!this.plant) {
       return "N/A"
     }
@@ -93,7 +125,10 @@ export class PlantComponent {
     return this.formatDate(nextWaterDate)
   }
 
-  getImage() {
+  /**
+   * get the image for this plant based on its imageId
+   */
+  private getImage(): void {
     if (!this.plant || this.plant.imageId == 0) {
       return
     }
@@ -110,7 +145,10 @@ export class PlantComponent {
       });
   }
 
-  deletePlant() {
+  /**
+   * delete this plant. Handle the 'delete' button. 
+   */
+  public deletePlant() {
     if (!this.plant) {
       return;
     }
