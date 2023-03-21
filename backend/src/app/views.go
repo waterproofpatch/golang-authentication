@@ -163,6 +163,10 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			break
 		}
 		db.Find(&plant, id)
+		if plant.Email != claims.Email {
+			authentication.WriteError(w, "This isn't your plant!", http.StatusBadRequest)
+			return
+		}
 		fmt.Printf("Deleting plant imageId=%d\n", plant.ImageId)
 		db.Delete(&ImageModel{}, plant.ImageId)
 		fmt.Printf("Deleting plant id=%d\n", plant.Id)
@@ -215,6 +219,10 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		// get the existing plant so we can obtain its old imageId
 		var existingPlant PlantModel
 		db.First(&existingPlant, plantId)
+		if plant.Email != claims.Email {
+			authentication.WriteError(w, "This isn't your plant!", http.StatusBadRequest)
+			return
+		}
 
 		// make a new plant based on form values
 		var newPlant PlantModel
