@@ -6,8 +6,12 @@
 	align-items: center;
 }
 
+button {
+	margin-bottom: 10px;
+}
+
 .comment {
-	width: 500px;
+	width: 80%;
 	/* set the card width */
 	margin-bottom: 10px;
 	/* add space between the cards */

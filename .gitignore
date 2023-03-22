@@ -11,3 +11,4 @@ build-errors.log
 backend/src/go_authentication
 workspace.code-workspace
 *.env
+notes.txt
