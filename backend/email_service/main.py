@@ -1,0 +1,43 @@
+import os
+import argparse
+from azure.communication.email import EmailClient
+from azure.identity import DefaultAzureCredential
+
+def send_email(recipient: str, plant_name: str, username: str) -> None:
+        try:
+                conn_string = os.environ['AZ_EMAIL_CONNECTION_STRING']
+                sender_address = os.environ['AZ_EMAIL_SENDER_ADDRESS']
+                if not conn_string or not sender_address:
+                        raise RuntimeError("No AZ_EMAIL_CONNECTION_STRING or AZ_EMAIL_SENDER_ADDRESS set in the environment.")
+
+                email_client = EmailClient.from_connection_string(conn_string)
+
+                message = {
+                        "content": {
+                                "subject": f"Time to water {plant_name}!",
+                                "plainText": f"Time to water plant {plant_name}",
+                                "html": f"<html><h1>It's time to water {plant_name}</h1></html>"
+                        },
+                        "recipients": {
+                                "to": [
+                                {
+                                        "address": f"{recipient}",
+                                        "displayName": f"{username}"
+                                }
+                                ]
+                        },
+                        "senderAddress": f"{sender_address}"
+                }
+
+                poller = email_client.begin_send(message)
+                print(f"Result: {poller.result()}")
+        except Exception as ex:
+                print('Exception:')
+                print(ex)
+if __name__ == "__main__":
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--recipient", type=str, help="email")
+        parser.add_argument("--username", type=str, help="username")
+        parser.add_argument("--plant-name", type=str, help="name of plant to water")
+        args = parser.parse_args()
+        send_email(args.recipient, args.plant_name, args.username)
