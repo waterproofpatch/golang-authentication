@@ -13,8 +13,8 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./backend:/app
-    # env_file:
-    #   - secret.env
+    env_file:
+      - secret.env
     environment:
       - DEFAULT_ADMIN_EMAIL=admin@gmail.com
       - DEFAULT_ADMIN_PASSWORD=admin123

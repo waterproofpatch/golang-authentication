@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
+	"path/filepath"
 	"strconv"
 
 	"github.com/waterproofpatch/go_authentication/authentication"
@@ -138,6 +140,61 @@ func plantsInfo(w http.ResponseWriter, r *http.Request, claims *authentication.J
 	json.NewEncoder(w).Encode(response)
 }
 
+func sendEmail() {
+	fmt.Printf("Sending email...")
+	// Get the current directory path
+	dir, err := os.Getwd()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// Get a list of files and directories in the current directory
+	files, err := filepath.Glob("*")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// Print the names of the files and directories
+	fmt.Println("Files and directories in", dir)
+	for _, file := range files {
+		fmt.Println(file)
+	}
+	if _, err := os.Stat("/services/dist/main"); os.IsNotExist(err) {
+		fmt.Println("Error: main file does not exist")
+		return
+	}
+
+	if err := os.Chmod("/services/dist/main", 0755); err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	if _, err := os.Open("/services/dist/main"); err != nil {
+		fmt.Println("Error: main file is not readable")
+		return
+	}
+
+	if err := exec.Command("/services/dist/main", "--recipient", "coronism@gmail.com", "--username", "macci", "--plant-name", "zz-plant").Run(); err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	cmd := exec.Command("/services/dist/main", "--recipient", "coronism@gmail.com", "--username", "macci", "--plant-name", "zz-plant")
+	if err := cmd.Start(); err != nil {
+		log.Fatal(err)
+	}
+	if err := cmd.Wait(); err != nil {
+		log.Fatal(err)
+	}
+	output, err := cmd.Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Output:", string(output))
+}
+
 func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
 	db := authentication.GetDb()
 	var plants []PlantModel
@@ -145,7 +202,9 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 	vars := mux.Vars(r)
 	id, hasPlantId := vars["id"]
 
-	fmt.Printf("Handling plants request for %s\n", claims.Email)
+	// sendEmail()
+
+	fmt.Printf("1: Handling plants request for %s\n", claims.Email)
 
 	switch r.Method {
 	case "GET":
