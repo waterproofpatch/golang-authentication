@@ -36,8 +36,8 @@ def send_email(recipient: str, plant_name: str, username: str) -> None:
                 print(ex)
 if __name__ == "__main__":
         parser = argparse.ArgumentParser()
-        parser.add_argument("--recipient", type=str, help="email")
-        parser.add_argument("--username", type=str, help="username")
-        parser.add_argument("--plant-name", type=str, help="name of plant to water")
+        parser.add_argument("--recipient", type=str, help="email", required=True)
+        parser.add_argument("--username", type=str, help="username", required=True)
+        parser.add_argument("--plant-name", type=str, help="name of plant to water", required=True)
         args = parser.parse_args()
         send_email(args.recipient, args.plant_name, args.username)
