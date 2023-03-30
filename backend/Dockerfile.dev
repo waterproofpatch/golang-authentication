@@ -1,4 +1,13 @@
 FROM golang:1.18-alpine AS build
 
+RUN apk add python3
 RUN go install github.com/cosmtrek/air@latest
+WORKDIR /app/src
+
+#COPY src/email_service/main.py /app/outsource/email_service_bin/
+COPY src/email_service/main.py /email_service/
+COPY src/email_service/requirements.txt /email_service/
+WORKDIR /email_service
+RUN python3 -m venv venv
+RUN venv/bin/python -m pip install -r requirements.txt
 WORKDIR /app/src

@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"strconv"
 
 	"github.com/waterproofpatch/go_authentication/authentication"
@@ -138,6 +139,19 @@ func plantsInfo(w http.ResponseWriter, r *http.Request, claims *authentication.J
 	json.NewEncoder(w).Encode(response)
 }
 
+// execute the python script 'main.py' in /email_service to send an email
+func sendEmail() {
+	return
+	cmd := exec.Command("/email_service/venv/bin/python", "/email_service/main.py", "--recipient", "someemail", "--plant-name", "zzplant123", "--username", "some_username")
+	stdout, err := cmd.Output()
+	if err != nil {
+		fmt.Println(string(stdout))
+		fmt.Println(err.Error())
+		return
+	}
+	fmt.Println(string(stdout))
+}
+
 func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
 	db := authentication.GetDb()
 	var plants []PlantModel
@@ -211,6 +225,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		json.NewEncoder(w).Encode(plants)
 		break
 	case "PUT":
+		sendEmail()
 		plantId, err := strconv.Atoi(r.FormValue("id"))
 		var isNewImage = false
 		if err != nil {
