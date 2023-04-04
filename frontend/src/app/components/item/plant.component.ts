@@ -98,7 +98,12 @@ export class PlantComponent {
         if (!this.plant) {
           return;
         }
-        this.plant.lastWaterDate = new Date().toDateString()
+        // this.plant.lastWaterDate = new Date().toDateString()
+        const dateString = 'Tue Apr 04 2023 03:31:51 AM EDT';
+        const date = new Date(Date.parse(dateString));
+        console.log(date);
+        this.plant.lastWaterDate = date.toString()
+
         // not updating the image for this plant
         this.plantService.updatePlant(this.plant, null)
       } else {
