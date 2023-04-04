@@ -456,7 +456,6 @@ func InitViews(router *mux.Router) {
 	router.HandleFunc("/api/dashboard", authentication.VerifiedOnly(dashboard)).Methods("GET", "POST", "PUT", "OPTIONS")
 	router.HandleFunc("/api/comments/{id:[0-9]+}", authentication.VerifiedOnly(comments)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	router.HandleFunc("/api/plants", authentication.VerifiedOnly(plants)).Methods("GET", "POST", "PUT", "OPTIONS")
-	router.HandleFunc("/api/plantsInfo", authentication.VerifiedOnly(plantsInfo)).Methods("POST", "OPTIONS")
 	router.HandleFunc("/api/plants/{id:[0-9]+}", authentication.VerifiedOnly(plants)).Methods("GET", "POST", "DELETE", "PUT", "OPTIONS")
 	router.HandleFunc("/api/images/{id:[0-9]+}", images).Methods("GET", "OPTIONS")
 	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
