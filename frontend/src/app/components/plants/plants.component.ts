@@ -13,6 +13,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   styleUrls: ['./plants.component.css']
 })
 export class PlantsComponent {
+  public wateringFrequencyOptions = Array.from({ length: 60 }, (_, i) => i + 1);
 
   // suggested watering frequency for the plant based on backend search
   suggestedWateringFrequency: BehaviorSubject<number> = new BehaviorSubject<number>(0)
