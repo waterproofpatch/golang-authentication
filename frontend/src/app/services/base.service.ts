@@ -7,6 +7,11 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class BaseService extends BaseComponent {
+  public httpOptionsNonJson = {
+    headers: new HttpHeaders({
+      'Access-Control-Allow-Origin': '*',
+    }),
+  };
   public httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',

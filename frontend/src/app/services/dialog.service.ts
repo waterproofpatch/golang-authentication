@@ -6,8 +6,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { BaseService } from './base.service';
 import { LogDialogComponent } from 'src/app/components/log-dialog/log-dialog.component';
 import { ErrorDialogComponent } from 'src/app/components/error-dialog/error-dialog.component';
+import { ConfirmationDialogComponent } from '../components/confirmation-dialog/confirmation-dialog.component';
 
-export interface NewGameDialogData {}
+export interface NewGameDialogData { }
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +19,13 @@ export class DialogService extends BaseService {
     super();
   }
 
+  displayConfirmationDialog(confirmationMsg: string): any {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '300px',
+      data: { title: 'Confirm', confirmationMsg: confirmationMsg }
+    });
+    return dialogRef
+  }
   /**
    * display an error modal.
    * @param errorMsg the error message to display.

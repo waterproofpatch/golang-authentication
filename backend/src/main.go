@@ -46,6 +46,10 @@ func startServing(port int, router *mux.Router) {
 // main is the entrypoint to the program.
 func main() {
 	log.Printf("Starting...")
+	stopCh := make(chan bool)
+
+	// Stop the function by sending a message to the channel
+	// stopCh <- true
 
 	var router = makeRouter()
 	var dropTables = false
@@ -77,11 +81,8 @@ func main() {
 	app.InitViews(router)
 	app.InitModels(db)
 
-	err = app.AddItem(db, "some name", 32)
-	if err != nil {
-		log.Printf("Error adding item: %s", err)
-		return
-	}
+	// Run the function in a goroutine
+	go app.StartTimer(stopCh, db)
 
 	startServing(port, router)
 }

@@ -1,0 +1,33 @@
+.plants {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	margin: 10px;
+	padding: 10px;
+	justify-content: center;
+}
+
+.container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+form {
+	display: flex;
+	flex-direction: column;
+	margin: 10px;
+}
+
+mat-form-field,
+button {
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+
+img {
+	width: 100%;
+	max-width: 250px;
+	height: auto;
+}

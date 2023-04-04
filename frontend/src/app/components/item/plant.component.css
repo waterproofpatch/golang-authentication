@@ -1,0 +1,52 @@
+.plant-theirs {
+	max-width: 250px;
+	min-width: 250px;
+	/* height: auto; */
+	max-height: 500;
+	min-height: 500;
+	margin: 10px;
+	color: blue;
+}
+
+.plant-mine {
+	max-width: 250px;
+	min-width: 250px;
+	/* height: auto; */
+	max-height: 500;
+	min-height: 500;
+	margin: 10px;
+}
+
+mat-card img {
+	object-fit: cover;
+	/*this makes the image in src fit to the size specified below*/
+	width: 100%;
+	/* Here you can use wherever you want to specify the width and also the height of the <img>*/
+	height: 80%;
+}
+
+mat-card-actions {
+	display: flex;
+	justify-content: space-between;
+}
+
+.water-times {
+	display: flex;
+	justify-content: space-between;
+}
+
+.left {
+	text-align: left;
+}
+
+.right {
+	text-align: right;
+}
+
+.lock-icon {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	font-size: 20px;
+	color: #ccc;
+}

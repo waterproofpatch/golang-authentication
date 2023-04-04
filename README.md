@@ -2,10 +2,17 @@
 
 ## Quickstart
 
-Install azure-cli (MacOS):
+### MacOS
 
 ```bash
 brew update && brew install azure-cli
+```
+
+### Ubuntu
+
+```bash
+sudo apt install make -y
+sudo snap install docker
 ```
 
 There is a `docker-compose.yml` file at the root of this repo that starts up

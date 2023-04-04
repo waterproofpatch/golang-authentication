@@ -1,0 +1,84 @@
+<div class="container">
+	<div *ngIf="isLoading">Retreiving plants - hang tight...</div>
+	<div *ngIf="!isLoading">
+
+		<button mat-button mat-raised-button color="primary" *ngIf="!addMode" (click)="addMode=true">Add
+			Plant</button>
+		<div *ngIf="addMode">
+
+			<form (ngSubmit)="addPlant()" [formGroup]="form" *ngIf="form">
+				<mat-form-field hintLabel="Max 30 characters" appearance="fill">
+					<mat-label>Plant Name</mat-label>
+					<input matInput formControlName="name" #input maxlength="30">
+					<mat-hint align="end">{{input.value.length}}/30</mat-hint>
+				</mat-form-field>
+
+				<mat-form-field appearance="fill">
+					<mat-label>Watering Frequency</mat-label>
+					<mat-select formControlName="wateringFrequency">
+						<mat-option value=1>1 day</mat-option>
+						<mat-option value=2>2 days</mat-option>
+						<mat-option value=3>3 days</mat-option>
+						<mat-option value=4>4 days</mat-option>
+						<mat-option value=5>5 days</mat-option>
+						<mat-option value=6>6 days</mat-option>
+						<mat-option value=7>7 days</mat-option>
+						<mat-option value=8>8 days</mat-option>
+						<mat-option value=9>9 days</mat-option>
+						<mat-option value=10>10 days</mat-option>
+						<mat-option value=11>11 days</mat-option>
+						<mat-option value=12>12 days</mat-option>
+						<mat-option value=13>13 days</mat-option>
+						<mat-option value=14>14 days</mat-option>
+						<mat-option value=15>15 days</mat-option>
+						<mat-option value=16>16 days</mat-option>
+						<mat-option value=17>17 days</mat-option>
+						<mat-option value=18>18 days</mat-option>
+						<mat-option value=19>19 days</mat-option>
+						<mat-option value=20>20 days</mat-option>
+					</mat-select>
+				</mat-form-field>
+				<!-- <button mat-button mat-raised-button
+					(click)="getSuggestedWateringFrequency(); $event.preventDefault()">Get Suggested
+					Watering Frequency
+				</button>
+				<p *ngIf="!(isWaitingSuggestedWateringFrequency | async)">Suggested Frequency: every
+					{{suggestedWateringFrequency | async}} days.</p>
+				<p *ngIf="isWaitingSuggestedWateringFrequency | async">Hang
+					tight...</p> -->
+				<mat-form-field appearance="fill">
+					<mat-label>Last Watered Date</mat-label>
+					<input matInput formControlName="lastWateredDate" [matDatepicker]="picker">
+					<mat-hint>MM/DD/YYYY</mat-hint>
+					<mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+					<mat-datepicker #picker></mat-datepicker>
+				</mat-form-field>
+
+				<mat-label>Email me when overdue for watering:</mat-label>
+				<mat-radio-group formControlName="doNotify">
+					<mat-radio-button value="yes">Yes</mat-radio-button>
+					<mat-radio-button value="no">No</mat-radio-button>
+				</mat-radio-group>
+				<mat-radio-group formControlName="publicOrPrivate">
+					<mat-radio-button value="public">Public</mat-radio-button>
+					<mat-radio-button value="private">Private</mat-radio-button>
+				</mat-radio-group>
+				<button type="button" mat-raised-button (click)="fileInput.click()">Plant
+					Picture</button>
+				<input hidden (change)="onImageSelected($event)" #fileInput type="file" id="file">
+				<img id="preview" [src]="selectedImagePreview_safe" />
+				<button *ngIf="editingPlant" mat-button mat-raised-button color="primary"
+					type="submit">Update</button>
+				<button *ngIf="!editingPlant" mat-button mat-raised-button color="primary"
+					type="submit">Add</button>
+				<button mat-button mat-raised-button color="warn" *ngIf="addMode"
+					(click)="cancelAddMode(); $event.preventDefault()">Cancel</button>
+
+			</form>
+		</div>
+	</div>
+</div>
+<div class="plants" *ngIf="!addMode">
+	<app-plant (editModeEmitter)="editPlant($event)" *ngFor="let plant of plants | async"
+		[plant]="plant"></app-plant>
+</div>

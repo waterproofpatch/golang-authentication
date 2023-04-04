@@ -1,17 +1,41 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"log"
+	"time"
 
 	"gorm.io/gorm"
 )
 
-type ItemModel struct {
+type ImageModel struct {
 	gorm.Model
-	Id   int    `json:"id"`
-	Name string `json:"name"`
-	Type int    `json:"type"`
+	ID   uint
+	Name string
+	Data []byte
+}
+
+type CommentModel struct {
+	gorm.Model
+	Id       int    `json:"id"`
+	PlantId  int    `json:"plantId"`
+	Email    string `json:"email"`
+	Username string `json:"username"`
+	Content  string `json:"content"`
+}
+type PlantModel struct {
+	gorm.Model
+	Id                int    `json:"id"`
+	Email             string `json:"email"`
+	Username          string `json:"username"`
+	Name              string `json:"name"`
+	WateringFrequency string `json:"wateringFrequency"`
+	LastWaterDate     string `json:"lastWaterDate"`
+	LastNotifyDate    string `json:"lastNotifyDate"`
+	ImageId           uint   `json:"imageId"`
+	IsPublic          bool   `json:"isPublic"`
+	DoNotify          bool   `json:"doNotify"`
 }
 type MessageModel struct {
 	gorm.Model
@@ -24,8 +48,15 @@ type MessageModel struct {
 	Authenticated bool   `json:"authenticated"`
 }
 
-func (i ItemModel) String() string {
-	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name: %s, type: %d", i.ID, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name, i.Type)
+// render a plant
+func (i PlantModel) String() string {
+	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name=%s, waterFrequency=%s, lastWateringDate=%s, lastNotifyDate=%s, username=%s, isPublic=%t, doNotify=%t\n", i.Id, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name,
+		i.WateringFrequency,
+		i.LastWaterDate,
+		i.LastNotifyDate,
+		i.Username,
+		i.IsPublic,
+		i.DoNotify)
 }
 
 func AddMessage(db *gorm.DB, message *Message) error {
@@ -53,34 +84,115 @@ func AddMessage(db *gorm.DB, message *Message) error {
 	db.Save(newDbMessage)
 	return nil
 }
-func UpdateItem(db *gorm.DB, id int, name string, itemType int) error {
-	var existingItem ItemModel
-	existingItem.Id = id
-	db.First(&existingItem)
-	existingItem.Name = name
-	existingItem.Type = itemType
-	db.Save(existingItem)
+
+func UpdatePlant(db *gorm.DB,
+	id int,
+	name string,
+	wateringFrequency string,
+	imageId uint,
+	lastWaterDate string,
+	isNewImage bool,
+	isPublic bool,
+	doNotify bool) error {
+	var existingplant PlantModel
+	existingplant.Id = id
+	db.First(&existingplant)
+	fmt.Printf("Existing plant: %s\n", existingplant)
+	if existingplant.ImageId != 0 && isNewImage {
+		fmt.Printf("isNewImage=%t, Must first remove old plant image ID=%d\n", isNewImage, existingplant.ImageId)
+		db.Delete(&ImageModel{}, existingplant.ImageId)
+	}
+
+	// imageId exists by now since we process the image before calling this function to update the plant
+	existingplant.DoNotify = doNotify
+	existingplant.IsPublic = isPublic
+	existingplant.ImageId = imageId
+	existingplant.Name = name
+	existingplant.WateringFrequency = wateringFrequency
+	existingplant.LastWaterDate = lastWaterDate
+	existingplant.LastNotifyDate = time.Now().UTC().String()
+	db.Save(existingplant)
 	return nil
 }
 
-func AddItem(db *gorm.DB, name string, itemType int) error {
-	var item = ItemModel{
-		Name: name,
-		Type: itemType,
+func AddPlant(db *gorm.DB,
+	name string,
+	wateringFrequency string,
+	imageId uint,
+	lastWaterDate string,
+	email string,
+	username string,
+	isPublic bool,
+	doNotify bool) error {
+	if name == "" {
+		return errors.New("Invalid plant name.")
+	}
+	if wateringFrequency == "" {
+		return errors.New("Invalid watering frequency.")
+	}
+	if lastWaterDate == "" {
+		return errors.New("Invalid last watering date.")
+	}
+	// Delete old records if the limit has been reached
+	var count int64
+	db.Model(&PlantModel{}).Count(&count)
+	if count > 50 {
+		fmt.Printf("DB has %d plants.", count)
+		var plants []PlantModel
+		db.Order("id asc").Limit(int(count) - 50).Find(&plants)
+		db.Delete(&plants)
+	}
+	currentDate := time.Now().UTC().String()
+	var plant = PlantModel{
+		Name:              name,
+		WateringFrequency: wateringFrequency,
+		ImageId:           imageId,
+		Email:             email,
+		Username:          username,
+		IsPublic:          isPublic,
+		DoNotify:          doNotify,
+		LastWaterDate:     lastWaterDate,
+		LastNotifyDate:    currentDate,
 	}
 
-	log.Printf("Adding item %s", item)
+	log.Printf("Adding plant %s", plant)
 
-	err := db.Create(&item).Error
+	err := db.Create(&plant).Error
 	if err != nil {
 		return err
 	}
-	db.Save(item)
+	db.Save(plant)
+	return nil
+}
+
+func AddComment(db *gorm.DB, content string, email string, username string, plantId int) error {
+	// Delete old records if the limit has been reached
+	var count int64
+	db.Model(&CommentModel{}).Count(&count)
+	if count > 50 {
+		fmt.Printf("DB has %d plants.", count)
+		var comments []CommentModel
+		db.Order("id asc").Limit(int(count) - 50).Find(&comments)
+		db.Delete(&comments)
+	}
+	comment := &CommentModel{
+		Content:  content,
+		Username: username,
+		Email:    email,
+		PlantId:  plantId,
+	}
+	err := db.Create(&comment).Error
+	if err != nil {
+		return err
+	}
+	db.Save(comment)
 	return nil
 }
 
 func InitModels(db *gorm.DB) {
 	log.Printf("Initializing models...\n")
-	db.AutoMigrate(&ItemModel{})
+	db.AutoMigrate(&PlantModel{})
 	db.AutoMigrate(&MessageModel{})
+	db.AutoMigrate(&CommentModel{})
+	db.AutoMigrate(&ImageModel{})
 }

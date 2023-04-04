@@ -5,9 +5,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // <-- NgMode
 
 
 import { AuthenticationComponent } from './components/authentication/authentication.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthenticationService } from './services/authentication.service';
+import { MatRadioModule } from '@angular/material/radio';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
 import { LogDialogComponent } from './components/log-dialog/log-dialog.component';
+import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 import { ErrorDialogComponent } from './components/error-dialog/error-dialog.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
@@ -29,30 +32,34 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { ItemComponent } from './components/item/item.component';
+import { PlantsComponent } from './components/plants/plants.component';
+import { PlantComponent } from './components/item/plant.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { MessageComponent } from './components/message/message.component';
 import { UserComponent } from './components/user/user.component';
+import { CommentsComponent } from './components/comments/comments.component';
 
 
 @NgModule({
   declarations: [
     AuthenticationComponent,
     LogDialogComponent,
+    ConfirmationDialogComponent,
     ErrorDialogComponent,
     AppComponent,
     BaseComponent,
-    DashboardComponent,
-    ItemComponent,
+    PlantsComponent,
+    PlantComponent,
     ChatComponent,
     ProfileComponent,
     MessageComponent,
-    UserComponent
+    UserComponent,
+    CommentsComponent
   ],
   imports: [
     HttpClientModule,
+    MatProgressSpinnerModule,
     BrowserModule,
     MatTabsModule,
     AppRoutingModule,
@@ -73,6 +80,7 @@ import { UserComponent } from './components/user/user.component';
     MatListModule,
     MatInputModule,
     FormsModule,
+    MatRadioModule,
     ReactiveFormsModule,
   ],
   providers: [
