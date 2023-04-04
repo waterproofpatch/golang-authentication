@@ -107,7 +107,9 @@ export class PlantsComponent {
     let imageUrl = event.imageUrl
     this.editingPlant = plant
     this.form.controls.name.setValue(plant.name)
-    this.form.controls.wateringFrequency.setValue(plant.wateringFrequency)
+    // this.form.controls.wateringFrequency.setValue(plant.wateringFrequency)
+    console.log("plant wf: " + plant.wateringFrequency)
+    this.form.controls['wateringFrequency'].setValue(plant.wateringFrequency)
     this.form.controls.lastWateredDate.setValue(plant.lastWaterDate)
     this.form.controls.publicOrPrivate.setValue(plant.isPublic ? "public" : "private")
     this.form.controls.doNotify.setValue(plant.doNotify ? true : false)

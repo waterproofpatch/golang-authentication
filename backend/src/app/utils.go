@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os/exec"
 	"regexp"
-	"strconv"
 	"time"
 
 	"gorm.io/gorm"
@@ -68,13 +67,7 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 					break
 				}
 
-				wateringFrequency, err := strconv.Atoi(plant.WateringFrequency)
-				if err != nil {
-					fmt.Println("Error converting string to integer:", err)
-					return
-				}
-
-				nextWaterDate := lastWaterDate.AddDate(0, 0, wateringFrequency)
+				nextWaterDate := lastWaterDate.AddDate(0, 0, plant.WateringFrequency)
 				today := time.Now().UTC()
 
 				// is the plant overdue for watering

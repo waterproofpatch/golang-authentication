@@ -30,7 +30,7 @@ type PlantModel struct {
 	Email             string `json:"email"`
 	Username          string `json:"username"`
 	Name              string `json:"name"`
-	WateringFrequency string `json:"wateringFrequency"`
+	WateringFrequency int    `json:"wateringFrequency"`
 	LastWaterDate     string `json:"lastWaterDate"`
 	LastNotifyDate    string `json:"lastNotifyDate"`
 	ImageId           uint   `json:"imageId"`
@@ -50,7 +50,7 @@ type MessageModel struct {
 
 // render a plant
 func (i PlantModel) String() string {
-	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name=%s, waterFrequency=%s, lastWateringDate=%s, lastNotifyDate=%s, username=%s, isPublic=%t, doNotify=%t\n", i.Id, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name,
+	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name=%s, waterFrequency=%s, lastWateringDate=%u, lastNotifyDate=%s, username=%s, isPublic=%t, doNotify=%t\n", i.Id, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name,
 		i.WateringFrequency,
 		i.LastWaterDate,
 		i.LastNotifyDate,
@@ -88,7 +88,7 @@ func AddMessage(db *gorm.DB, message *Message) error {
 func UpdatePlant(db *gorm.DB,
 	id int,
 	name string,
-	wateringFrequency string,
+	wateringFrequency int,
 	imageId uint,
 	lastWaterDate string,
 	isNewImage bool,
@@ -117,7 +117,7 @@ func UpdatePlant(db *gorm.DB,
 
 func AddPlant(db *gorm.DB,
 	name string,
-	wateringFrequency string,
+	wateringFrequency int,
 	imageId uint,
 	lastWaterDate string,
 	email string,
@@ -127,7 +127,7 @@ func AddPlant(db *gorm.DB,
 	if name == "" {
 		return errors.New("Invalid plant name.")
 	}
-	if wateringFrequency == "" {
+	if wateringFrequency == 0 {
 		return errors.New("Invalid watering frequency.")
 	}
 	if lastWaterDate == "" {

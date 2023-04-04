@@ -99,44 +99,6 @@ func images(w http.ResponseWriter, r *http.Request) {
 		break
 	}
 }
-func plantsInfo(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
-	if !isChatGptEnabled() {
-		authentication.WriteError(w, "Unable to handle this request at this time.", http.StatusBadRequest)
-		return
-	}
-
-	var jsonObject map[string]interface{}
-	err := json.NewDecoder(r.Body).Decode(&jsonObject)
-	if err != nil {
-		fmt.Println(err)
-		authentication.WriteError(w, "Problem decoding request.", http.StatusBadRequest)
-		return
-	}
-
-	plantName, ok := jsonObject["plantName"].(string)
-	if !ok {
-		authentication.WriteError(w, "Problem parsing plantName", http.StatusBadRequest)
-		return
-	}
-
-	wateringFrequency, err := chatgptGetWateringFruencyByPlantName(plantName)
-	if err != nil {
-		fmt.Printf("Error: %s\n", err)
-		authentication.WriteError(w, "Unable to get watering frequency.", http.StatusBadRequest)
-		return
-	}
-	response := map[string]interface{}{
-		"wateringFrequency": wateringFrequency,
-	}
-	jsonResponse, err := json.Marshal(response)
-	if err != nil {
-		fmt.Println(err)
-		authentication.WriteError(w, "Unable to marshal watering frequency.", http.StatusBadRequest)
-		return
-	}
-	fmt.Printf("JSON response is %s", jsonResponse)
-	json.NewEncoder(w).Encode(response)
-}
 
 func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
 	db := authentication.GetDb()
@@ -181,7 +143,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		var newPlant PlantModel
 		newPlant.ImageId = imageId
 		newPlant.Name = r.FormValue("nameOfPlant")
-		newPlant.WateringFrequency = r.FormValue("wateringFrequency")
+		newPlant.WateringFrequency, _ = strconv.Atoi(r.FormValue("wateringFrequency"))
 		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
 		doNotify, err := strconv.ParseBool(r.FormValue("doNotify"))
 		if err != nil {
@@ -252,7 +214,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		}
 		// update to new values
 		newPlant.Name = r.FormValue("nameOfPlant")
-		newPlant.WateringFrequency = r.FormValue("wateringFrequency")
+		newPlant.WateringFrequency, _ = strconv.Atoi(r.FormValue("wateringFrequency"))
 		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
 		doNotify, err := strconv.ParseBool(r.FormValue("doNotify"))
 		if err != nil {
