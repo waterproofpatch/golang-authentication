@@ -140,9 +140,8 @@ func plantsInfo(w http.ResponseWriter, r *http.Request, claims *authentication.J
 }
 
 // execute the python script 'main.py' in /email_service to send an email
-func sendEmail() {
-	return
-	cmd := exec.Command("/email_service/venv/bin/python", "/email_service/main.py", "--recipient", "someemail", "--plant-name", "zzplant123", "--username", "some_username")
+func sendEmail(recpient string, plantName string, username string) {
+	cmd := exec.Command("/email_service/venv/bin/python", "/email_service/main.py", "--recipient", recpient, "--plant-name", plantName, "--username", username)
 	stdout, err := cmd.Output()
 	if err != nil {
 		fmt.Println(string(stdout))
@@ -225,7 +224,6 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		json.NewEncoder(w).Encode(plants)
 		break
 	case "PUT":
-		sendEmail()
 		plantId, err := strconv.Atoi(r.FormValue("id"))
 		var isNewImage = false
 		if err != nil {

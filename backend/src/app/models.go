@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -31,6 +32,7 @@ type PlantModel struct {
 	Name              string `json:"name"`
 	WateringFrequency string `json:"wateringFrequency"`
 	LastWaterDate     string `json:"lastWaterDate"`
+	LastNotifyDate    string `json:"lastNotifyDate"`
 	ImageId           uint   `json:"imageId"`
 	IsPublic          bool   `json:"isPublic"`
 }
@@ -47,7 +49,12 @@ type MessageModel struct {
 
 // render a plant
 func (i PlantModel) String() string {
-	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name=%s, waterFrequency:=%s, lastWateringDate=%s, username=%s isPublic=%t\n", i.Id, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name, i.WateringFrequency, i.LastWaterDate, i.Username, i.IsPublic)
+	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name=%s, waterFrequency=%s, lastWateringDate=%s, lastNotifyDate=%s, username=%s isPublic=%t\n", i.Id, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name,
+		i.WateringFrequency,
+		i.LastWaterDate,
+		i.LastNotifyDate,
+		i.Username,
+		i.IsPublic)
 }
 
 func AddMessage(db *gorm.DB, message *Message) error {
@@ -99,6 +106,7 @@ func UpdatePlant(db *gorm.DB,
 	existingplant.Name = name
 	existingplant.WateringFrequency = wateringFrequency
 	existingplant.LastWaterDate = lastWaterDate
+	existingplant.LastNotifyDate = time.Now().UTC().String()
 	db.Save(existingplant)
 	return nil
 }
@@ -129,6 +137,7 @@ func AddPlant(db *gorm.DB,
 		db.Order("id asc").Limit(int(count) - 50).Find(&plants)
 		db.Delete(&plants)
 	}
+	currentDate := time.Now().UTC().String()
 	var plant = PlantModel{
 		Name:              name,
 		WateringFrequency: wateringFrequency,
@@ -137,6 +146,7 @@ func AddPlant(db *gorm.DB,
 		Username:          username,
 		IsPublic:          isPublic,
 		LastWaterDate:     lastWaterDate,
+		LastNotifyDate:    currentDate,
 	}
 
 	log.Printf("Adding plant %s", plant)
