@@ -80,7 +80,7 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 				// is the plant overdue for watering
 				if nextWaterDate.Before(today) {
 					diff := currentDate.Sub(notifyDate).Hours()
-					fmt.Printf("Plant is overdue for watering. It's been %v hours since last notification\n", diff)
+					fmt.Printf("Plant %v is overdue for watering. It's been %v hours since last notification\n", plant.Name, diff)
 
 					// if it's been more than 24h since we last notified user, do so
 					if diff > 24 {
