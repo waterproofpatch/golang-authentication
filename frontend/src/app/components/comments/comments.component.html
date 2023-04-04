@@ -1,10 +1,11 @@
 <div class="container">
 
+	<button mat-button mat-raised-button color="primary" (click)="goBack()">Back</button>
 	<mat-form-field appearance="fill">
 		<mat-label>Comment</mat-label>
 		<textarea (keyup.enter)="addComment()" [(ngModel)]="commentContent" matInput></textarea>
 	</mat-form-field>
-	<button mat-button (click)="addComment()">Add Comment</button>
+	<button mat-button mat-raised-button (click)="addComment()">Post</button>
 
 	<mat-divider></mat-divider>
 

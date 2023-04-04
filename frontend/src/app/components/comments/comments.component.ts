@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommentsService } from 'src/app/services/comments.service';
 import Comment from 'src/app/services/comments.service';
 import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-comments',
@@ -17,9 +18,11 @@ export class CommentsComponent {
 
   constructor(
     private commentsService: CommentsService,
-    private activatedRoute: ActivatedRoute) {
+    private activatedRoute: ActivatedRoute,
+    private location: Location) {
 
   }
+
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
       this.plantId = parseInt(params['plantId']);
@@ -29,6 +32,10 @@ export class CommentsComponent {
     this.commentsService.comments$.subscribe((x) => this.comments = x)
   }
 
+
+  public goBack(): void {
+    this.location.back();
+  }
   public deleteComment(comment: Comment) {
     this.commentsService.deleteComment(comment)
   }

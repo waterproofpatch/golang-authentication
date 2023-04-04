@@ -16,3 +16,8 @@ button {
 	margin-bottom: 10px;
 	/* add space between the cards */
 }
+
+button {
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
