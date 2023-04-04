@@ -35,6 +35,7 @@ type PlantModel struct {
 	LastNotifyDate    string `json:"lastNotifyDate"`
 	ImageId           uint   `json:"imageId"`
 	IsPublic          bool   `json:"isPublic"`
+	DoNotify          bool   `json:"doNotify"`
 }
 type MessageModel struct {
 	gorm.Model
@@ -49,12 +50,13 @@ type MessageModel struct {
 
 // render a plant
 func (i PlantModel) String() string {
-	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name=%s, waterFrequency=%s, lastWateringDate=%s, lastNotifyDate=%s, username=%s isPublic=%t\n", i.Id, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name,
+	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name=%s, waterFrequency=%s, lastWateringDate=%s, lastNotifyDate=%s, username=%s, isPublic=%t, doNotify=%t\n", i.Id, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name,
 		i.WateringFrequency,
 		i.LastWaterDate,
 		i.LastNotifyDate,
 		i.Username,
-		i.IsPublic)
+		i.IsPublic,
+		i.DoNotify)
 }
 
 func AddMessage(db *gorm.DB, message *Message) error {
@@ -90,7 +92,8 @@ func UpdatePlant(db *gorm.DB,
 	imageId uint,
 	lastWaterDate string,
 	isNewImage bool,
-	isPublic bool) error {
+	isPublic bool,
+	doNotify bool) error {
 	var existingplant PlantModel
 	existingplant.Id = id
 	db.First(&existingplant)
@@ -101,6 +104,7 @@ func UpdatePlant(db *gorm.DB,
 	}
 
 	// imageId exists by now since we process the image before calling this function to update the plant
+	existingplant.DoNotify = doNotify
 	existingplant.IsPublic = isPublic
 	existingplant.ImageId = imageId
 	existingplant.Name = name
@@ -118,7 +122,8 @@ func AddPlant(db *gorm.DB,
 	lastWaterDate string,
 	email string,
 	username string,
-	isPublic bool) error {
+	isPublic bool,
+	doNotify bool) error {
 	if name == "" {
 		return errors.New("Invalid plant name.")
 	}
@@ -145,6 +150,7 @@ func AddPlant(db *gorm.DB,
 		Email:             email,
 		Username:          username,
 		IsPublic:          isPublic,
+		DoNotify:          doNotify,
 		LastWaterDate:     lastWaterDate,
 		LastNotifyDate:    currentDate,
 	}

@@ -36,18 +36,22 @@ func sendEmail(recpient string, plantName string, username string) {
 	fmt.Println(string(stdout))
 }
 
-func startTimer(stopCh chan bool, db *gorm.DB) {
+func StartTimer(stopCh chan bool, db *gorm.DB) {
 	// Create a ticker that ticks every 5 seconds
 	ticker := time.NewTicker(5 * time.Second)
 
 	for {
 		select {
 		case <-ticker.C:
-			fmt.Println("Function executed at", time.Now())
-			var plants []app.PlantModel
+			currentDate := time.Now().UTC()
+			var plants []PlantModel
 			db.Find(&plants)
 			for _, plant := range plants {
 				fmt.Printf("checking watering notifications for %v", plant)
+				if !plant.DoNotify {
+					fmt.Printf("Plant notifications turned off. Skipping\n")
+					continue
+				}
 				regex := regexp.MustCompile(`\s*\([^)]*\)`)
 				lastWaterDateStr := regex.ReplaceAllString(plant.LastWaterDate, "")
 				notifyDateStr := regex.ReplaceAllString(plant.LastNotifyDate, "")
@@ -71,16 +75,16 @@ func startTimer(stopCh chan bool, db *gorm.DB) {
 				}
 
 				nextWaterDate := lastWaterDate.AddDate(0, 0, wateringFrequency)
-				fmt.Printf("Next watering date: %v\n", nextWaterDate)
 				today := time.Now().UTC()
+
+				// is the plant overdue for watering
 				if nextWaterDate.Before(today) {
-					fmt.Printf("next water date is before today=%v\n", nextWaterDate)
-					currentDate := time.Now().UTC()
 					diff := currentDate.Sub(notifyDate).Hours()
-					fmt.Printf("lastNotifyDate=%v", notifyDate)
-					fmt.Printf("It's been %v hours since last notification\n", diff)
+					fmt.Printf("Plant is overdue for watering. It's been %v hours since last notification\n", diff)
+
+					// if it's been more than 24h since we last notified user, do so
 					if diff > 24 {
-						fmt.Printf("notify!\n")
+						fmt.Printf("Sending notification to %v!\n", plant.Email)
 						sendEmail(plant.Email, plant.Name, plant.Username)
 						plant.LastNotifyDate = currentDate.String()
 						db.Save(&plant)

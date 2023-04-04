@@ -15,6 +15,7 @@ export default interface Plant {
   lastWaterDate: string;
   imageId: number;
   isPublic: boolean;
+  doNotify: boolean;
 }
 
 @Injectable({
@@ -37,12 +38,14 @@ export class PlantsService extends BaseService {
       console.log(`lastWaterDate: ${plant.lastWaterDate}`);
       console.log(`imageId: ${plant.imageId}`);
       console.log(`isPublic: ${plant.isPublic}`);
+      console.log(`doNotify: ${plant.doNotify}`);
     }
 
     public static makePlant(name: string,
       wateringFrequency: string,
       lastWateredDate: string,
-      isPublic: boolean): Plant {
+      isPublic: boolean,
+      doNotify: boolean): Plant {
       console.log("makePlant: isPublic=" + isPublic)
       const plant: Plant = {
         name: name,
@@ -53,6 +56,7 @@ export class PlantsService extends BaseService {
         email: "", // authoritative
         imageId: 0, // TODO improve how this is set.
         isPublic: isPublic,
+        doNotify: doNotify,
       }
       return plant;
     }
@@ -132,6 +136,7 @@ export class PlantsService extends BaseService {
     formData.append('wateringFrequency', plant.wateringFrequency.toString())
     formData.append('lastWateredDate', plant.lastWaterDate)
     formData.append('isPublic', plant.isPublic.toString())
+    formData.append('doNotify', plant.doNotify.toString())
     this.plantsApiService
       .putFormData(formData)
       .pipe(
@@ -164,6 +169,7 @@ export class PlantsService extends BaseService {
     formData.append('wateringFrequency', plant.wateringFrequency.toString())
     formData.append('lastWateredDate', plant.lastWaterDate)
     formData.append('isPublic', plant.isPublic.toString())
+    formData.append('doNotify', plant.doNotify.toString())
     this.plantsApiService
       .postFormData(formData)
       .pipe(

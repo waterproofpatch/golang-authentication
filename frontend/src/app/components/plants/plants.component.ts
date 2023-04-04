@@ -41,6 +41,7 @@ export class PlantsComponent {
   form = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.min(3), Validators.max(30)]),
     publicOrPrivate: new FormControl(''),
+    doNotify: new FormControl(''),
     wateringFrequency: new FormControl('', [Validators.required]),
     lastWateredDate: new FormControl('', [Validators.required])
   });
@@ -54,6 +55,7 @@ export class PlantsComponent {
   ) {
     this.form = this.formBuilder.group({
       publicOrPrivate: [''],
+      doNotify: [''],
       name: [''],
       wateringFrequency: [''],
       lastWateredDate: ['']
@@ -119,6 +121,7 @@ export class PlantsComponent {
     this.form.controls.wateringFrequency.setValue(plant.wateringFrequency)
     this.form.controls.lastWateredDate.setValue(plant.lastWaterDate)
     this.form.controls.publicOrPrivate.setValue(plant.isPublic ? "public" : "private")
+    this.form.controls.doNotify.setValue(plant.doNotify ? "yes" : "no")
     if (imageUrl) {
 
       this.selectedImagePreview = imageUrl
@@ -158,7 +161,8 @@ export class PlantsComponent {
       var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '',
         this.form.controls.wateringFrequency.value || '',
         this.form.controls.lastWateredDate.value || '',
-        this.form.controls.publicOrPrivate.value == "public" || false)
+        this.form.controls.publicOrPrivate.value == "public" || false,
+        this.form.controls.doNotify.value == "yes" || false)
       plant.id = this.editingPlant.id
       this.plantsService.updatePlant(plant, this.selectedImage)
       this.editingPlant = null
@@ -172,7 +176,8 @@ export class PlantsComponent {
     var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '',
       this.form.controls.wateringFrequency.value || '',
       this.form.controls.lastWateredDate.value || '',
-      this.form.controls.publicOrPrivate.value == "public" || false)
+      this.form.controls.publicOrPrivate.value == "public" || false,
+      this.form.controls.doNotify.value == "yes" || false)
     this.plantsService.addPlant(plant, this.selectedImage)
     this.addMode = false;
     this.selectedImage = null

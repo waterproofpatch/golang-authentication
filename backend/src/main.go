@@ -82,7 +82,7 @@ func main() {
 	app.InitModels(db)
 
 	// Run the function in a goroutine
-	go startTimer(stopCh, db)
+	go app.StartTimer(stopCh, db)
 
 	startServing(port, router)
 }

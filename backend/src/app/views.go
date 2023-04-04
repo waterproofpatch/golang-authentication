@@ -183,6 +183,13 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		newPlant.Name = r.FormValue("nameOfPlant")
 		newPlant.WateringFrequency = r.FormValue("wateringFrequency")
 		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
+		doNotify, err := strconv.ParseBool(r.FormValue("doNotify"))
+		if err != nil {
+			// handle error
+			authentication.WriteError(w, "Invalid public/private setting.", http.StatusBadRequest)
+			return
+		}
+		newPlant.DoNotify = doNotify
 		isPublic, err := strconv.ParseBool(r.FormValue("isPublic"))
 		if err != nil {
 			// handle error
@@ -199,7 +206,8 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			newPlant.LastWaterDate,
 			claims.Email,
 			claims.Username,
-			newPlant.IsPublic)
+			newPlant.IsPublic,
+			newPlant.DoNotify)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			break
@@ -246,6 +254,13 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		newPlant.Name = r.FormValue("nameOfPlant")
 		newPlant.WateringFrequency = r.FormValue("wateringFrequency")
 		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
+		doNotify, err := strconv.ParseBool(r.FormValue("doNotify"))
+		if err != nil {
+			// handle error
+			authentication.WriteError(w, "Invalid public/private setting.", http.StatusBadRequest)
+			return
+		}
+		newPlant.DoNotify = doNotify
 		isPublic, err := strconv.ParseBool(r.FormValue("isPublic"))
 		if err != nil {
 			// handle error
@@ -267,7 +282,8 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			newPlant.ImageId,
 			newPlant.LastWaterDate,
 			isNewImage,
-			newPlant.IsPublic)
+			newPlant.IsPublic,
+			newPlant.DoNotify)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			return
