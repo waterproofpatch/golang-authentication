@@ -1,5 +1,6 @@
 FROM golang:1.18-alpine AS build
 
+RUN apk add python3
 COPY src/email_service/main.py /email_service/
 COPY src/email_service/requirements.txt /email_service/
 WORKDIR /email_service
