@@ -1,7 +1,7 @@
 import { catchError } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Subject, throwError, Observable, BehaviorSubject } from 'rxjs';
+import { of, tap, Subject, throwError, Observable, BehaviorSubject } from 'rxjs';
 
 import { PlantsApiService } from '../apis/plants-api.service';
 import { BaseService } from './base.service';
@@ -25,6 +25,7 @@ export class PlantsService extends BaseService {
   isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
   suggestedWateringFrequency: BehaviorSubject<number> = new BehaviorSubject<number>(0)
   suggestedWateringFrequencyRaw: BehaviorSubject<string> = new BehaviorSubject<string>("")
+  imageCache: Map<number, Blob> = new Map<number, Blob>();
 
 
   public static PlantsFactory = class {
@@ -78,7 +79,17 @@ export class PlantsService extends BaseService {
    * @returns observable
    */
   public getPlantImage(imageId: number): Observable<any> {
-    return this.plantsApiService.getImage(imageId)
+    let blob = this.imageCache.get(imageId)
+    if (blob) {
+      console.log("Obtaining blob from cache...")
+      return of(blob)
+    }
+    return this.plantsApiService.getImage(imageId).pipe(
+      tap((imageContent: any) => {
+        console.log("Tapping... " + imageContent)
+        this.imageCache.set(imageId, imageContent)
+      })
+    );
   }
 
   /**

@@ -59,7 +59,7 @@ export class PlantComponent {
     }
     this.numComments.next(0)
     this.commentsService.comments$.subscribe((x) => {
-      console.log("Got " + x.length + "comments");
+      console.log("Got " + x.length + " comments");
       for (let comment of x) {
         if (comment.plantId == this.plant?.id) {
 
