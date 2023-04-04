@@ -4,7 +4,6 @@ RUN apk add python3
 RUN go install github.com/cosmtrek/air@latest
 WORKDIR /app/src
 
-#COPY src/email_service/main.py /app/outsource/email_service_bin/
 COPY src/email_service/main.py /email_service/
 COPY src/email_service/requirements.txt /email_service/
 WORKDIR /email_service
