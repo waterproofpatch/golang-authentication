@@ -67,12 +67,14 @@
 					Picture</button>
 				<input hidden (change)="onImageSelected($event)" #fileInput type="file" id="file">
 				<img id="preview" [src]="selectedImagePreview_safe" />
-				<button *ngIf="editingPlant" mat-button mat-raised-button color="primary"
-					type="submit">Update</button>
-				<button *ngIf="!editingPlant" mat-button mat-raised-button color="primary"
-					type="submit">Add</button>
-				<button mat-button mat-raised-button color="warn" *ngIf="addMode"
-					(click)="cancelAddMode(); $event.preventDefault()">Cancel</button>
+				<div class="button-group">
+					<button *ngIf="editingPlant" mat-button mat-raised-button color="primary"
+						type="submit">Update</button>
+					<button *ngIf="!editingPlant" mat-button mat-raised-button color="primary"
+						type="submit">Add</button>
+					<button mat-button mat-raised-button color="warn" *ngIf="addMode"
+						(click)="cancelAddMode(); $event.preventDefault()">Cancel</button>
+				</div>
 
 			</form>
 		</div>

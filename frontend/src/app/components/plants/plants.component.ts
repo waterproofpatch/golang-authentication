@@ -115,7 +115,6 @@ export class PlantsComponent {
   public editPlant(event: any): void {
     let plant = event.plant
     let imageUrl = event.imageUrl
-    console.log("Plant ID " + plant.id + " wants edit. It has current image at " + imageUrl)
     this.editingPlant = plant
     this.form.controls.name.setValue(plant.name)
     this.form.controls.wateringFrequency.setValue(plant.wateringFrequency)

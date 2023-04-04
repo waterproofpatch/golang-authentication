@@ -20,6 +20,11 @@ form {
 	margin: 10px;
 }
 
+.button-group {
+	display: flex;
+	justify-content: space-between;
+}
+
 mat-form-field,
 button {
 	margin-top: 8px;
