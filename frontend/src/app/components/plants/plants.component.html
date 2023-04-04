@@ -54,11 +54,13 @@
 					<mat-datepicker #picker></mat-datepicker>
 				</mat-form-field>
 
-				<mat-label>Email me when overdue for watering:</mat-label>
-				<mat-radio-group formControlName="doNotify">
+				<!-- <mat-label>Email me when overdue for watering:</mat-label> -->
+				<mat-checkbox formControlName="doNotify" class="example-margin">Email
+					Notifications</mat-checkbox>
+				<!-- <mat-radio-group formControlName="doNotify">
 					<mat-radio-button value="yes">Yes</mat-radio-button>
 					<mat-radio-button value="no">No</mat-radio-button>
-				</mat-radio-group>
+				</mat-radio-group> -->
 				<mat-radio-group formControlName="publicOrPrivate">
 					<mat-radio-button value="public">Public</mat-radio-button>
 					<mat-radio-button value="private">Private</mat-radio-button>

@@ -41,7 +41,7 @@ export class PlantsComponent {
   form = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.min(3), Validators.max(30)]),
     publicOrPrivate: new FormControl(''),
-    doNotify: new FormControl(''),
+    doNotify: new FormControl(false),
     wateringFrequency: new FormControl('', [Validators.required]),
     lastWateredDate: new FormControl('', [Validators.required])
   });
@@ -55,7 +55,7 @@ export class PlantsComponent {
   ) {
     this.form = this.formBuilder.group({
       publicOrPrivate: [''],
-      doNotify: [''],
+      doNotify: [false],
       name: [''],
       wateringFrequency: [''],
       lastWateredDate: ['']
@@ -120,7 +120,7 @@ export class PlantsComponent {
     this.form.controls.wateringFrequency.setValue(plant.wateringFrequency)
     this.form.controls.lastWateredDate.setValue(plant.lastWaterDate)
     this.form.controls.publicOrPrivate.setValue(plant.isPublic ? "public" : "private")
-    this.form.controls.doNotify.setValue(plant.doNotify ? "yes" : "no")
+    this.form.controls.doNotify.setValue(plant.doNotify ? true : false)
     if (imageUrl) {
 
       this.selectedImagePreview = imageUrl
@@ -161,7 +161,7 @@ export class PlantsComponent {
         this.form.controls.wateringFrequency.value || '',
         this.form.controls.lastWateredDate.value || '',
         this.form.controls.publicOrPrivate.value == "public" || false,
-        this.form.controls.doNotify.value == "yes" || false)
+        this.form.controls.doNotify.value == true || false)
       plant.id = this.editingPlant.id
       this.plantsService.updatePlant(plant, this.selectedImage)
       this.editingPlant = null
@@ -176,7 +176,7 @@ export class PlantsComponent {
       this.form.controls.wateringFrequency.value || '',
       this.form.controls.lastWateredDate.value || '',
       this.form.controls.publicOrPrivate.value == "public" || false,
-      this.form.controls.doNotify.value == "yes" || false)
+      this.form.controls.doNotify.value == true || false)
     this.plantsService.addPlant(plant, this.selectedImage)
     this.addMode = false;
     this.selectedImage = null
