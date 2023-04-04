@@ -4,6 +4,12 @@ from azure.communication.email import EmailClient
 from azure.identity import DefaultAzureCredential
 
 def send_email(recipient: str, plant_name: str, username: str) -> None:
+        """
+        Send an email to a recipient about a plant that needs to be watered.
+        :param recpient: email address.
+        :param plant_name: the name of the plant.
+        :param username: the username of the user who owns the plant.
+        """
         try:
                 conn_string = os.environ['AZ_EMAIL_CONNECTION_STRING']
                 sender_address = os.environ['AZ_EMAIL_SENDER_ADDRESS']
