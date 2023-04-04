@@ -2,9 +2,10 @@
 	<div *ngIf="isLoading">Retreiving plants - hang tight...</div>
 	<div *ngIf="!isLoading">
 
-		<button mat-button mat-raised-button color="primary" *ngIf="!addMode" (click)="addMode=true">Add
+		<button mat-button mat-raised-button color="primary" *ngIf="!addOrEditMode"
+			(click)="addOrEditMode=true">Add
 			Plant</button>
-		<div *ngIf="addMode">
+		<div *ngIf="addOrEditMode">
 
 			<form (ngSubmit)="addPlant()" [formGroup]="form" *ngIf="form">
 				<mat-form-field hintLabel="Max 30 characters" appearance="fill">
@@ -45,7 +46,7 @@
 						type="submit">Update</button>
 					<button *ngIf="!editingPlant" mat-button mat-raised-button color="primary"
 						type="submit">Add</button>
-					<button mat-button mat-raised-button color="warn" *ngIf="addMode"
+					<button mat-button mat-raised-button color="warn" *ngIf="addOrEditMode"
 						(click)="cancelAddMode(); $event.preventDefault()">Cancel</button>
 				</div>
 
@@ -53,7 +54,7 @@
 		</div>
 	</div>
 </div>
-<div class="plants" *ngIf="!addMode">
+<div class="plants" *ngIf="!addOrEditMode">
 	<app-plant (editModeEmitter)="editPlant($event)" *ngFor="let plant of plants | async"
 		[plant]="plant"></app-plant>
 </div>

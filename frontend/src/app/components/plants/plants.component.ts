@@ -33,7 +33,7 @@ export class PlantsComponent {
   isLoading: boolean = false;
 
   // whether or not the edit/add plant form is open
-  addMode: boolean = false
+  addOrEditMode: boolean = false
 
   // the plant currently being edited
   editingPlant: Plant | null = null
@@ -43,7 +43,7 @@ export class PlantsComponent {
     name: new FormControl('', [Validators.required, Validators.min(3), Validators.max(30)]),
     publicOrPrivate: new FormControl(''),
     doNotify: new FormControl(false),
-    wateringFrequency: new FormControl('', [Validators.required]),
+    wateringFrequency: new FormControl(0, [Validators.required]),
     lastWateredDate: new FormControl('', [Validators.required])
   });
 
@@ -58,7 +58,7 @@ export class PlantsComponent {
       publicOrPrivate: [''],
       doNotify: [false],
       name: [''],
-      wateringFrequency: [''],
+      wateringFrequency: [0],
       lastWateredDate: ['']
     });
   }
@@ -98,23 +98,12 @@ export class PlantsComponent {
   }
 
   /**
-   * Get the suggested watering frequency based on the plant name
-   */
-  public getSuggestedWateringFrequency(): void {
-    let plantName = this.form.controls.name.value
-    if (plantName) {
-      this.isWaitingSuggestedWateringFrequency.next(true)
-      this.plantsService.getPlantWateringFrequency(plantName)
-    }
-  }
-
-  /**
    * Switch to edit mode for a given plant. 
    * @note called via Output handler for the plant component.   
    * @param event from the event emitter in the plant component.
    */
   public editPlant(event: any): void {
-    let plant = event.plant
+    let plant: Plant = event.plant
     let imageUrl = event.imageUrl
     this.editingPlant = plant
     this.form.controls.name.setValue(plant.name)
@@ -123,11 +112,10 @@ export class PlantsComponent {
     this.form.controls.publicOrPrivate.setValue(plant.isPublic ? "public" : "private")
     this.form.controls.doNotify.setValue(plant.doNotify ? true : false)
     if (imageUrl) {
-
       this.selectedImagePreview = imageUrl
       this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
     }
-    this.addMode = true
+    this.addOrEditMode = true
   }
 
   /**
@@ -135,7 +123,7 @@ export class PlantsComponent {
    * @note Called from the 'cancel' button.
    */
   public cancelAddMode(): void {
-    this.addMode = false;
+    this.addOrEditMode = false;
     this.selectedImagePreview = "/assets/placeholder.jpg"
     this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
     this.getPlants()
@@ -152,21 +140,19 @@ export class PlantsComponent {
       this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
     }
   }
-  get name() { return this.form.get('name'); }
-  get wateringFrequency() { return this.form.get('wateringFrequency'); }
 
   addPlant() {
     if (this.editingPlant) {
       console.log("A plant has been edited (not added)")
       var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '',
-        this.form.controls.wateringFrequency.value || '',
+        this.form.controls.wateringFrequency.value || 0,
         this.form.controls.lastWateredDate.value || '',
         this.form.controls.publicOrPrivate.value == "public" || false,
         this.form.controls.doNotify.value == true || false)
       plant.id = this.editingPlant.id
       this.plantsService.updatePlant(plant, this.selectedImage)
       this.editingPlant = null
-      this.addMode = false;
+      this.addOrEditMode = false;
       this.selectedImage = null
       this.selectedImagePreview = "/assets/placeholder.jpg"
       this.selectedImagePreview_safe = null
@@ -174,12 +160,12 @@ export class PlantsComponent {
     }
     // Perform actions when the form is submitted
     var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '',
-      this.form.controls.wateringFrequency.value || '',
+      this.form.controls.wateringFrequency.value || 0,
       this.form.controls.lastWateredDate.value || '',
       this.form.controls.publicOrPrivate.value == "public" || false,
       this.form.controls.doNotify.value == true || false)
     this.plantsService.addPlant(plant, this.selectedImage)
-    this.addMode = false;
+    this.addOrEditMode = false;
     this.selectedImage = null
     this.selectedImagePreview = "/assets/placeholder.jpg"
     this.selectedImagePreview_safe = null

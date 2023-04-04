@@ -11,7 +11,7 @@ export default interface Plant {
   name: string;
   username: string;
   email: string;
-  wateringFrequency: string;
+  wateringFrequency: number;
   lastWaterDate: string;
   imageId: number;
   isPublic: boolean;
@@ -43,7 +43,7 @@ export class PlantsService extends BaseService {
     }
 
     public static makePlant(name: string,
-      wateringFrequency: string,
+      wateringFrequency: number,
       lastWateredDate: string,
       isPublic: boolean,
       doNotify: boolean): Plant {
