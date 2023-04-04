@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"strconv"
 
 	"github.com/waterproofpatch/go_authentication/authentication"
@@ -139,26 +138,12 @@ func plantsInfo(w http.ResponseWriter, r *http.Request, claims *authentication.J
 	json.NewEncoder(w).Encode(response)
 }
 
-// execute the python script 'main.py' in /email_service to send an email
-func sendEmail(recpient string, plantName string, username string) {
-	cmd := exec.Command("/email_service/venv/bin/python", "/email_service/main.py", "--recipient", recpient, "--plant-name", plantName, "--username", username)
-	stdout, err := cmd.Output()
-	if err != nil {
-		fmt.Println(string(stdout))
-		fmt.Println(err.Error())
-		return
-	}
-	fmt.Println(string(stdout))
-}
-
 func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
 	db := authentication.GetDb()
 	var plants []PlantModel
 	var plant PlantModel
 	vars := mux.Vars(r)
 	id, hasPlantId := vars["id"]
-
-	fmt.Printf("1: Handling plants request for %s\n", claims.Email)
 
 	switch r.Method {
 	case "GET":
