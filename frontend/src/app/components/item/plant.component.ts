@@ -144,7 +144,10 @@ export class PlantComponent {
     }
     var nextWaterDate = new Date()
     var lastWaterDate = new Date(this.plant.lastWaterDate)
-    nextWaterDate.setDate(lastWaterDate.getDate() + parseInt(this.plant.wateringFrequency))
+    // nextWaterDate.setDate(lastWaterDate.getDate() + parseInt(this.plant.wateringFrequency))
+    nextWaterDate.setFullYear(lastWaterDate.getFullYear());
+    nextWaterDate.setMonth(lastWaterDate.getMonth());
+    nextWaterDate.setDate(lastWaterDate.getDate() + parseInt(this.plant.wateringFrequency));
     return this.formatDate(nextWaterDate)
   }
 
