@@ -6,6 +6,10 @@
 			(click)="addOrEditMode=true">Add
 			Plant</button>
 		<div *ngIf="addOrEditMode">
+			<div class="button-group-top">
+				<button mat-button mat-raised-button color="warn" *ngIf="addOrEditMode"
+					(click)="cancelAddMode(); $event.preventDefault()">Cancel</button>
+			</div>
 
 			<form (ngSubmit)="addPlant()" [formGroup]="form" *ngIf="form">
 				<mat-form-field hintLabel="Max 30 characters" appearance="fill">
@@ -46,8 +50,6 @@
 						type="submit">Update</button>
 					<button *ngIf="!editingPlant" mat-button mat-raised-button color="primary"
 						type="submit">Add</button>
-					<button mat-button mat-raised-button color="warn" *ngIf="addOrEditMode"
-						(click)="cancelAddMode(); $event.preventDefault()">Cancel</button>
 				</div>
 
 			</form>
