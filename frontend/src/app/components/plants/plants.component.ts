@@ -41,6 +41,9 @@ export class PlantsComponent {
   // the plant currently being edited
   editingPlant: Plant | null = null
 
+  // list of view filters
+  filters = new Map<string, boolean>();
+
   // the plant edit/add form
   form = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.min(3), Validators.max(30)]),
@@ -50,11 +53,13 @@ export class PlantsComponent {
     lastWateredDate: new FormControl('', [Validators.required])
   });
 
+  needsWatering = PlantsService.NeedsWatering;
+
   constructor(
     private sanitizer: DomSanitizer,
     private plantsService: PlantsService,
     private formBuilder: FormBuilder,
-    private authenticationService: AuthenticationService,
+    public authenticationService: AuthenticationService,
     private router: Router
   ) {
     this.form = this.formBuilder.group({
@@ -102,6 +107,10 @@ export class PlantsComponent {
 
   public viewModeChanged(isCondensed: boolean): void {
     this.condensedView = isCondensed;
+  }
+
+  public filterChange(filterName: string): void {
+    this.filters.set(filterName, !this.filters.get(filterName))
   }
 
 

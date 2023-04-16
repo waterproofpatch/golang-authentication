@@ -46,9 +46,9 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 			var plants []PlantModel
 			db.Find(&plants)
 			for _, plant := range plants {
-				fmt.Printf("checking watering notifications for %v", plant)
+				// fmt.Printf("checking watering notifications for %v", plant)
 				if !plant.DoNotify {
-					fmt.Printf("Plant notifications turned off. Skipping\n")
+					// fmt.Printf("Plant notifications turned off. Skipping\n")
 					continue
 				}
 				regex := regexp.MustCompile(`\s*\([^)]*\)`)
@@ -71,10 +71,10 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 						plant.LastNotifyDate = currentDate.String()
 						db.Save(&plant)
 					} else {
-						fmt.Printf("Notification already sent on %v\n", plant.LastNotifyDate)
+						// fmt.Printf("Notification already sent on %v\n", plant.LastNotifyDate)
 					}
 				} else {
-					fmt.Printf("Next watering date is in the future: %v\n", nextWaterDate)
+					// fmt.Printf("Next watering date is in the future: %v\n", nextWaterDate)
 				}
 
 			}

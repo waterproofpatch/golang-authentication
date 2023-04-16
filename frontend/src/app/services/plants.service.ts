@@ -27,10 +27,36 @@ export class PlantsService extends BaseService {
   suggestedWateringFrequencyRaw: BehaviorSubject<string> = new BehaviorSubject<string>("")
   imageCache: Map<number, Blob> = new Map<number, Blob>();
 
+  /**
+   * @param date to format
+   * @returns formatted @c date
+   */
+  private static FormatDate(date: Date): string {
+
+    const day = date.getDate().toString().padStart(2, '0'); // Get the day of the month (1-31) and pad it with a leading zero if necessary
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Get the month (0-11), add 1 to get the month as a number (1-12), and pad it with a leading zero if necessary
+    const year = date.getFullYear().toString(); // Get the year (4 digits)
+
+    const formattedDate = `${month}/${day}/${year}`;
+    return formattedDate
+  }
+  public static NeedsWatering(plant: Plant) {
+    var nextWaterDate = new Date()
+    var lastWaterDate = new Date(plant.lastWaterDate)
+    nextWaterDate.setFullYear(lastWaterDate.getFullYear());
+    nextWaterDate.setMonth(lastWaterDate.getMonth());
+    var frequencyInMs = plant.wateringFrequency * 24 * 60 * 60 * 1000;
+    nextWaterDate.setTime(lastWaterDate.getTime() + frequencyInMs);
+    let wateringDate = PlantsService.FormatDate(nextWaterDate)
+    if (new Date(wateringDate) < new Date()) {
+      return true;
+    }
+    return false;
+  }
 
   public static PlantsFactory = class {
     public static printPlant(plant: Plant): void {
-      console.log("PLANT:")
+      console.log("plantsFactort.printPlant:")
       console.log(`id: ${plant.id}`);
       console.log(`name: ${plant.name}`);
       console.log(`username: ${plant.username}`);
