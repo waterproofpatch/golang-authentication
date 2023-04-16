@@ -61,7 +61,7 @@
 		<button mat-button (click)="waterPlant()" color="primary">Water</button>
 		<button mat-button (click)="editPlant()" color="primary">Edit</button>
 	</mat-card-actions>
-	<mat-accordion>
+	<mat-accordion *ngIf="plant.email==email">
 		<mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
 			<mat-expansion-panel-header>
 				<mat-panel-title>
