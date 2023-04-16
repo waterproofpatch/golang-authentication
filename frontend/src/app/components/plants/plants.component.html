@@ -12,9 +12,11 @@
 			</mat-button-toggle>
 		</mat-button-toggle-group>
 		<mat-button-toggle-group name="filters" aria-label="Filters" multiple>
-			<mat-button-toggle value="needsWatering" (change)="filterChange('needsWatering')">Needs
+			<mat-button-toggle value="needsWatering" [checked]="filters.get('needsWatering')"
+				(change)="filterChange('needsWatering')">Needs
 				Watering</mat-button-toggle>
-			<mat-button-toggle value="mineOnly" (change)="filterChange('onlyMyPlants')">Only My
+			<mat-button-toggle value="mineOnly" [checked]="filters.get('onlyMyPlants')"
+				(change)="filterChange('onlyMyPlants')">Only My
 				Plants</mat-button-toggle>
 		</mat-button-toggle-group>
 
