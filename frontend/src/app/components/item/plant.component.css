@@ -48,7 +48,20 @@ mat-card-actions {
 	top: 10px;
 	right: 10px;
 	font-size: 20px;
-	color: #ccc;
+	color: black;
+}
+
+div .menu-icon {
+	padding: 0px;
+	margin: 0px;
+}
+
+.menu-icon {
+	position: absolute;
+	top: 0;
+	right: 0px;
+	font-size: 20px;
+	color: black;
 }
 
 .plant-header-image {

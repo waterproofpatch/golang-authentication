@@ -12,8 +12,26 @@
 		<mat-card-subtitle *ngIf="!isCondensed">by {{plant.username}}</mat-card-subtitle>
 		<mat-card-subtitle *ngIf="!isCondensed">Water every {{plant.wateringFrequency}}
 			days</mat-card-subtitle>
-		<mat-icon *ngIf="!plant.isPublic" class="lock-icon">lock</mat-icon>
-		<mat-icon *ngIf="plant.isPublic" class="lock-icon">lock_open</mat-icon>
+		<!-- <mat-icon *ngIf="!plant.isPublic" class="lock-icon">lock</mat-icon>
+		<mat-icon *ngIf="plant.isPublic" class="lock-icon">lock_open</mat-icon> -->
+		<div class="menu-icon" *ngIf="isCondensed && plant.email == email">
+
+			<button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+				<mat-icon>more_vert</mat-icon>
+			</button>
+			<mat-menu #menu="matMenu">
+				<button mat-menu-item (click)="editPlant()"
+					color="primary"><mat-icon>edit</mat-icon><span>Edit</span></button>
+				<button mat-menu-item (click)="waterPlant()" color="primary"><mat-icon
+						style="color:blue;">
+						local_drink</mat-icon><span>Water</span></button>
+				<button mat-menu-item (click)="deletePlant()" color="warn">
+					<mat-icon>delete_outline</mat-icon><span>Delete</span></button>
+				<a mat-button [routerLink]="['/comments', plant.id]"><mat-icon>
+						comment</mat-icon><span>Comments ({{numComments |
+						async}})</span></a>
+			</mat-menu>
+		</div>
 	</mat-card-header>
 	<div *ngIf="!isCondensed">
 
@@ -38,7 +56,7 @@
 	<mat-card-actions *ngIf="!isCondensed">
 		<a mat-button [routerLink]="['/comments', plant.id]">Comments ({{numComments | async}})</a>
 	</mat-card-actions>
-	<mat-card-actions *ngIf=" plant.email==email">
+	<mat-card-actions *ngIf="plant.email==email && !isCondensed">
 		<button mat-button (click)="deletePlant()" color="warn">Delete</button>
 		<button mat-button (click)="waterPlant()" color="primary">Water</button>
 		<button mat-button (click)="editPlant()" color="primary">Edit</button>
