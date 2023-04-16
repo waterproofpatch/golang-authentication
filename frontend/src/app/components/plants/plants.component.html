@@ -3,10 +3,11 @@
 	<div *ngIf="!isLoading">
 
 		<mat-button-toggle-group #group="matButtonToggleGroup">
-			<mat-button-toggle value="uncondensed" (change)="viewModeChanged(false)">
+			<mat-button-toggle value="uncondensed" [checked]="!condensedView"
+				(change)="viewModeChanged(false)">
 				<mat-icon>unfold_more</mat-icon>
 			</mat-button-toggle>
-			<mat-button-toggle value="condensed" (change)="viewModeChanged(true)">
+			<mat-button-toggle value="condensed" [checked]="condensedView" (change)="viewModeChanged(true)">
 				<mat-icon>unfold_less</mat-icon>
 			</mat-button-toggle>
 		</mat-button-toggle-group>
