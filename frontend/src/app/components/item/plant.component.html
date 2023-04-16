@@ -14,7 +14,7 @@
 			days</mat-card-subtitle>
 		<!-- <mat-icon *ngIf="!plant.isPublic" class="lock-icon">lock</mat-icon>
 		<mat-icon *ngIf="plant.isPublic" class="lock-icon">lock_open</mat-icon> -->
-		<div class="menu-icon" *ngIf="isCondensed && plant.email == email">
+		<div class="menu-icon" *ngIf="plant.email == email">
 
 			<button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
 				<mat-icon>more_vert</mat-icon>
@@ -53,14 +53,14 @@
 			</span>
 		</div>
 	</mat-card-content>
-	<mat-card-actions *ngIf="!isCondensed">
+	<!-- <mat-card-actions *ngIf="!isCondensed">
 		<a mat-button [routerLink]="['/comments', plant.id]">Comments ({{numComments | async}})</a>
-	</mat-card-actions>
-	<mat-card-actions *ngIf="plant.email==email && !isCondensed">
+	</mat-card-actions> -->
+	<!-- <mat-card-actions *ngIf="plant.email==email && !isCondensed">
 		<button mat-button (click)="deletePlant()" color="warn">Delete</button>
 		<button mat-button (click)="waterPlant()" color="primary">Water</button>
 		<button mat-button (click)="editPlant()" color="primary">Edit</button>
-	</mat-card-actions>
+	</mat-card-actions> -->
 	<mat-accordion *ngIf="plant.email==email">
 		<mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
 			<mat-expansion-panel-header>
