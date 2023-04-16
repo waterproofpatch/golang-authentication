@@ -2,6 +2,15 @@
 	<div *ngIf="isLoading">Retreiving plants - hang tight...</div>
 	<div *ngIf="!isLoading">
 
+		<mat-button-toggle-group #group="matButtonToggleGroup">
+			<mat-button-toggle value="uncondensed" (change)="viewModeChanged(false)">
+				<mat-icon>unfold_more</mat-icon>
+			</mat-button-toggle>
+			<mat-button-toggle value="condensed" (change)="viewModeChanged(true)">
+				<mat-icon>unfold_less</mat-icon>
+			</mat-button-toggle>
+		</mat-button-toggle-group>
+
 		<button mat-button mat-raised-button color="primary" *ngIf="!addOrEditMode"
 			(click)="addOrEditMode=true">Add
 			Plant</button>
@@ -57,6 +66,6 @@
 	</div>
 </div>
 <div class="plants" *ngIf="!addOrEditMode">
-	<app-plant (editModeEmitter)="editPlant($event)" *ngFor="let plant of plants | async"
-		[plant]="plant"></app-plant>
+	<app-plant [isCondensed]="condensedView" (editModeEmitter)="editPlant($event)"
+		*ngFor="let plant of plants | async" [plant]="plant"></app-plant>
 </div>

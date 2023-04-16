@@ -22,7 +22,7 @@ def send_email(recipient: str, plant_name: str, username: str) -> None:
                         "content": {
                                 "subject": f"Time to water {plant_name}!",
                                 "plainText": f"Time to water plant {plant_name}",
-                                "html": f"<html><h1>It's time to water {plant_name}</h1></html>"
+                                "html": f"<html><h1>It's time to water <i>{plant_name}></i>. Visit https://antlion.azurewebsites.net to view your plants.</h1></html>"
                         },
                         "recipients": {
                                 "to": [

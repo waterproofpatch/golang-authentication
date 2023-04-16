@@ -1,19 +1,28 @@
-<!-- <mat-card *ngIf="plant != null" class="plant-card"> -->
 <mat-card *ngIf="plant != null" [class.plant-mine]="plant.email==email" [class.plant-theirs]="plant.email != email">
 	<mat-card-header>
-		<div mat-card-avatar class="plant-header-image"></div>
-		<mat-card-title>{{plant.name}}</mat-card-title>
-		<mat-card-subtitle>by {{plant.username}}</mat-card-subtitle>
-		<mat-card-subtitle>Water every {{plant.wateringFrequency}} days</mat-card-subtitle>
+		<div mat-card-avatar class="plant-header-image" *ngIf="isCondensed">
+			<img *ngIf="isImageLoading" mat-card-image [src]="'/assets/loading.gif'" alt="Photo">
+			<img *ngIf="!isImageLoading && imageUrl != null" mat-card-image [src]="imageUrl" alt="Photo">
+			<img *ngIf="!isImageLoading && imageUrl == null" [src]="'/assets/placeholder.jpg'" alt="Image">
+		</div>
+		<mat-card-title *ngIf="!isCondensed">{{plant.name}}</mat-card-title>
+		<mat-card-subtitle *ngIf="isCondensed">{{plant.name}} <p *ngIf="isCondensed && needsWatering"
+				[style.color]="backgroundColor">
+				Needs Watering</p></mat-card-subtitle>
+		<mat-card-subtitle *ngIf="!isCondensed">by {{plant.username}}</mat-card-subtitle>
+		<mat-card-subtitle *ngIf="!isCondensed">Water every {{plant.wateringFrequency}}
+			days</mat-card-subtitle>
 		<mat-icon *ngIf="!plant.isPublic" class="lock-icon">lock</mat-icon>
 		<mat-icon *ngIf="plant.isPublic" class="lock-icon">lock_open</mat-icon>
 	</mat-card-header>
-	<img *ngIf="isImageLoading" mat-card-image [src]="'/assets/loading.gif'" alt="Photo">
-	<img *ngIf="!isImageLoading && imageUrl != null" mat-card-image [src]="imageUrl" alt="Photo">
-	<img *ngIf="!isImageLoading && imageUrl == null" [src]="'/assets/placeholder.jpg'" alt="Image">
-	<mat-card-content>
-		<div class="water-times">
+	<div *ngIf="!isCondensed">
 
+		<img *ngIf="isImageLoading" mat-card-image [src]="'/assets/loading.gif'" alt="Photo">
+		<img *ngIf="!isImageLoading && imageUrl != null" mat-card-image [src]="imageUrl" alt="Photo">
+		<img *ngIf="!isImageLoading && imageUrl == null" [src]="'/assets/placeholder.jpg'" alt="Image">
+	</div>
+	<mat-card-content>
+		<div class="water-times" *ngIf="!isCondensed">
 			<span class="left">
 
 				<mat-card-subtitle>Last watered on
@@ -26,12 +35,12 @@
 			</span>
 		</div>
 	</mat-card-content>
-	<mat-card-actions>
+	<mat-card-actions *ngIf="!isCondensed">
 		<a mat-button [routerLink]="['/comments', plant.id]">Comments ({{numComments | async}})</a>
 	</mat-card-actions>
 	<mat-card-actions *ngIf=" plant.email==email">
-		<button mat-button mat-raised-button color="warn" (click)="deletePlant()">Delete</button>
-		<button mat-raised-button (click)="waterPlant()" color="primary">Water</button>
-		<button mat-raised-button (click)="editPlant()" color="primary">Edit</button>
+		<button mat-button (click)="deletePlant()" color="warn">Delete</button>
+		<button mat-button (click)="waterPlant()" color="primary">Water</button>
+		<button mat-button (click)="editPlant()" color="primary">Edit</button>
 	</mat-card-actions>
 </mat-card>

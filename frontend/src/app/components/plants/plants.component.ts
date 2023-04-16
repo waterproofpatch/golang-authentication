@@ -15,6 +15,9 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 export class PlantsComponent {
   public wateringFrequencyOptions = Array.from({ length: 60 }, (_, i) => i + 1);
 
+  // whether or not the view is condensed
+  condensedView: boolean = false;
+
   // suggested watering frequency for the plant based on backend search
   suggestedWateringFrequency: BehaviorSubject<number> = new BehaviorSubject<number>(0)
 
@@ -96,6 +99,11 @@ export class PlantsComponent {
     // on init, ask for the list of plants
     this.getPlants()
   }
+
+  public viewModeChanged(isCondensed: boolean): void {
+    this.condensedView = isCondensed;
+  }
+
 
   /**
    * Switch to edit mode for a given plant. 

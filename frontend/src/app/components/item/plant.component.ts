@@ -17,6 +17,12 @@ export class PlantComponent {
   // passed from the parent component
   @Input() plant?: Plant
 
+  // whether or not we're supposed to take up less screen space per plant
+  @Input() isCondensed?: boolean
+
+  // whether or not this plant is overdue for watering
+  needsWatering: boolean = false
+
   // the email for our user from the authentication service
   // TODO make this something we subscribe to
   email: string = ''
@@ -41,6 +47,7 @@ export class PlantComponent {
     private dialogService: DialogService,
     private commentsService: CommentsService,
     private authenticationService: AuthenticationService) {
+    this.isCondensed = false // deafult value
 
   }
 
@@ -55,6 +62,7 @@ export class PlantComponent {
       if (this.plant) {
         console.log("plant " + this.plant.id + " is due for watering!")
         this.backgroundColor = "red"
+        this.needsWatering = true
       }
     }
     this.numComments.next(0)

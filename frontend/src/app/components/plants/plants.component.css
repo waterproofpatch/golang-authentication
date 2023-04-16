@@ -7,17 +7,14 @@
 	justify-content: center;
 }
 
-/* .button-group-top {
-	display: flex;
-	flex-direction: row;
-	justify-items: center;
-} */
-
 .container {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	justify-items: center;
+	align-content: center;
+	text-align: center;
 }
 
 form {
