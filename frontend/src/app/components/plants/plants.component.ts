@@ -101,16 +101,23 @@ export class PlantsComponent {
     // sanitize the selected preview image URL for display at the frontend
     this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
 
+    // set the UI from localStorage
+    this.condensedView = localStorage.getItem("isCondensed") == "true" ? true : false
+    this.filters.set("onlyMyPlants", localStorage.getItem("onlyMyPlants") == "true" ? true : false)
+    this.filters.set("needsWatering", localStorage.getItem("needsWatering") == "true" ? true : false)
+
     // on init, ask for the list of plants
     this.getPlants()
   }
 
   public viewModeChanged(isCondensed: boolean): void {
     this.condensedView = isCondensed;
+    localStorage.setItem("isCondensed", isCondensed ? "true" : "false")
   }
 
   public filterChange(filterName: string): void {
     this.filters.set(filterName, !this.filters.get(filterName))
+    localStorage.setItem(filterName, (this.filters.get(filterName) ? "true" : false) || "n/a")
   }
 
 
