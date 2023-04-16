@@ -14,6 +14,8 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./plant.component.css']
 })
 export class PlantComponent {
+  panelOpenState: boolean = false;
+
   // passed from the parent component
   @Input() plant?: Plant
 

@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // <-- NgModel lives here
 
-
+import { MatExpansionModule } from '@angular/material/expansion';
 import { AuthenticationComponent } from './components/authentication/authentication.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthenticationService } from './services/authentication.service';
@@ -62,6 +62,7 @@ import { CommentsComponent } from './components/comments/comments.component';
     MatProgressSpinnerModule,
     BrowserModule,
     MatTabsModule,
+    MatExpansionModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatMenuModule,
