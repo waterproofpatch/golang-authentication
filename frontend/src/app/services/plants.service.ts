@@ -48,6 +48,9 @@ export class PlantsService extends BaseService {
       isPublic: boolean,
       doNotify: boolean): Plant {
       console.log("makePlant: isPublic=" + isPublic)
+      const dateString = 'Tue Apr 04 2023 03:31:51 GMT-0700 (MST)';
+      const date = new Date(Date.parse(lastWateredDate));
+      console.log("Original last water date: " + lastWateredDate + ", new lastWaterDate: " + date)
       const plant: Plant = {
         name: name,
         wateringFrequency: wateringFrequency,

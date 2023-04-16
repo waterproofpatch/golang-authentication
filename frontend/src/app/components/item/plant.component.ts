@@ -99,8 +99,8 @@ export class PlantComponent {
           return;
         }
         // this.plant.lastWaterDate = new Date().toDateString()
-        const dateString = 'Tue Apr 04 2023 03:31:51 AM EDT';
-        const date = new Date(Date.parse(dateString));
+        // const dateString = 'Tue Apr 04 2023 03:31:51 AM EDT';
+        const date = new Date();
         console.log(date);
         this.plant.lastWaterDate = date.toString()
 

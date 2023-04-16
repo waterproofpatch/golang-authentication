@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -108,9 +107,12 @@ func UpdatePlant(db *gorm.DB,
 	existingplant.IsPublic = isPublic
 	existingplant.ImageId = imageId
 	existingplant.Name = name
+	if existingplant.LastWaterDate != lastWaterDate || existingplant.WateringFrequency != wateringFrequency {
+		fmt.Println("Last water date or watering frequency has changed, resetting last notify date")
+		existingplant.LastNotifyDate = "" // reset
+	}
 	existingplant.WateringFrequency = wateringFrequency
 	existingplant.LastWaterDate = lastWaterDate
-	existingplant.LastNotifyDate = time.Now().UTC().String()
 	db.Save(existingplant)
 	return nil
 }
@@ -142,7 +144,7 @@ func AddPlant(db *gorm.DB,
 		db.Order("id asc").Limit(int(count) - 50).Find(&plants)
 		db.Delete(&plants)
 	}
-	currentDate := time.Now().UTC().String()
+	// currentDate := time.Now().UTC().String()
 	var plant = PlantModel{
 		Name:              name,
 		WateringFrequency: wateringFrequency,
@@ -152,7 +154,7 @@ func AddPlant(db *gorm.DB,
 		IsPublic:          isPublic,
 		DoNotify:          doNotify,
 		LastWaterDate:     lastWaterDate,
-		LastNotifyDate:    currentDate,
+		LastNotifyDate:    "",
 	}
 
 	log.Printf("Adding plant %s", plant)

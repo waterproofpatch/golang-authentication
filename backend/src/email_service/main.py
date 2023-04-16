@@ -38,8 +38,7 @@ def send_email(recipient: str, plant_name: str, username: str) -> None:
                 poller = email_client.begin_send(message)
                 print(f"Result: {poller.result()}")
         except Exception as ex:
-                print('Exception:')
-                print(ex)
+                print(f'Exception: {ex}')
 if __name__ == "__main__":
         parser = argparse.ArgumentParser()
         parser.add_argument("--recipient", type=str, help="email", required=True)

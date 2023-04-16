@@ -53,36 +53,28 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 				}
 				regex := regexp.MustCompile(`\s*\([^)]*\)`)
 				lastWaterDateStr := regex.ReplaceAllString(plant.LastWaterDate, "")
-				notifyDateStr := regex.ReplaceAllString(plant.LastNotifyDate, "")
-				lastWaterDateLayout := "Mon Jan 02 2006 15:04:05 MST-0700"
-				lastNotifyDateLayout := "2006-01-02 15:04:05.999999999 -0700 MST"
+				lastWaterDateLayout := "Mon Jan 02 2006 15:04:05 GMT-0700"
 				lastWaterDate, err := time.Parse(lastWaterDateLayout, lastWaterDateStr)
 				if err != nil {
 					fmt.Println("Error parsing lastWaterDate string:", err)
 					break
 				}
-				notifyDate, err := time.Parse(lastNotifyDateLayout, notifyDateStr)
-				if err != nil {
-					fmt.Println("Error parsing lastNotifyDate string:", err)
-					break
-				}
-
 				nextWaterDate := lastWaterDate.AddDate(0, 0, plant.WateringFrequency)
 				today := time.Now().UTC()
 
 				// is the plant overdue for watering
 				if nextWaterDate.Before(today) {
-					diff := currentDate.Sub(notifyDate).Hours()
-					fmt.Printf("Plant %v is overdue for watering. It's been %v hours since last notification\n", plant.Name, diff)
+					if plant.LastNotifyDate == "" {
 
-					// if it's been more than 24h since we last notified user, do so
-					if diff > 24 {
 						fmt.Printf("Sending notification to %v!\n", plant.Email)
 						sendEmail(plant.Email, plant.Name, plant.Username)
 						plant.LastNotifyDate = currentDate.String()
 						db.Save(&plant)
+					} else {
+						fmt.Printf("Notification already sent on %v\n", plant.LastNotifyDate)
 					}
-
+				} else {
+					fmt.Printf("Next watering date is in the future: %v\n", nextWaterDate)
 				}
 
 			}
