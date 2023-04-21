@@ -46,11 +46,30 @@
 					</mat-select>
 				</mat-form-field>
 				<mat-form-field appearance="fill">
+					<mat-label>Fertilizing Frequency</mat-label>
+					<mat-select formControlName="fertilizingFrequency">
+						<mat-option *ngFor="let option of fertilizingFrequencyOptions"
+							[value]="option">
+							{{ option }} day{{ option !== 1 ? 's' : '' }}
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
+				<mat-form-field appearance="fill">
 					<mat-label>Last Watered Date</mat-label>
-					<input matInput formControlName="lastWateredDate" [matDatepicker]="picker">
+					<input matInput formControlName="lastWateredDate" [matDatepicker]="pickerWater">
 					<mat-hint>MM/DD/YYYY</mat-hint>
-					<mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-					<mat-datepicker #picker></mat-datepicker>
+					<mat-datepicker-toggle matIconSuffix
+						[for]="pickerWater"></mat-datepicker-toggle>
+					<mat-datepicker #pickerWater></mat-datepicker>
+				</mat-form-field>
+				<mat-form-field appearance="fill">
+					<mat-label>Last Fertilize Date</mat-label>
+					<input matInput formControlName="lastFertilizedDate"
+						[matDatepicker]="pickerFertilize">
+					<mat-hint>MM/DD/YYYY</mat-hint>
+					<mat-datepicker-toggle matIconSuffix
+						[for]="pickerFertilize"></mat-datepicker-toggle>
+					<mat-datepicker #pickerFertilize></mat-datepicker>
 				</mat-form-field>
 
 				<mat-checkbox formControlName="doNotify" class="example-margin">Email

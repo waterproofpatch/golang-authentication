@@ -14,15 +14,10 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 })
 export class PlantsComponent {
   public wateringFrequencyOptions = Array.from({ length: 60 }, (_, i) => i + 1);
+  public fertilizingFrequencyOptions = Array.from({ length: 60 }, (_, i) => i + 1);
 
   // whether or not the view is condensed
   condensedView: boolean = false;
-
-  // suggested watering frequency for the plant based on backend search
-  suggestedWateringFrequency: BehaviorSubject<number> = new BehaviorSubject<number>(0)
-
-  // whether or not we're waiting for the answer to the suggested watering frequency
-  isWaitingSuggestedWateringFrequency: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
 
   // the image, if any, the user wishes to upload for their plant via the 
   // add/edit form
@@ -47,10 +42,12 @@ export class PlantsComponent {
   // the plant edit/add form
   form = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.min(3), Validators.max(30)]),
-    publicOrPrivate: new FormControl(''),
+    publicOrPrivate: new FormControl('', [Validators.required]),
     doNotify: new FormControl(false),
     wateringFrequency: new FormControl(0, [Validators.required]),
-    lastWateredDate: new FormControl('', [Validators.required])
+    fertilizingFrequency: new FormControl(0, [Validators.required]),
+    lastWateredDate: new FormControl('', [Validators.required]),
+    lastFertilizedDate: new FormControl('', [Validators.required])
   });
 
   needsWatering = PlantsService.NeedsWatering;
@@ -67,7 +64,9 @@ export class PlantsComponent {
       doNotify: [false],
       name: [''],
       wateringFrequency: [0],
-      lastWateredDate: ['']
+      fertilizingFrequency: [0],
+      lastWateredDate: [''],
+      lastFertilizedDate: ['']
     });
   }
 
@@ -85,14 +84,6 @@ export class PlantsComponent {
         // setTimeout here is a kludge to make sure we actually redirect the user, rather than do nothing
         setTimeout(() => this.router.navigateByUrl('/authentication?mode=login'), 0)
       }
-    })
-
-    // when the plant service gets the watering frequency back, it notifies us here
-    this.plantsService.suggestedWateringFrequency.subscribe((x) => {
-      console.log("Updated watering frequency: " + x)
-      this.suggestedWateringFrequency.next(x)
-      // we're no longer waiting for the watering frequency
-      this.isWaitingSuggestedWateringFrequency.next(false)
     })
 
     // the plant service lets us know if it's waiting on plants from the backend here
@@ -131,10 +122,10 @@ export class PlantsComponent {
     let imageUrl = event.imageUrl
     this.editingPlant = plant
     this.form.controls.name.setValue(plant.name)
-    // this.form.controls.wateringFrequency.setValue(plant.wateringFrequency)
-    console.log("plant wf: " + plant.wateringFrequency)
     this.form.controls['wateringFrequency'].setValue(plant.wateringFrequency)
+    this.form.controls['fertilizingFrequency'].setValue(plant.fertilizingFrequency)
     this.form.controls.lastWateredDate.setValue(plant.lastWaterDate)
+    this.form.controls.lastFertilizedDate.setValue(plant.lastFertilizeDate)
     this.form.controls.publicOrPrivate.setValue(plant.isPublic ? "public" : "private")
     this.form.controls.doNotify.setValue(plant.doNotify ? true : false)
     if (imageUrl) {
@@ -172,7 +163,9 @@ export class PlantsComponent {
       console.log("A plant has been edited (not added)")
       var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '',
         this.form.controls.wateringFrequency.value || 0,
+        this.form.controls.fertilizingFrequency.value || 0,
         this.form.controls.lastWateredDate.value || '',
+        this.form.controls.lastFertilizedDate.value || '',
         this.form.controls.publicOrPrivate.value == "public" || false,
         this.form.controls.doNotify.value == true || false)
       plant.id = this.editingPlant.id
@@ -187,7 +180,9 @@ export class PlantsComponent {
     // Perform actions when the form is submitted
     var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '',
       this.form.controls.wateringFrequency.value || 0,
+      this.form.controls.fertilizingFrequency.value || 0,
       this.form.controls.lastWateredDate.value || '',
+      this.form.controls.lastFertilizedDate.value || '',
       this.form.controls.publicOrPrivate.value == "public" || false,
       this.form.controls.doNotify.value == true || false)
     this.plantsService.addPlant(plant, this.selectedImage)

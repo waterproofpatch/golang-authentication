@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { DialogService } from 'src/app/services/dialog.service';
-import Plant, { PlantsService } from 'src/app/services/plants.service';
+import Plant, { PlantCareType, PlantsService } from 'src/app/services/plants.service';
 import { EventEmitter } from '@angular/core';
 import { Output } from '@angular/core';
 import { CommentsService } from 'src/app/services/comments.service';
@@ -15,6 +15,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class PlantComponent {
   panelOpenState: boolean = false;
+  plantCareType = PlantCareType
 
   // passed from the parent component
   @Input() plant?: Plant
@@ -24,6 +25,9 @@ export class PlantComponent {
 
   // whether or not this plant is overdue for watering
   needsWatering: boolean = false
+
+  // whether or not this plant is overdue for fertilizing
+  needsFertilizing: boolean = false
 
   // the email for our user from the authentication service
   // TODO make this something we subscribe to
@@ -60,6 +64,13 @@ export class PlantComponent {
       return
     }
     this.getImage()
+    if (new Date(this.getNextFertilizeDate()) < new Date()) {
+      if (this.plant) {
+        console.log("plant " + this.plant.id + " is due for fertilizing!")
+        this.backgroundColor = "red"
+        this.needsFertilizing = true
+      }
+    }
     if (new Date(this.getNextWaterDate()) < new Date()) {
       if (this.plant) {
         console.log("plant " + this.plant.id + " is due for watering!")
@@ -108,8 +119,6 @@ export class PlantComponent {
         if (!this.plant) {
           return;
         }
-        // this.plant.lastWaterDate = new Date().toDateString()
-        // const dateString = 'Tue Apr 04 2023 03:31:51 AM EDT';
         const date = new Date();
         console.log(date);
         this.plant.lastWaterDate = date.toString()
@@ -127,11 +136,20 @@ export class PlantComponent {
    * format the last water date to a string.
    * @returns formatted last water date
    */
-  transformLastWaterDate(): string {
+  transformLastPlantCareDate(careType: PlantCareType): string {
     if (!this.plant) {
       return "N/A"
     }
-    const myDate = new Date(this.plant.lastWaterDate);
+
+    let myDate = new Date()
+    switch (careType) {
+      case PlantCareType.FERTILIZE:
+        myDate = new Date(this.plant.lastFertilizeDate);
+        break;
+      case PlantCareType.WATER:
+        myDate = new Date(this.plant.lastWaterDate);
+        break;
+    }
     return this.formatDate(myDate)
   }
 
@@ -148,6 +166,24 @@ export class PlantComponent {
     const formattedDate = `${month}/${day}/${year}`;
     return formattedDate
   }
+  /**
+   * obtain a formatted next-fertilize-date from the difference between this plants last fertilize date 
+   * and fertilize frequency.
+   * @returns the date to next fertilize this plant.
+   */
+  public getNextFertilizeDate(): string {
+    if (!this.plant) {
+      return "N/A"
+    }
+    var nextFertilizeDate = new Date()
+    var lastFertilizeDate = new Date(this.plant.lastFertilizeDate)
+    nextFertilizeDate.setFullYear(lastFertilizeDate.getFullYear());
+    nextFertilizeDate.setMonth(lastFertilizeDate.getMonth());
+    var frequencyInMs = this.plant.fertilizingFrequency * 24 * 60 * 60 * 1000;
+    nextFertilizeDate.setTime(lastFertilizeDate.getTime() + frequencyInMs);
+    return this.formatDate(nextFertilizeDate)
+  }
+
   /**
    * obtain a formatted next-water-date from the difference between this plants last water date 
    * and water frequency.

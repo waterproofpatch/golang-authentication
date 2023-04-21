@@ -12,10 +12,17 @@ export default interface Plant {
   username: string;
   email: string;
   wateringFrequency: number;
+  fertilizingFrequency: number;
   lastWaterDate: string;
+  lastFertilizeDate: string;
   imageId: number;
   isPublic: boolean;
   doNotify: boolean;
+}
+
+export enum PlantCareType {
+  FERTILIZE = 1,
+  WATER,
 }
 
 @Injectable({
@@ -23,8 +30,6 @@ export default interface Plant {
 })
 export class PlantsService extends BaseService {
   isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
-  suggestedWateringFrequency: BehaviorSubject<number> = new BehaviorSubject<number>(0)
-  suggestedWateringFrequencyRaw: BehaviorSubject<string> = new BehaviorSubject<string>("")
   imageCache: Map<number, Blob> = new Map<number, Blob>();
 
   /**
@@ -39,6 +44,19 @@ export class PlantsService extends BaseService {
 
     const formattedDate = `${month}/${day}/${year}`;
     return formattedDate
+  }
+  public static NeedsFertilizing(plant: Plant) {
+    var nextFertilizeDate = new Date()
+    var lastFertilizeDate = new Date(plant.lastFertilizeDate)
+    nextFertilizeDate.setFullYear(lastFertilizeDate.getFullYear());
+    nextFertilizeDate.setMonth(lastFertilizeDate.getMonth());
+    var frequencyInMs = plant.fertilizingFrequency * 24 * 60 * 60 * 1000;
+    nextFertilizeDate.setTime(lastFertilizeDate.getTime() + frequencyInMs);
+    let fertilizingDate = PlantsService.FormatDate(nextFertilizeDate)
+    if (new Date(fertilizingDate) < new Date()) {
+      return true;
+    }
+    return false;
   }
   public static NeedsWatering(plant: Plant) {
     var nextWaterDate = new Date()
@@ -62,7 +80,9 @@ export class PlantsService extends BaseService {
       console.log(`username: ${plant.username}`);
       console.log(`email: ${plant.email}`);
       console.log(`wateringFrequency: ${plant.wateringFrequency}`);
+      console.log(`fertilizingFrequency: ${plant.fertilizingFrequency}`);
       console.log(`lastWaterDate: ${plant.lastWaterDate}`);
+      console.log(`lastFertilizeDate: ${plant.lastFertilizeDate}`);
       console.log(`imageId: ${plant.imageId}`);
       console.log(`isPublic: ${plant.isPublic}`);
       console.log(`doNotify: ${plant.doNotify}`);
@@ -70,17 +90,20 @@ export class PlantsService extends BaseService {
 
     public static makePlant(name: string,
       wateringFrequency: number,
+      fertilizingFrequency: number,
       lastWateredDate: string,
+      lastFertilizeDate: string,
       isPublic: boolean,
       doNotify: boolean): Plant {
       console.log("makePlant: isPublic=" + isPublic)
-      const dateString = 'Tue Apr 04 2023 03:31:51 GMT-0700 (MST)';
       const date = new Date(Date.parse(lastWateredDate));
       console.log("Original last water date: " + lastWateredDate + ", new lastWaterDate: " + date)
       const plant: Plant = {
         name: name,
         wateringFrequency: wateringFrequency,
+        fertilizingFrequency: fertilizingFrequency,
         lastWaterDate: lastWateredDate,
+        lastFertilizeDate: lastFertilizeDate,
         id: 0, // authoritative
         username: "", // authoritative
         email: "", // authoritative
@@ -119,18 +142,6 @@ export class PlantsService extends BaseService {
         this.imageCache.set(imageId, imageContent)
       })
     );
-  }
-
-  /**
-   * Ask the backend for suggested watering frequency.
-   * @param plantName name of the plant
-   */
-  public getPlantWateringFrequency(plantName: string): void {
-    this.plantsApiService.postPlantInfoData(plantName).subscribe((x) => {
-      console.log("Got watering frequency " + x.wateringFrequency)
-      console.log("Got watering frequency (raw) " + x)
-      this.suggestedWateringFrequency.next(x.wateringFrequency)
-    })
   }
 
   /**
@@ -174,6 +185,8 @@ export class PlantsService extends BaseService {
     formData.append('id', plant.id.toString())
     formData.append('nameOfPlant', plant.name)
     formData.append('wateringFrequency', plant.wateringFrequency.toString())
+    formData.append('fertilizingFrequency', plant.fertilizingFrequency.toString())
+    formData.append('lastFertilizeDate', plant.lastFertilizeDate.toString())
     formData.append('lastWateredDate', plant.lastWaterDate)
     formData.append('isPublic', plant.isPublic.toString())
     formData.append('doNotify', plant.doNotify.toString())
@@ -207,7 +220,9 @@ export class PlantsService extends BaseService {
     }
     formData.append('nameOfPlant', plant.name)
     formData.append('wateringFrequency', plant.wateringFrequency.toString())
+    formData.append('fertilizingFrequency', plant.fertilizingFrequency.toString())
     formData.append('lastWateredDate', plant.lastWaterDate)
+    formData.append('lastFertilizeDate', plant.lastFertilizeDate)
     formData.append('isPublic', plant.isPublic.toString())
     formData.append('doNotify', plant.doNotify.toString())
     this.plantsApiService

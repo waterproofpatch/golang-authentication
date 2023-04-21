@@ -25,16 +25,18 @@ type CommentModel struct {
 }
 type PlantModel struct {
 	gorm.Model
-	Id                int    `json:"id"`
-	Email             string `json:"email"`
-	Username          string `json:"username"`
-	Name              string `json:"name"`
-	WateringFrequency int    `json:"wateringFrequency"`
-	LastWaterDate     string `json:"lastWaterDate"`
-	LastNotifyDate    string `json:"lastNotifyDate"`
-	ImageId           uint   `json:"imageId"`
-	IsPublic          bool   `json:"isPublic"`
-	DoNotify          bool   `json:"doNotify"`
+	Id                   int    `json:"id"`
+	Email                string `json:"email"`
+	Username             string `json:"username"`
+	Name                 string `json:"name"`
+	WateringFrequency    int    `json:"wateringFrequency"`
+	FertilizingFrequency int    `json:"fertilizingFrequency"`
+	LastWaterDate        string `json:"lastWaterDate"`
+	LastFertilizeDate    string `json:"lastFertilizeDate"`
+	LastNotifyDate       string `json:"lastNotifyDate"`
+	ImageId              uint   `json:"imageId"`
+	IsPublic             bool   `json:"isPublic"`
+	DoNotify             bool   `json:"doNotify"`
 }
 type MessageModel struct {
 	gorm.Model
@@ -49,9 +51,11 @@ type MessageModel struct {
 
 // render a plant
 func (i PlantModel) String() string {
-	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name=%s, waterFrequency=%d, lastWateringDate=%s, lastNotifyDate=%s, username=%s, isPublic=%t, doNotify=%t\n", i.Id, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name,
+	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name=%s, waterFrequency=%d, fertilizeFrequency=%d, lastWateringDate=%s, lastFertlizeDate=%s, lastNotifyDate=%s, username=%s, isPublic=%t, doNotify=%t\n", i.Id, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name,
 		i.WateringFrequency,
+		i.FertilizingFrequency,
 		i.LastWaterDate,
+		i.LastFertilizeDate,
 		i.LastNotifyDate,
 		i.Username,
 		i.IsPublic,
@@ -88,8 +92,10 @@ func UpdatePlant(db *gorm.DB,
 	id int,
 	name string,
 	wateringFrequency int,
+	fertilizingFrequency int,
 	imageId uint,
 	lastWaterDate string,
+	lastFertilizeDate string,
 	isNewImage bool,
 	isPublic bool,
 	doNotify bool) error {
@@ -112,7 +118,9 @@ func UpdatePlant(db *gorm.DB,
 		existingplant.LastNotifyDate = "" // reset
 	}
 	existingplant.WateringFrequency = wateringFrequency
+	existingplant.FertilizingFrequency = fertilizingFrequency
 	existingplant.LastWaterDate = lastWaterDate
+	existingplant.LastFertilizeDate = lastFertilizeDate
 	db.Save(existingplant)
 	return nil
 }
@@ -120,8 +128,10 @@ func UpdatePlant(db *gorm.DB,
 func AddPlant(db *gorm.DB,
 	name string,
 	wateringFrequency int,
+	fertilizingFrequency int,
 	imageId uint,
 	lastWaterDate string,
+	lastFertilizeDate string,
 	email string,
 	username string,
 	isPublic bool,
@@ -132,8 +142,14 @@ func AddPlant(db *gorm.DB,
 	if wateringFrequency == 0 {
 		return errors.New("Invalid watering frequency.")
 	}
+	if fertilizingFrequency == 0 {
+		return errors.New("Invalid fertilizing frequency.")
+	}
 	if lastWaterDate == "" {
 		return errors.New("Invalid last watering date.")
+	}
+	if lastFertilizeDate == "" {
+		return errors.New("Invalid last fertilize date.")
 	}
 	// Delete old records if the limit has been reached
 	var count int64
@@ -144,17 +160,18 @@ func AddPlant(db *gorm.DB,
 		db.Order("id asc").Limit(int(count) - 50).Find(&plants)
 		db.Delete(&plants)
 	}
-	// currentDate := time.Now().UTC().String()
 	var plant = PlantModel{
-		Name:              name,
-		WateringFrequency: wateringFrequency,
-		ImageId:           imageId,
-		Email:             email,
-		Username:          username,
-		IsPublic:          isPublic,
-		DoNotify:          doNotify,
-		LastWaterDate:     lastWaterDate,
-		LastNotifyDate:    "",
+		Name:                 name,
+		WateringFrequency:    wateringFrequency,
+		FertilizingFrequency: fertilizingFrequency,
+		ImageId:              imageId,
+		Email:                email,
+		Username:             username,
+		IsPublic:             isPublic,
+		DoNotify:             doNotify,
+		LastWaterDate:        lastWaterDate,
+		LastFertilizeDate:    lastFertilizeDate,
+		LastNotifyDate:       "",
 	}
 
 	log.Printf("Adding plant %s", plant)

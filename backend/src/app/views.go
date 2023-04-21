@@ -144,7 +144,9 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		newPlant.ImageId = imageId
 		newPlant.Name = r.FormValue("nameOfPlant")
 		newPlant.WateringFrequency, _ = strconv.Atoi(r.FormValue("wateringFrequency"))
+		newPlant.FertilizingFrequency, _ = strconv.Atoi(r.FormValue("fertilizingFrequency"))
 		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
+		newPlant.LastFertilizeDate = r.FormValue("lastFertilizeDate")
 		doNotify, err := strconv.ParseBool(r.FormValue("doNotify"))
 		if err != nil {
 			// handle error
@@ -164,8 +166,10 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		err = AddPlant(db,
 			newPlant.Name,
 			newPlant.WateringFrequency,
+			newPlant.FertilizingFrequency,
 			newPlant.ImageId,
 			newPlant.LastWaterDate,
+			newPlant.LastFertilizeDate,
 			claims.Email,
 			claims.Username,
 			newPlant.IsPublic,
@@ -215,7 +219,9 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		// update to new values
 		newPlant.Name = r.FormValue("nameOfPlant")
 		newPlant.WateringFrequency, _ = strconv.Atoi(r.FormValue("wateringFrequency"))
+		newPlant.FertilizingFrequency, _ = strconv.Atoi(r.FormValue("fertilizingFrequency"))
 		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
+		newPlant.LastFertilizeDate = r.FormValue("lastFertilizeDate")
 		doNotify, err := strconv.ParseBool(r.FormValue("doNotify"))
 		if err != nil {
 			// handle error
@@ -241,8 +247,10 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			newPlant.Id,
 			newPlant.Name,
 			newPlant.WateringFrequency,
+			newPlant.FertilizingFrequency,
 			newPlant.ImageId,
 			newPlant.LastWaterDate,
+			newPlant.LastFertilizeDate,
 			isNewImage,
 			newPlant.IsPublic,
 			newPlant.DoNotify)
