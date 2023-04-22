@@ -119,9 +119,16 @@ export class PlantComponent {
         if (!this.plant) {
           return;
         }
-        const date = new Date();
-        console.log(date);
-        this.plant.lastWaterDate = date.toString()
+        const currentDate = new Date();
+        const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const dayOfWeek = daysOfWeek[currentDate.getDay()];
+        const month = months[currentDate.getMonth()];
+        const day = currentDate.getDate();
+        const year = currentDate.getFullYear();
+        const formattedDate = `${dayOfWeek} ${month} ${day} ${year}`;
+        console.log("Setting water date to " + formattedDate);
+        this.plant.lastWaterDate = formattedDate
 
         // not updating the image for this plant
         this.plantService.updatePlant(this.plant, null)
