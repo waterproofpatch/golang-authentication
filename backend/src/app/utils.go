@@ -53,7 +53,7 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 				}
 				regex := regexp.MustCompile(`\s*\([^)]*\)`)
 				lastWaterDateStr := regex.ReplaceAllString(plant.LastWaterDate, "")
-				lastWaterDateLayout := "Mon Jan 02 2006 15:04:05 GMT-0700"
+				lastWaterDateLayout := "Mon Jan 02 2006"
 				lastWaterDate, err := time.Parse(lastWaterDateLayout, lastWaterDateStr)
 				if err != nil {
 					fmt.Println("Error parsing lastWaterDate string:", err)

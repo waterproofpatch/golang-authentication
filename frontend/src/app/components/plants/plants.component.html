@@ -56,7 +56,8 @@
 				</mat-form-field>
 				<mat-form-field appearance="fill">
 					<mat-label>Last Watered Date</mat-label>
-					<input matInput formControlName="lastWateredDate" [matDatepicker]="pickerWater">
+					<input matInput [formControl]="editingPlantLastWaterDate"
+						[matDatepicker]="pickerWater">
 					<mat-hint>MM/DD/YYYY</mat-hint>
 					<mat-datepicker-toggle matIconSuffix
 						[for]="pickerWater"></mat-datepicker-toggle>
@@ -64,7 +65,7 @@
 				</mat-form-field>
 				<mat-form-field appearance="fill">
 					<mat-label>Last Fertilize Date</mat-label>
-					<input matInput formControlName="lastFertilizedDate"
+					<input matInput [formControl]="editingPlantLastFertilizeDate"
 						[matDatepicker]="pickerFertilize">
 					<mat-hint>MM/DD/YYYY</mat-hint>
 					<mat-datepicker-toggle matIconSuffix

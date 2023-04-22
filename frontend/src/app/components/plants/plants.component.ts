@@ -16,6 +16,10 @@ export class PlantsComponent {
   public wateringFrequencyOptions = Array.from({ length: 60 }, (_, i) => i + 1);
   public fertilizingFrequencyOptions = Array.from({ length: 60 }, (_, i) => i + 1);
 
+  // the currently editing plants last water date
+  editingPlantLastWaterDate = new FormControl(new Date());
+  editingPlantLastFertilizeDate = new FormControl(new Date());
+
   // whether or not the view is condensed
   condensedView: boolean = false;
 
@@ -124,8 +128,8 @@ export class PlantsComponent {
     this.form.controls.name.setValue(plant.name)
     this.form.controls['wateringFrequency'].setValue(plant.wateringFrequency)
     this.form.controls['fertilizingFrequency'].setValue(plant.fertilizingFrequency)
-    this.form.controls.lastWateredDate.setValue(plant.lastWaterDate)
-    this.form.controls.lastFertilizedDate.setValue(plant.lastFertilizeDate)
+    this.editingPlantLastWaterDate = new FormControl(new Date(plant.lastWaterDate));
+    this.editingPlantLastFertilizeDate = new FormControl(new Date(plant.lastFertilizeDate));
     this.form.controls.publicOrPrivate.setValue(plant.isPublic ? "public" : "private")
     this.form.controls.doNotify.setValue(plant.doNotify ? true : false)
     if (imageUrl) {
@@ -164,8 +168,8 @@ export class PlantsComponent {
       var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '',
         this.form.controls.wateringFrequency.value || 0,
         this.form.controls.fertilizingFrequency.value || 0,
-        this.form.controls.lastWateredDate.value || '',
-        this.form.controls.lastFertilizedDate.value || '',
+        this.editingPlantLastWaterDate.value?.toDateString() || '',
+        this.editingPlantLastFertilizeDate.value?.toDateString() || '',
         this.form.controls.publicOrPrivate.value == "public" || false,
         this.form.controls.doNotify.value == true || false)
       plant.id = this.editingPlant.id
