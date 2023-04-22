@@ -316,6 +316,16 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		AddComment(db, comment.Content, claims.Email, claims.Username, comment.PlantId)
 		break
 	case "PUT":
+		q := r.URL.Query()
+		commentId := q.Get("commentId")
+		var comment CommentModel
+		db.Where("id = ?", commentId).First(&comment)
+		if comment.Email != claims.Email {
+			authentication.WriteError(w, "This isn't your comment!", http.StatusBadRequest)
+			return
+		}
+		comment.Viewed = true
+		db.Save(&comment)
 		break
 	}
 

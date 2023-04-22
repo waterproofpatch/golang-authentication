@@ -50,8 +50,12 @@ export class CommentsService {
   constructor(private commentsApiService: CommentsApiService) { }
 
   public viewComment(comment: Comment): void {
-    console.log("viewed comment: " + comment.id)
-    comment.viewed = true
+    // this check prevents us from recuring
+    if (!comment.viewed) {
+      console.log("viewed comment: " + comment.id)
+      comment.viewed = true
+      this.commentsApiService.put(comment).subscribe((x) => { this.updateCommentsList(x) })
+    }
   }
 
   public deleteComment(comment: Comment): void {

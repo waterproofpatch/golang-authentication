@@ -16,9 +16,9 @@ export class CommentsApiService extends BaseService {
   post(comment: Comment): Observable<any> {
     return this.http.post(this.getUrlBase() + this.commentsApiUrl + "/" + comment.plantId, comment, this.httpOptions);
   }
+  // updating the comment marks it as viewed on the remote side
   put(comment: Comment): Observable<any> {
-    console.log("Updating comment " + comment.id)
-    return this.http.put(this.getUrlBase() + this.commentsApiUrl, comment, this.httpOptions);
+    return this.http.put(this.getUrlBase() + this.commentsApiUrl + "/" + comment.plantId + "?commentId=" + comment.id, comment, this.httpOptions);
   }
   get(
     plantId: number,
