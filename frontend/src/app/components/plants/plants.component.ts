@@ -185,8 +185,8 @@ export class PlantsComponent {
     var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '',
       this.form.controls.wateringFrequency.value || 0,
       this.form.controls.fertilizingFrequency.value || 0,
-      this.form.controls.lastWateredDate.value || '',
-      this.form.controls.lastFertilizedDate.value || '',
+      this.editingPlantLastWaterDate.value?.toDateString() || '',
+      this.editingPlantLastFertilizeDate.value?.toDateString() || '',
       this.form.controls.publicOrPrivate.value == "public" || false,
       this.form.controls.doNotify.value == true || false)
     this.plantsService.addPlant(plant, this.selectedImage)

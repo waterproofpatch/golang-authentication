@@ -150,7 +150,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		doNotify, err := strconv.ParseBool(r.FormValue("doNotify"))
 		if err != nil {
 			// handle error
-			authentication.WriteError(w, "Invalid public/private setting.", http.StatusBadRequest)
+			authentication.WriteError(w, "Invalid notification setting.", http.StatusBadRequest)
 			return
 		}
 		newPlant.DoNotify = doNotify

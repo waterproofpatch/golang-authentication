@@ -24,8 +24,18 @@ func isValidInput(input string) bool {
 }
 
 // execute the python script 'main.py' in /email_service to send an email
-func sendEmail(recpient string, plantName string, username string) {
-	cmd := exec.Command("/email_service/venv/bin/python", "/email_service/main.py", "--recipient", recpient, "--plant-name", plantName, "--username", username)
+func sendEmail(recipient string, plantName string, username string, needsFertilizer bool, needsWater bool) {
+	fmt.Println("Building email...")
+	args := []string{"/email_service/main.py", "--recipient", recipient, "--plant-name", plantName, "--username", username}
+	if needsFertilizer {
+		args = append(args, "--needs-fertilizer")
+	}
+	if needsWater {
+		args = append(args, "--needs-water")
+	}
+	fmt.Println("About to send email...")
+	cmd := exec.Command("/email_service/venv/bin/python", args...)
+	fmt.Println("Sent email.")
 	stdout, err := cmd.Output()
 	if err != nil {
 		fmt.Println(string(stdout))
@@ -38,47 +48,56 @@ func sendEmail(recpient string, plantName string, username string) {
 func StartTimer(stopCh chan bool, db *gorm.DB) {
 	// Create a ticker that ticks every 5 seconds
 	ticker := time.NewTicker(5 * time.Second)
+	dateLayoutStr := "Mon Jan 02 2006"
+	regex := regexp.MustCompile(`\s*\([^)]*\)`)
 
 	for {
 		select {
 		case <-ticker.C:
-			currentDate := time.Now().UTC()
+			today := time.Now().UTC()
 			var plants []PlantModel
 			db.Find(&plants)
+
 			for _, plant := range plants {
-				// fmt.Printf("checking watering notifications for %v", plant)
 				if !plant.DoNotify {
-					// fmt.Printf("Plant notifications turned off. Skipping\n")
 					continue
 				}
-				regex := regexp.MustCompile(`\s*\([^)]*\)`)
 				lastWaterDateStr := regex.ReplaceAllString(plant.LastWaterDate, "")
-				lastWaterDateLayout := "Mon Jan 02 2006"
-				lastWaterDate, err := time.Parse(lastWaterDateLayout, lastWaterDateStr)
+				lastWaterDate, err := time.Parse(dateLayoutStr, lastWaterDateStr)
 				if err != nil {
 					fmt.Println("Error parsing lastWaterDate string:", err)
 					break
 				}
 				nextWaterDate := lastWaterDate.AddDate(0, 0, plant.WateringFrequency)
-				today := time.Now().UTC()
 
-				// is the plant overdue for watering
+				lastFertilizeDateStr := regex.ReplaceAllString(plant.LastFertilizeDate, "")
+				lastFertilizeDate, err := time.Parse(dateLayoutStr, lastFertilizeDateStr)
+				if err != nil {
+					fmt.Println("Error parsing lastFertilizeDate string:", err)
+					break
+				}
+				nextFertilizeDate := lastFertilizeDate.AddDate(0, 0, plant.FertilizingFrequency)
+
+				var needsFertilize bool
+				var needsWater bool
+
+				if nextFertilizeDate.Before(today) {
+					needsFertilize = true
+				}
 				if nextWaterDate.Before(today) {
-					if plant.LastNotifyDate == "" {
-
-						fmt.Printf("Sending notification to %v!\n", plant.Email)
-						sendEmail(plant.Email, plant.Name, plant.Username)
-						plant.LastNotifyDate = currentDate.String()
-						db.Save(&plant)
-					} else {
-						// fmt.Printf("Notification already sent on %v\n", plant.LastNotifyDate)
-					}
-				} else {
-					// fmt.Printf("Next watering date is in the future: %v\n", nextWaterDate)
+					needsWater = true
 				}
 
+				// is the plant overdue for watering
+				if needsFertilize || needsWater {
+					if plant.LastNotifyDate == "" {
+						fmt.Printf("Sending notification to owner of plant %s: %v!\n", plant.Name, plant.Email)
+						sendEmail(plant.Email, plant.Name, plant.Username, needsFertilize, needsWater)
+						plant.LastNotifyDate = today.String()
+						db.Save(&plant)
+					}
+				}
 			}
-			// for each plant, check if it's time to water it
 		case <-stopCh:
 			// Stop the ticker and exit the goroutine
 			fmt.Println("Stopping timer...")
