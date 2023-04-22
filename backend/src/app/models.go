@@ -22,6 +22,7 @@ type CommentModel struct {
 	Email    string `json:"email"`
 	Username string `json:"username"`
 	Content  string `json:"content"`
+	Viewed   bool   `json:"viewed"`
 }
 type PlantModel struct {
 	gorm.Model

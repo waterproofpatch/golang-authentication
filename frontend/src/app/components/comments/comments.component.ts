@@ -29,7 +29,11 @@ export class CommentsComponent {
       this.commentsService.getComments(this.plantId)
     });
     this.commentsService.isLoading$.subscribe((x) => this.isLoading = x)
-    this.commentsService.comments$.subscribe((x) => this.comments = x)
+    this.commentsService.comments$.subscribe((x) => {
+      this.comments = x; for (let comment of x) {
+        this.commentsService.viewComment(comment)
+      }
+    })
   }
 
 

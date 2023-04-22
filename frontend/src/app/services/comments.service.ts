@@ -11,6 +11,7 @@ export default interface Comment {
   content: string;
   username: string;
   email: string;
+  viewed: boolean;
 }
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,7 @@ export class CommentsService {
       console.log(`email: ${comment.email}`);
       console.log(`content: ${comment.content}`);
       console.log(`plantId: ${comment.plantId}`);
+      console.log(`viewed: ${comment.viewed}`);
     }
 
     public static makeComment(content: string, plantId: number): Comment {
@@ -39,12 +41,18 @@ export class CommentsService {
         email: "", //authoritative
         id: 0, //authoritative
         CreatedAt: "", // authoritative
+        viewed: false, //authoritative
       }
       return comment;
     }
   }
 
   constructor(private commentsApiService: CommentsApiService) { }
+
+  public viewComment(comment: Comment): void {
+    console.log("viewed comment: " + comment.id)
+    comment.viewed = true
+  }
 
   public deleteComment(comment: Comment): void {
     this.isLoading$.next(true)
