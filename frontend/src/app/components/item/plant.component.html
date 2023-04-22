@@ -59,23 +59,12 @@
 			</span>
 		</div>
 	</mat-card-content>
-	<!-- <mat-card-actions *ngIf="!isCondensed">
-		<a mat-button [routerLink]="['/comments', plant.id]">Comments ({{numComments | async}})</a>
-	</mat-card-actions> -->
-	<!-- <mat-card-actions *ngIf="plant.email==email && !isCondensed">
-		<button mat-button (click)="deletePlant()" color="warn">Delete</button>
-		<button mat-button (click)="waterPlant()" color="primary">Water</button>
-		<button mat-button (click)="editPlant()" color="primary">Edit</button>
-	</mat-card-actions> -->
 	<mat-accordion *ngIf="plant.email==email">
 		<mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
 			<mat-expansion-panel-header>
 				<mat-panel-title>
 					Log
 				</mat-panel-title>
-				<!-- <mat-panel-description>
-					Plant log coming soon!
-				</mat-panel-description> -->
 			</mat-expansion-panel-header>
 			<p>Coming soon!</p>
 		</mat-expansion-panel>
