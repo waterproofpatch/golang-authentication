@@ -284,9 +284,12 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		q := r.URL.Query()
 		commentId := q.Get("commentId")
 		var comment CommentModel
+		var plant PlantModel
 		db.Where("id = ?", commentId).First(&comment)
-		if comment.Email != claims.Email {
-			authentication.WriteError(w, "This isn't your comment!", http.StatusBadRequest)
+		db.Where("id = ?", comment.PlantId).First(&plant)
+		// users should be able to delete comments by others for their plant
+		if plant.Email != claims.Email && comment.Email != claims.Email {
+			authentication.WriteError(w, "This isn't your comment, nor a comment on your plant!", http.StatusBadRequest)
 			return
 		}
 		db.Delete(&comment)
@@ -319,14 +322,17 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		q := r.URL.Query()
 		commentId := q.Get("commentId")
 		var comment CommentModel
+		var plant PlantModel
 		db.Where("id = ?", commentId).First(&comment)
-		if comment.Email != claims.Email {
-			authentication.WriteError(w, "This isn't your comment!", http.StatusBadRequest)
-			return
+		db.Where("id = ?", comment.PlantId).First(&plant)
+		if plant.Email != claims.Email {
+			fmt.Printf("This comment belongs to plant owned by %s. You are %s, and this comment doesn't belong to a plant that is yours. This is not an error.", plant.Email, claims.Email)
+			break
+		} else {
+			comment.Viewed = true
+			db.Save(&comment)
+			break
 		}
-		comment.Viewed = true
-		db.Save(&comment)
-		break
 	}
 
 	var comments []CommentModel

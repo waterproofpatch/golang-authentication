@@ -16,22 +16,23 @@
 			days</mat-card-subtitle>
 		<!-- <mat-icon *ngIf="!plant.isPublic" class="lock-icon">lock</mat-icon>
 		<mat-icon *ngIf="plant.isPublic" class="lock-icon">lock_open</mat-icon> -->
-		<div class="menu-icon" *ngIf="plant.email == email">
+		<!-- <div class="menu-icon" *ngIf="plant.email == email"> -->
+		<div class="menu-icon">
 
 			<button mat-icon-button [matBadgeHidden]="(numComments|async)==0"
 				[matBadge]="numComments | async" matBadgeColor="warn" [matMenuTriggerFor]="menu"
-				aria-label="Example icon-button with a menu">
+				aria-label="Actions">
 				<mat-icon>more_vert</mat-icon>
 			</button>
 			<mat-menu #menu="matMenu">
-				<button mat-menu-item (click)="editPlant()"
+				<button *ngIf="plant.email == email" mat-menu-item (click)="editPlant()"
 					color="primary"><mat-icon>edit</mat-icon><span>Edit</span></button>
-				<button mat-menu-item (click)="waterPlant()" color="primary"><mat-icon
-						style="color:blue;">
+				<button *ngIf="plant.email == email" mat-menu-item (click)="waterPlant()"
+					color="primary"><mat-icon style="color:blue;">
 						local_drink</mat-icon><span>Water</span></button>
 				<a mat-button [routerLink]="['/comments', plant.id]"><mat-icon>
 						comment</mat-icon><span>Comments</span></a>
-				<button mat-menu-item (click)="deletePlant()" color="warn">
+				<button *ngIf="plant.email == email" mat-menu-item (click)="deletePlant()" color="warn">
 					<mat-icon>delete_outline</mat-icon><span>Delete</span></button>
 			</mat-menu>
 		</div>

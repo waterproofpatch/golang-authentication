@@ -53,8 +53,7 @@ export class CommentsService {
     // this check prevents us from recuring
     if (!comment.viewed) {
       console.log("viewed comment: " + comment.id)
-      comment.viewed = true
-      this.commentsApiService.put(comment).subscribe((x) => { this.updateCommentsList(x) })
+      this.commentsApiService.put(comment).subscribe((x) => { })
     }
   }
 
