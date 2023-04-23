@@ -7,6 +7,7 @@ import { BaseService } from './base.service';
 import { LogDialogComponent } from 'src/app/components/log-dialog/log-dialog.component';
 import { ErrorDialogComponent } from 'src/app/components/error-dialog/error-dialog.component';
 import { ConfirmationDialogComponent } from '../components/confirmation-dialog/confirmation-dialog.component';
+import { PlantCareComponent } from '../components/plant-care/plant-care.component';
 
 export interface NewGameDialogData { }
 
@@ -17,6 +18,14 @@ export class DialogService extends BaseService {
   dialogRef: any = undefined;
   constructor(private dialog: MatDialog) {
     super();
+  }
+
+  displayPlantCareDialog(confirmationMsg: string): any {
+    const dialogRef = this.dialog.open(PlantCareComponent, {
+      width: '300px',
+      data: { title: 'Confirm', confirmationMsg: confirmationMsg }
+    });
+    return dialogRef
   }
 
   displayConfirmationDialog(confirmationMsg: string): any {

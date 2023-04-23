@@ -29,7 +29,7 @@
 					color="primary"><mat-icon>edit</mat-icon><span>Edit</span></button>
 				<button *ngIf="plant.email == email" mat-menu-item (click)="waterPlant()"
 					color="primary"><mat-icon style="color:blue;">
-						local_drink</mat-icon><span>Water</span></button>
+						local_drink</mat-icon><span>Care</span></button>
 				<a mat-button [routerLink]="['/comments', plant.id]"><mat-icon>
 						comment</mat-icon><span>Comments</span></a>
 				<button *ngIf="plant.email == email" mat-menu-item (click)="deletePlant()" color="warn">

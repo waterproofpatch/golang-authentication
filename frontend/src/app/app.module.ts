@@ -40,6 +40,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { MessageComponent } from './components/message/message.component';
 import { UserComponent } from './components/user/user.component';
 import { CommentsComponent } from './components/comments/comments.component';
+import { PlantCareComponent } from './components/plant-care/plant-care.component';
 
 
 @NgModule({
@@ -56,7 +57,8 @@ import { CommentsComponent } from './components/comments/comments.component';
     ProfileComponent,
     MessageComponent,
     UserComponent,
-    CommentsComponent
+    CommentsComponent,
+    PlantCareComponent
   ],
   imports: [
     HttpClientModule,

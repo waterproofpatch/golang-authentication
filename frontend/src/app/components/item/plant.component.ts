@@ -109,7 +109,8 @@ export class PlantComponent {
     if (!this.plant) {
       return
     }
-    var dialogRef = this.dialogService.displayConfirmationDialog("Did you water plant: " + this.plant.name + "?")
+    var dialogRef = this.dialogService.displayPlantCareDialog("Did you water plant: " + this.plant.name + "?")
+    // var dialogRef = this.dialogService.displayConfirmationDialog("Did you water plant: " + this.plant.name + "?")
     if (this.plant == null) {
       console.log("Unexpected plant is NULL");
       return;
