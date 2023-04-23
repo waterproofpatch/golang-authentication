@@ -7,9 +7,9 @@ import { BaseService } from './base.service';
 import { LogDialogComponent } from 'src/app/components/log-dialog/log-dialog.component';
 import { ErrorDialogComponent } from 'src/app/components/error-dialog/error-dialog.component';
 import { ConfirmationDialogComponent } from '../components/confirmation-dialog/confirmation-dialog.component';
-import { PlantCareComponent } from '../components/plant-care/plant-care.component';
+import { PlantCareDialogComponent } from '../components/plant-care-dialog/plant-care-dialog.component';
 
-export interface NewGameDialogData { }
+export interface PlantCareDialogData { title: string, confirmationMsg: string, water: boolean, fertilize: boolean }
 
 @Injectable({
   providedIn: 'root',
@@ -20,10 +20,10 @@ export class DialogService extends BaseService {
     super();
   }
 
-  displayPlantCareDialog(confirmationMsg: string): any {
-    const dialogRef = this.dialog.open(PlantCareComponent, {
+  displayPlantCareDialog(confirmationMsg: string, water: boolean, fertilize: boolean): any {
+    const dialogRef = this.dialog.open(PlantCareDialogComponent, {
       width: '300px',
-      data: { title: 'Confirm', confirmationMsg: confirmationMsg }
+      data: { title: 'Confirm', confirmationMsg: confirmationMsg, water: water, fertilize: fertilize }
     });
     return dialogRef
   }

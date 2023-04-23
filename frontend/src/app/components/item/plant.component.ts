@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { DialogService } from 'src/app/services/dialog.service';
+import { DialogService, PlantCareDialogData } from 'src/app/services/dialog.service';
 import Plant, { PlantCareType, PlantsService } from 'src/app/services/plants.service';
 import { EventEmitter } from '@angular/core';
 import { Output } from '@angular/core';
@@ -109,13 +109,18 @@ export class PlantComponent {
     if (!this.plant) {
       return
     }
-    var dialogRef = this.dialogService.displayPlantCareDialog("Did you water plant: " + this.plant.name + "?")
-    // var dialogRef = this.dialogService.displayConfirmationDialog("Did you water plant: " + this.plant.name + "?")
+    let water: boolean = false
+    let fertilize: boolean = false
+    var dialogRef = this.dialogService.displayPlantCareDialog("Did you water plant: " + this.plant.name + "?",
+      water,
+      fertilize)
     if (this.plant == null) {
       console.log("Unexpected plant is NULL");
       return;
     }
-    dialogRef.afterClosed().subscribe((result: boolean) => {
+    dialogRef.afterClosed().subscribe((result: PlantCareDialogData) => {
+      console.log("water: " + result.water)
+      console.log("fertilize: " + result.fertilize)
       if (result) {
         if (!this.plant) {
           return;
@@ -128,8 +133,14 @@ export class PlantComponent {
         const day = currentDate.getDate();
         const year = currentDate.getFullYear();
         const formattedDate = `${dayOfWeek} ${month} ${day} ${year}`;
-        console.log("Setting water date to " + formattedDate);
-        this.plant.lastWaterDate = formattedDate
+        if (result.water) {
+          console.log("Setting water date to " + formattedDate);
+          this.plant.lastWaterDate = formattedDate
+        }
+        if (result.fertilize) {
+          console.log("Setting fertilize date to " + formattedDate);
+          this.plant.lastFertilizeDate = formattedDate
+        }
 
         // not updating the image for this plant
         this.plantService.updatePlant(this.plant, null)
