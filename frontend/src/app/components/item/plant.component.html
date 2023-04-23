@@ -5,7 +5,7 @@
 			<img *ngIf="!isImageLoading && imageUrl != null" mat-card-image [src]="imageUrl" alt="Photo">
 			<img *ngIf="!isImageLoading && imageUrl == null" [src]="'/assets/placeholder.jpg'" alt="Image">
 		</div>
-		<mat-card-title *ngIf="!isCondensed">{{plant.name}}</mat-card-title>
+		<mat-card-title>{{plant.name}}</mat-card-title>
 		<mat-card-subtitle *ngIf="isCondensed">
 			<p *ngIf="isCondensed && needsWatering" [style.color]="backgroundColorWater">
 				Needs Watering</p>
