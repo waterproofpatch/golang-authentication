@@ -43,8 +43,9 @@ export class PlantComponent {
   // when user clicks the "edit" button on this plant
   @Output() editModeEmitter = new EventEmitter<{ plant: Plant, imageUrl: string | null }>()
 
-  // color for text for the 'next water date' - set to red for plants in need of watering
-  backgroundColor: string = 'black'; // Set the default background color here
+  // color for text for the 'next care date' - set to red for plants in need of care
+  backgroundColorWater: string = 'black';
+  backgroundColorFertilize: string = 'black';
 
   numComments: BehaviorSubject<number> = new BehaviorSubject<number>(0)
 
@@ -67,14 +68,14 @@ export class PlantComponent {
     if (new Date(this.getNextFertilizeDate()) < new Date()) {
       if (this.plant) {
         console.log("plant " + this.plant.id + " is due for fertilizing!")
-        this.backgroundColor = "red"
+        this.backgroundColorFertilize = "red"
         this.needsFertilizing = true
       }
     }
     if (new Date(this.getNextWaterDate()) < new Date()) {
       if (this.plant) {
         console.log("plant " + this.plant.id + " is due for watering!")
-        this.backgroundColor = "red"
+        this.backgroundColorWater = "red"
         this.needsWatering = true
       }
     }
