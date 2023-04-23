@@ -111,7 +111,7 @@ export class PlantComponent {
     }
     let water: boolean = false
     let fertilize: boolean = false
-    var dialogRef = this.dialogService.displayPlantCareDialog("Did you water plant: " + this.plant.name + "?",
+    var dialogRef = this.dialogService.displayPlantCareDialog("What did you do for " + this.plant.name + "?",
       water,
       fertilize)
     if (this.plant == null) {
