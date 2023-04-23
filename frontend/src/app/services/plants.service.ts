@@ -58,15 +58,25 @@ export class PlantsService extends BaseService {
     }
     return false;
   }
-  public static NeedsWatering(plant: Plant) {
+  public static NeedsCare(plant: Plant) {
     var nextWaterDate = new Date()
+    var nextFertilizeDate = new Date()
     var lastWaterDate = new Date(plant.lastWaterDate)
+    var lastFertilizeDate = new Date(plant.lastFertilizeDate)
     nextWaterDate.setFullYear(lastWaterDate.getFullYear());
     nextWaterDate.setMonth(lastWaterDate.getMonth());
-    var frequencyInMs = plant.wateringFrequency * 24 * 60 * 60 * 1000;
-    nextWaterDate.setTime(lastWaterDate.getTime() + frequencyInMs);
+    nextFertilizeDate.setFullYear(lastFertilizeDate.getFullYear());
+    nextFertilizeDate.setMonth(lastFertilizeDate.getMonth());
+    var frequencyInMsWater = plant.wateringFrequency * 24 * 60 * 60 * 1000;
+    var frequencyInMsFertilize = plant.fertilizingFrequency * 24 * 60 * 60 * 1000;
+    nextWaterDate.setTime(lastWaterDate.getTime() + frequencyInMsWater);
+    nextFertilizeDate.setTime(lastFertilizeDate.getTime() + frequencyInMsFertilize);
     let wateringDate = PlantsService.FormatDate(nextWaterDate)
     if (new Date(wateringDate) < new Date()) {
+      return true;
+    }
+    let fertilizingDate = PlantsService.FormatDate(nextFertilizeDate)
+    if (new Date(fertilizingDate) < new Date()) {
       return true;
     }
     return false;

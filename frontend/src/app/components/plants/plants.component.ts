@@ -54,7 +54,7 @@ export class PlantsComponent {
     lastFertilizedDate: new FormControl('', [Validators.required])
   });
 
-  needsWatering = PlantsService.NeedsWatering;
+  needsCaring = PlantsService.NeedsCare;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -99,7 +99,7 @@ export class PlantsComponent {
     // set the UI from localStorage
     this.condensedView = localStorage.getItem("isCondensed") == "true" ? true : false
     this.filters.set("onlyMyPlants", localStorage.getItem("onlyMyPlants") == "true" ? true : false)
-    this.filters.set("needsWatering", localStorage.getItem("needsWatering") == "true" ? true : false)
+    this.filters.set("needsCare", localStorage.getItem("needsCare") == "true" ? true : false)
 
     // on init, ask for the list of plants
     this.getPlants()

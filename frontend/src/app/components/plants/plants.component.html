@@ -12,9 +12,9 @@
 			</mat-button-toggle>
 		</mat-button-toggle-group>
 		<mat-button-toggle-group name="filters" aria-label="Filters" multiple>
-			<mat-button-toggle value="needsWatering" [checked]="filters.get('needsWatering')"
-				(change)="filterChange('needsWatering')">Needs
-				Watering</mat-button-toggle>
+			<mat-button-toggle value="needsCare" [checked]="filters.get('needsCare')"
+				(change)="filterChange('needsCare')">Needs
+				Care</mat-button-toggle>
 			<mat-button-toggle value="mineOnly" [checked]="filters.get('onlyMyPlants')"
 				(change)="filterChange('onlyMyPlants')">Only My
 				Plants</mat-button-toggle>
@@ -97,7 +97,7 @@
 <div class="plants" *ngIf="!addOrEditMode">
 	<div *ngFor="let plant of plants | async">
 		<div
-			*ngIf="(!filters.get('onlyMyPlants') || plant.email == authenticationService.email()) && (!filters.get('needsWatering') || needsWatering(plant))">
+			*ngIf="(!filters.get('onlyMyPlants') || plant.email == authenticationService.email()) && (!filters.get('needsCare') || needsCaring(plant))">
 			<app-plant [isCondensed]="condensedView" (editModeEmitter)="editPlant($event)"
 				[plant]="plant"></app-plant>
 		</div>
