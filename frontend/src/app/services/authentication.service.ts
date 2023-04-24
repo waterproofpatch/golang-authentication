@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, Subject, BehaviorSubject, throwError } from 'rxjs';
+import { Subject, BehaviorSubject, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import jwt_decode from 'jwt-decode';
 import { JwtPayload } from 'jwt-decode';
