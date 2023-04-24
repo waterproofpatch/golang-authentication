@@ -11,6 +11,9 @@ def test_login(guest_user: User):
         password=constants.GUEST_PASSWORD,
     )
     res = guest_user.post("/api/login", json=payload)
+    assert len(res.cookies) == 1, "Unexpected number of cookies."
+    for cookie in res.cookies:
+        assert cookie.secure, "Cookie was not secure"
     assert (
         res.status_code == 200
     ), f"Registration failed: {res.text} - {json.loads(res.text)}"

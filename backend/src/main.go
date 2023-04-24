@@ -67,7 +67,9 @@ func main() {
 	log.Printf("Default admin user name will be %s", os.Getenv("DEFAULT_ADMIN_USERNAME"))
 
 	// must happen before we get the db
-	authentication.Init(os.Getenv("SECRET"),
+	authentication.Init(
+		os.Getenv("SECRET"),
+		os.Getenv("REFRESH_SECRET"),
 		os.Getenv("DEFAULT_ADMIN_EMAIL"),
 		os.Getenv("DEFAULT_ADMIN_USERNAME"),
 		os.Getenv("DEFAULT_ADMIN_PASSWORD"),
