@@ -143,9 +143,9 @@ func AddPlant(db *gorm.DB,
 	if wateringFrequency == 0 {
 		return errors.New("Invalid watering frequency.")
 	}
-	if fertilizingFrequency == 0 {
-		return errors.New("Invalid fertilizing frequency.")
-	}
+	// if fertilizingFrequency == 0 {
+	// 	return errors.New("Invalid fertilizing frequency.")
+	// }
 	if lastWaterDate == "" {
 		return errors.New("Invalid last watering date.")
 	}

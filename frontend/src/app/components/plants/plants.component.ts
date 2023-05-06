@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { PlantsService } from 'src/app/services/plants.service';
 import Plant from 'src/app/services/plants.service';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -14,7 +14,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 })
 export class PlantsComponent {
   public wateringFrequencyOptions = Array.from({ length: 60 }, (_, i) => i + 1);
-  public fertilizingFrequencyOptions = Array.from({ length: 60 }, (_, i) => i + 1);
+  public fertilizingFrequencyOptions = Array.from({ length: 60 }, (_, i) => i + 0);
 
   // the currently editing plants last water date
   editingPlantLastWaterDate = new FormControl(new Date());
@@ -48,7 +48,7 @@ export class PlantsComponent {
     name: new FormControl('', [Validators.required, Validators.min(3), Validators.max(30)]),
     publicOrPrivate: new FormControl('', [Validators.required]),
     doNotify: new FormControl(false),
-    wateringFrequency: new FormControl(0, [Validators.required]),
+    wateringFrequency: new FormControl(1, [Validators.required]),
     fertilizingFrequency: new FormControl(0, [Validators.required]),
     lastWateredDate: new FormControl('', [Validators.required]),
     lastFertilizedDate: new FormControl('', [Validators.required])
@@ -64,10 +64,10 @@ export class PlantsComponent {
     private router: Router
   ) {
     this.form = this.formBuilder.group({
-      publicOrPrivate: [''],
+      publicOrPrivate: ['private'],
       doNotify: [false],
       name: [''],
-      wateringFrequency: [0],
+      wateringFrequency: [1],
       fertilizingFrequency: [0],
       lastWateredDate: [''],
       lastFertilizedDate: ['']
