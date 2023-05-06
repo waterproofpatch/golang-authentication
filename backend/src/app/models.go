@@ -31,7 +31,7 @@ type PlantModel struct {
 	Username             string `json:"username"`
 	Name                 string `json:"name"`
 	WateringFrequency    int    `json:"wateringFrequency"`
-	FertilizingFrequency int    `json:"fertilizingFrequency"`
+	FertilizingFrequency int    `json:"fertilizingFrequency;default:0"`
 	LastWaterDate        string `json:"lastWaterDate"`
 	LastFertilizeDate    string `json:"lastFertilizeDate"`
 	LastNotifyDate       string `json:"lastNotifyDate"`
