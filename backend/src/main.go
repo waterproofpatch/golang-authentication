@@ -31,9 +31,10 @@ func startServing(port int, router *mux.Router) {
 
 	methods := []string{"GET", "POST", "PUT", "DELETE"}
 	headers := []string{"Content-Type", "Access-Control-Allow-Origin", "Authorization"}
+	origins := []string{"http://localhost:4200"}
 	srv := &http.Server{
 		// Handler: router,
-		Handler: handlers.CORS(handlers.AllowedMethods(methods), handlers.AllowedHeaders(headers))(router),
+		Handler: handlers.CORS(handlers.AllowCredentials(), handlers.AllowedMethods(methods), handlers.AllowedHeaders(headers), handlers.AllowedOrigins(origins))(router),
 		Addr:    portStr,
 		// Good practice: enforce timeouts for servers you create!
 		WriteTimeout: 15 * time.Second,

@@ -29,6 +29,9 @@ export class AuthenticationService extends BaseService {
   // this status string is for modals to display login or registration status messages.
   status$ = new Subject<string>();
 
+  // for auth interceptor to monitor status of refresh
+  refreshStatus$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
   // UI can subscribe to this to reflect authentication state
   isAuthenticated$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
@@ -42,11 +45,12 @@ export class AuthenticationService extends BaseService {
   ) {
     super();
     if (this.token) {
+      this.isAuthenticated$.next(true);
       if (this.isTokenExpired()) {
-        this.clearToken();
-        this.dialogService.displayErrorDialog("Token exipred. Log in again.")
+        // this.clearToken();
+        // this.dialogService.displayErrorDialog("Token exipred. Log in again.")
       } else {
-        this.isAuthenticated$.next(true);
+        // this.isAuthenticated$.next(true);
       }
     }
   }
@@ -136,13 +140,6 @@ export class AuthenticationService extends BaseService {
     return sessionStorage.getItem(this.TOKEN_KEY);
   }
 
-  /**
-   * Check with '.isAuthenticated' (no parens).
-   */
-  // get isAuthenticated() {
-  //   return !!sessionStorage.getItem(this.TOKEN_KEY);
-  // }
-
   logout(showModal?: boolean, redirectToLogin?: boolean) {
     this.clearToken()
     if (showModal) {
@@ -153,6 +150,25 @@ export class AuthenticationService extends BaseService {
       return;
     }
     this.router.navigateByUrl('/');
+  }
+
+  refresh() {
+    this.authenticationApiService.refreshHttp().pipe(
+      catchError((error: any) => {
+        this.refreshStatus$.next(false)
+        if (error instanceof HttpErrorResponse) {
+          this.error$.next(error.error.error_message);
+        } else {
+          this.error$.next('Unexpected error');
+        }
+        return throwError(error);
+      })
+    )
+      .subscribe((x) => {
+        console.log('refresh completed OK');
+        this.refreshStatus$.next(true)
+        this.error$.next(''); // send a benign event so observers can close modals
+      });
   }
 
   register(

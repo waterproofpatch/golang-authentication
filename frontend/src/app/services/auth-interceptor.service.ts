@@ -8,6 +8,7 @@ import { Error } from '../types'
 
 @Injectable()
 export class AuthInterceptorService implements HttpInterceptor {
+  isRefreshInProgress: boolean = false
   constructor(
     private injector: Injector,
     private dialogService: DialogService,
@@ -15,11 +16,11 @@ export class AuthInterceptorService implements HttpInterceptor {
   ) { }
 
   intercept(req: any, next: any) {
-    const loginService = this.injector.get(AuthenticationService);
+    const authenticationService = this.injector.get(AuthenticationService);
     const authRequest = req.clone({
       headers: req.headers.append(
         'Authorization',
-        'Bearer ' + loginService.token
+        'Bearer ' + authenticationService.token
       ),
     });
 
@@ -36,11 +37,28 @@ export class AuthInterceptorService implements HttpInterceptor {
                   'Bad request: ' + error.error.error_message
                 );
                 break;
-              case 401: //login
-                this.dialogService.displayErrorDialog(
-                  '401 - Unauthorized: ' + error.error.error_message
-                );
-                this.authenticationService.logout();
+              case 401: // login or token expired
+                // don't recursively refresh
+                if (this.isRefreshInProgress) {
+                  console.log("Refresh already in progress, don't refresh again!")
+                  this.isRefreshInProgress = false;
+                  break;
+                }
+
+                // may be expired, try refreshing
+                this.isRefreshInProgress = true
+                this.authenticationService.refreshStatus$.subscribe((x: boolean) => {
+                  if (!x) {
+                    console.log("Refresh failed!")
+                    this.dialogService.displayErrorDialog(
+                      '401 - Unauthorized: ' + error.error.error_message
+                    );
+                    this.authenticationService.logout();
+                  } else {
+                    console.log("Refresh succeeded!")
+                  }
+                })
+                this.authenticationService.refresh()
                 break;
               case 403: //forbidden
                 this.dialogService.displayErrorDialog(
@@ -49,19 +67,13 @@ export class AuthInterceptorService implements HttpInterceptor {
                 this.authenticationService.logout();
                 break;
               default:
-                if (error.error) {
-                  this.dialogService.displayErrorDialog(
-                    'Unknown error ' + error.status + " - " + error.error.error_message
-                  );
-                } else {
-                  this.dialogService.displayErrorDialog(
-                    'Unknown error ' + error.status
-                  );
-                }
+                this.dialogService.displayErrorDialog(
+                  'Unknown error ' + error.status
+                );
             }
           }
         } else {
-          console.error('some thing else happened');
+          console.error('Not sure how we got here...');
         }
         return throwError(error);
       })

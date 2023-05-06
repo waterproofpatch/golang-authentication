@@ -13,6 +13,7 @@ export class BaseService extends BaseComponent {
     }),
   };
   public httpOptions = {
+    withCredentials: true,
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
