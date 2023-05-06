@@ -11,13 +11,14 @@
 				Needs Watering</p>
 		</mat-card-subtitle>
 		<mat-card-subtitle *ngIf="isCondensed">
-			<p *ngIf="isCondensed && needsFertilizing" [style.color]="backgroundColorFertilize">
+			<p *ngIf="isCondensed && needsFertilizing && plant.fertilizingFrequency > 0"
+				[style.color]="backgroundColorFertilize">
 				Needs Fertilizing</p>
 		</mat-card-subtitle>
 		<mat-card-subtitle *ngIf="!isCondensed">by {{plant.username}}</mat-card-subtitle>
 		<mat-card-subtitle>Water every {{plant.wateringFrequency}}
 			days</mat-card-subtitle>
-		<mat-card-subtitle>Fertilize every {{plant.fertilizingFrequency}}
+		<mat-card-subtitle *ngIf="plant.fertilizingFrequency > 0">Fertilize every {{plant.fertilizingFrequency}}
 			days</mat-card-subtitle>
 		<!-- <mat-icon *ngIf="!plant.isPublic" class="lock-icon">lock</mat-icon>
 		<mat-icon *ngIf="plant.isPublic" class="lock-icon">lock_open</mat-icon> -->
@@ -53,13 +54,14 @@
 			<span class="left">
 				<mat-card-subtitle>Last Watered:
 					{{transformLastPlantCareDate(plantCareType.WATER)}}</mat-card-subtitle>
-				<mat-card-subtitle>Last Fertilized:
+				<mat-card-subtitle *ngIf="plant.fertilizingFrequency > 0">Last Fertilized:
 					{{transformLastPlantCareDate(plantCareType.FERTILIZE)}}</mat-card-subtitle>
 			</span>
 			<span class="right">
 				<mat-card-subtitle [style.color]="backgroundColorWater">Water on:
 					{{getNextWaterDate()}}</mat-card-subtitle>
-				<mat-card-subtitle [style.color]="backgroundColorFertilize">Fertilize on:
+				<mat-card-subtitle *ngIf="plant.fertilizingFrequency > 0"
+					[style.color]="backgroundColorFertilize">Fertilize on:
 					{{getNextFertilizeDate()}}</mat-card-subtitle>
 			</span>
 		</div>

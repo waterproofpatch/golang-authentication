@@ -53,7 +53,7 @@ export class PlantsService extends BaseService {
     var frequencyInMs = plant.fertilizingFrequency * 24 * 60 * 60 * 1000;
     nextFertilizeDate.setTime(lastFertilizeDate.getTime() + frequencyInMs);
     let fertilizingDate = PlantsService.FormatDate(nextFertilizeDate)
-    if (new Date(fertilizingDate) < new Date()) {
+    if (new Date(fertilizingDate) < new Date() && plant.fertilizingFrequency > 0) {
       return true;
     }
     return false;
@@ -76,7 +76,7 @@ export class PlantsService extends BaseService {
       return true;
     }
     let fertilizingDate = PlantsService.FormatDate(nextFertilizeDate)
-    if (new Date(fertilizingDate) < new Date()) {
+    if (new Date(fertilizingDate) < new Date() && plant.fertilizingFrequency > 0) {
       return true;
     }
     return false;

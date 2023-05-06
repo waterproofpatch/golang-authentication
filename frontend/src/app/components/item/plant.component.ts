@@ -67,9 +67,11 @@ export class PlantComponent {
     this.getImage()
     if (new Date(this.getNextFertilizeDate()) < new Date()) {
       if (this.plant) {
-        console.log("plant " + this.plant.id + " is due for fertilizing!")
-        this.backgroundColorFertilize = "red"
-        this.needsFertilizing = true
+        if (this.plant.fertilizingFrequency > 0) {
+          console.log("plant " + this.plant.id + " is due for fertilizing!")
+          this.backgroundColorFertilize = "red"
+          this.needsFertilizing = true
+        }
       }
     }
     if (new Date(this.getNextWaterDate()) < new Date()) {
