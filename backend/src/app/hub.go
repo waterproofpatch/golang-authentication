@@ -134,7 +134,7 @@ func (h *Hub) run() {
 			}
 			h.broadcastClientLeave(client.username)
 		case messageTuple := <-h.broadcast:
-			success, _, errorMsg := authentication.ParseToken(messageTuple.Message.Token)
+			success, _, errorMsg := authentication.ParseToken(messageTuple.Message.Token, false)
 			if !success {
 				fmt.Printf("Failed parsing token from message: %s\n", errorMsg)
 				messageTuple.Client.conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "Please login or create an account."))

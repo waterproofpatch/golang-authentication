@@ -68,6 +68,7 @@ func main() {
 
 	// must happen before we get the db
 	authentication.Init(os.Getenv("SECRET"),
+		"TEMPORARY",
 		os.Getenv("DEFAULT_ADMIN_EMAIL"),
 		os.Getenv("DEFAULT_ADMIN_USERNAME"),
 		os.Getenv("DEFAULT_ADMIN_PASSWORD"),
