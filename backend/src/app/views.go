@@ -362,7 +362,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	token := q.Get("token")
 
 	log.Printf("Processing new client for channel=%s", channel)
-	success, jwtData, errorMsg := authentication.ParseToken(token)
+	success, jwtData, errorMsg := authentication.ParseToken(token, false)
 
 	// upgrade the connection
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
