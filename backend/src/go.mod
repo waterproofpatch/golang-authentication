@@ -6,11 +6,11 @@ require (
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.5.0
-	github.com/waterproofpatch/go_authentication v0.0.0-alpha.4
+	github.com/waterproofpatch/go_authentication v0.0.0-alpha.5
 	gorm.io/gorm v1.24.2
 )
 
-replace github.com/waterproofpatch/go_authentication v0.0.0-alpha.4 => ./go_authentication
+// replace github.com/waterproofpatch/go_authentication v0.0.0-alpha.4 => ./go_authentication
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect

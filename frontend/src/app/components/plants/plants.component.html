@@ -50,7 +50,8 @@
 					<mat-select formControlName="fertilizingFrequency">
 						<mat-option *ngFor="let option of fertilizingFrequencyOptions"
 							[value]="option">
-							{{ option }} day{{ option !== 1 ? 's' : '' }}
+							{{ option }} day{{ option === 0 ? ' (never)' : option !== 1 ?
+							's' : '' }}
 						</mat-option>
 					</mat-select>
 				</mat-form-field>
@@ -63,7 +64,9 @@
 						[for]="pickerWater"></mat-datepicker-toggle>
 					<mat-datepicker #pickerWater></mat-datepicker>
 				</mat-form-field>
-				<mat-form-field appearance="fill">
+				<mat-form-field
+					*ngIf="form.controls.fertilizingFrequency.value && form.controls.fertilizingFrequency.value>0"
+					appearance="fill">
 					<mat-label>Last Fertilize Date</mat-label>
 					<input matInput [formControl]="editingPlantLastFertilizeDate"
 						[matDatepicker]="pickerFertilize">
