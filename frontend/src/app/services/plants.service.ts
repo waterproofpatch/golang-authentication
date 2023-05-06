@@ -261,6 +261,7 @@ export class PlantsService extends BaseService {
       .get()
       .pipe(
         catchError((error: any) => {
+          console.log("Got an error in getPlants: " + error)
           if (error instanceof HttpErrorResponse) {
             this.error$.next(error.error.error_message);
           } else {
