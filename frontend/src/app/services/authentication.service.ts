@@ -30,7 +30,7 @@ export class AuthenticationService extends BaseService {
   status$ = new Subject<string>();
 
   // for auth interceptor to monitor status of refresh
-  refreshStatus$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  refreshStatus$: Subject<boolean> = new Subject<boolean>();
 
   // UI can subscribe to this to reflect authentication state
   isAuthenticated$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);

@@ -4,7 +4,6 @@ import { Injectable, Injector } from '@angular/core';
 import { HttpInterceptor, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from './authentication.service';
 import { DialogService } from './dialog.service';
-import { Error } from '../types'
 
 @Injectable()
 export class AuthInterceptorService implements HttpInterceptor {
@@ -56,6 +55,16 @@ export class AuthInterceptorService implements HttpInterceptor {
                     this.authenticationService.logout();
                   } else {
                     console.log("Refresh succeeded!")
+                    // the token has been updated, make a new request header 
+                    // using the updated token
+                    const refreshRequest = req.clone({
+                      headers: req.headers.append(
+                        'Authorization',
+                        'Bearer ' + authenticationService.token
+                      ),
+                    });
+                    console.log("Making new request: " + refreshRequest)
+                    next.handle(refreshRequest).subscribe()
                   }
                 })
                 this.authenticationService.refresh()
