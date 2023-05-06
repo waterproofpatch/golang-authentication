@@ -165,7 +165,8 @@ export class AuthenticationService extends BaseService {
       })
     )
       .subscribe((x) => {
-        console.log('refresh completed OK');
+        console.log('refresh completed OK, setting token to ' + x.token);
+        this.setToken(x.token)
         this.refreshStatus$.next(true)
         this.error$.next(''); // send a benign event so observers can close modals
       });
