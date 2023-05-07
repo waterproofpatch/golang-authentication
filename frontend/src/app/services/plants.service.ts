@@ -164,6 +164,7 @@ export class PlantsService extends BaseService {
       .delete(id)
       .pipe(
         catchError((error: any) => {
+          this.isLoading.next(false)
           if (error instanceof HttpErrorResponse) {
             this.error$.next(error.error.error_message);
           } else {
@@ -204,6 +205,7 @@ export class PlantsService extends BaseService {
       .putFormData(formData)
       .pipe(
         catchError((error: any) => {
+          this.isLoading.next(false)
           if (error instanceof HttpErrorResponse) {
             this.error$.next(error.error.error_message);
           } else {
@@ -239,15 +241,22 @@ export class PlantsService extends BaseService {
       .postFormData(formData)
       .pipe(
         catchError((error: any) => {
+          this.isLoading.next(false)
           if (error instanceof HttpErrorResponse) {
             this.error$.next(error.error.error_message);
           } else {
             this.error$.next('Unexpected error');
           }
-          return throwError(error);
+          // return throwError(error);
+          return of(null)
         })
       )
       .subscribe((x) => {
+        if (x == null) {
+          console.log("NULL!")
+          return;
+        }
+        console.log("Updating plant list!")
         this.updatePlantsList(x)
       });
   }
@@ -261,7 +270,7 @@ export class PlantsService extends BaseService {
       .get()
       .pipe(
         catchError((error: any) => {
-          console.log("Got an error in getPlants: " + error)
+          this.isLoading.next(false)
           if (error instanceof HttpErrorResponse) {
             this.error$.next(error.error.error_message);
           } else {
@@ -280,7 +289,7 @@ export class PlantsService extends BaseService {
    * @param plants new plants.
    */
   private updatePlantsList(plants: Plant[]): void {
-    console.log('Got plants ' + plants);
+    console.log('Updating plants list to: ' + plants);
     for (let p of plants) {
       PlantsService.PlantsFactory.printPlant(p)
     }

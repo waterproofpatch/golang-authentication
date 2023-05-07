@@ -97,14 +97,15 @@
 		</div>
 	</div>
 </div>
-<div class="plants" *ngIf="!addOrEditMode">
-	<div *ngFor="let plant of plants | async">
-		<div
-			*ngIf="(!filters.get('onlyMyPlants') || plant.email == authenticationService.email()) && (!filters.get('needsCare') || needsCaring(plant))">
-			<app-plant [isCondensed]="condensedView" (editModeEmitter)="editPlant($event)"
-				[plant]="plant"></app-plant>
+
+<ng-container *ngIf="(plants| async) as plantList">
+	<div class="plants" *ngIf="!addOrEditMode">
+		<div *ngFor="let plant of plantList">
+			<div
+				*ngIf="(!filters.get('onlyMyPlants') || plant.email == authenticationService.email()) && (!filters.get('needsCare') || needsCaring(plant))">
+				<app-plant [isCondensed]="condensedView" (editModeEmitter)="editPlant($event)"
+					[plant]="plant"></app-plant>
+			</div>
 		</div>
 	</div>
-	<!-- <app-plant [isCondensed]="condensedView" (editModeEmitter)="editPlant($event)"
-		*ngFor="let plant of plants | async" [plant]="plant"></app-plant> -->
-</div>
+</ng-container>
