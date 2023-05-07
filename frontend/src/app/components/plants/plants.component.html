@@ -20,12 +20,12 @@
 				Plants</mat-button-toggle>
 		</mat-button-toggle-group>
 
-		<button mat-button mat-raised-button color="primary" *ngIf="!addOrEditMode"
-			(click)="addOrEditMode=true">Add
+		<button mat-button mat-raised-button color="primary" *ngIf="!isInEditOrAddMode()"
+			(click)="switchToAddPlantMode()">Add
 			Plant</button>
-		<div *ngIf="addOrEditMode">
+		<div *ngIf="isInEditOrAddMode()">
 			<div class="button-group-top">
-				<button mat-button mat-raised-button color="warn" *ngIf="addOrEditMode"
+				<button mat-button mat-raised-button color="warn" *ngIf="isInEditOrAddMode()"
 					(click)="cancelAddMode(); $event.preventDefault()">Cancel</button>
 			</div>
 
@@ -99,7 +99,7 @@
 </div>
 
 <ng-container *ngIf="(plants| async) as plantList">
-	<div class="plants" *ngIf="!addOrEditMode">
+	<div class="plants" *ngIf="!isInEditOrAddMode()">
 		<div *ngFor="let plant of plantList">
 			<div
 				*ngIf="(!filters.get('onlyMyPlants') || plant.email == authenticationService.email()) && (!filters.get('needsCare') || needsCaring(plant))">

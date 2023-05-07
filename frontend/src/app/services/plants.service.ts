@@ -105,9 +105,6 @@ export class PlantsService extends BaseService {
       lastFertilizeDate: string,
       isPublic: boolean,
       doNotify: boolean): Plant {
-      console.log("makePlant: isPublic=" + isPublic)
-      const date = new Date(Date.parse(lastWateredDate));
-      console.log("Original last water date: " + lastWateredDate + ", new lastWaterDate: " + date)
       const plant: Plant = {
         name: name,
         wateringFrequency: wateringFrequency,
@@ -256,7 +253,6 @@ export class PlantsService extends BaseService {
           console.log("NULL!")
           return;
         }
-        console.log("Updating plant list!")
         this.updatePlantsList(x)
       });
   }
@@ -289,7 +285,7 @@ export class PlantsService extends BaseService {
    * @param plants new plants.
    */
   private updatePlantsList(plants: Plant[]): void {
-    console.log('Updating plants list to: ' + plants);
+    console.log("Here's the plant list we got from the server:")
     for (let p of plants) {
       PlantsService.PlantsFactory.printPlant(p)
     }

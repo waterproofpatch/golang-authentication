@@ -162,7 +162,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		}
 		newPlant.IsPublic = isPublic
 
-		fmt.Printf("Updating plant to: %s", newPlant)
+		fmt.Printf("Adding plant as: %v", newPlant)
 		err = AddPlant(db,
 			newPlant.Name,
 			newPlant.WateringFrequency,
