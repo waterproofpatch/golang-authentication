@@ -131,10 +131,22 @@ export class PlantsComponent {
    * @note called via Output handler for the plant component.   
    * @param event from the event emitter in the plant component.
    */
-  public editPlant(event: any): void {
+  public switchToditPlantMode(event: any): void {
     let plant: Plant = event.plant
     let imageUrl = event.imageUrl
     this.editingPlant = plant
+    this.setPlantFormData(this.editingPlant, imageUrl)
+    this.addOrEditMode = EditMode.EDIT
+  }
+
+  public switchToAddPlantMode(): void {
+    console.log("Switching to add plant mode...")
+    this.editingPlant = PlantsService.PlantsFactory.makePlant("", 1, 0, new Date().toDateString(), new Date().toDateString(), false, true)
+    this.setPlantFormData(this.editingPlant, null)
+    this.addOrEditMode = EditMode.ADD;
+  }
+
+  private setPlantFormData(plant: Plant, imageUrl: string | null) {
     this.form.controls.name.setValue(plant.name)
     this.form.controls['wateringFrequency'].setValue(plant.wateringFrequency)
     this.form.controls['fertilizingFrequency'].setValue(plant.fertilizingFrequency)
@@ -146,13 +158,6 @@ export class PlantsComponent {
       this.selectedImagePreview = imageUrl
       this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
     }
-    this.addOrEditMode = EditMode.EDIT
-  }
-
-  public switchToAddPlantMode(): void {
-    console.log("Switching to add plant mode...")
-    this.editingPlant = PlantsService.PlantsFactory.makePlant("", 1, 0, new Date().toDateString(), new Date().toDateString(), false, true)
-    this.addOrEditMode = EditMode.ADD;
   }
 
   /**
