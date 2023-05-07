@@ -7,6 +7,12 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router } from '@angular/router';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
+export enum EditMode {
+  ADD = 1,
+  EDIT = 2,
+  NEITHER = 3,
+}
+
 @Component({
   selector: 'app-plants',
   templateUrl: './plants.component.html',
@@ -15,6 +21,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 export class PlantsComponent {
   public wateringFrequencyOptions = Array.from({ length: 60 }, (_, i) => i + 1);
   public fertilizingFrequencyOptions = Array.from({ length: 60 }, (_, i) => i + 0);
+  public editMode = EditMode
 
   // the currently editing plants last water date
   editingPlantLastWaterDate = new FormControl(new Date());
@@ -35,7 +42,7 @@ export class PlantsComponent {
   isLoading: boolean = false;
 
   // whether or not the edit/add plant form is open
-  addOrEditMode: boolean = false
+  addOrEditMode: EditMode = EditMode.NEITHER
 
   // the plant currently being edited
   editingPlant: Plant | null = null
@@ -115,6 +122,9 @@ export class PlantsComponent {
     localStorage.setItem(filterName, (this.filters.get(filterName) ? "true" : false) || "n/a")
   }
 
+  public isInEditOrAddMode(): boolean {
+    return this.addOrEditMode !== EditMode.NEITHER
+  }
 
   /**
    * Switch to edit mode for a given plant. 
@@ -136,7 +146,13 @@ export class PlantsComponent {
       this.selectedImagePreview = imageUrl
       this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
     }
-    this.addOrEditMode = true
+    this.addOrEditMode = EditMode.EDIT
+  }
+
+  public switchToAddPlantMode(): void {
+    console.log("Switching to add plant mode...")
+    this.editingPlant = PlantsService.PlantsFactory.makePlant("", 1, 0, new Date().toDateString(), new Date().toDateString(), false, true)
+    this.addOrEditMode = EditMode.ADD;
   }
 
   /**
@@ -144,7 +160,7 @@ export class PlantsComponent {
    * @note Called from the 'cancel' button.
    */
   public cancelAddMode(): void {
-    this.addOrEditMode = false;
+    this.addOrEditMode = EditMode.NEITHER;
     this.selectedImagePreview = "/assets/placeholder.jpg"
     this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
     this.getPlants()
@@ -167,7 +183,7 @@ export class PlantsComponent {
       console.log("Invalid form!");
       return;
     }
-    if (this.editingPlant) {
+    if (this.addOrEditMode == EditMode.EDIT && this.editingPlant) {
       console.log("A plant has been edited (not added)")
       var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '',
         this.form.controls.wateringFrequency.value || 0,
@@ -179,7 +195,7 @@ export class PlantsComponent {
       plant.id = this.editingPlant.id
       this.plantsService.updatePlant(plant, this.selectedImage)
       this.editingPlant = null
-      this.addOrEditMode = false;
+      this.addOrEditMode = EditMode.NEITHER;
       this.selectedImage = null
       this.selectedImagePreview = "/assets/placeholder.jpg"
       this.selectedImagePreview_safe = null
@@ -194,7 +210,7 @@ export class PlantsComponent {
       this.form.controls.publicOrPrivate.value == "public" || false,
       this.form.controls.doNotify.value == true || false)
     this.plantsService.addPlant(plant, this.selectedImage)
-    this.addOrEditMode = false;
+    this.addOrEditMode = EditMode.NEITHER;
     this.selectedImage = null
     this.selectedImagePreview = "/assets/placeholder.jpg"
     this.selectedImagePreview_safe = null
