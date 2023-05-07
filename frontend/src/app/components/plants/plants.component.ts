@@ -163,6 +163,10 @@ export class PlantsComponent {
   }
 
   addPlant() {
+    if (this.form.invalid) {
+      console.log("Invalid form!");
+      return;
+    }
     if (this.editingPlant) {
       console.log("A plant has been edited (not added)")
       var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '',
