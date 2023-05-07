@@ -89,6 +89,23 @@ func AddMessage(db *gorm.DB, message *Message) error {
 	return nil
 }
 
+func validatePlantInfo(plantName string, wateringFrequency int, lastWaterDate string, lastFertilizeDate string) error {
+
+	if plantName == "" {
+		return errors.New("Invalid plant name.")
+	}
+	if wateringFrequency == 0 {
+		return errors.New("Invalid watering frequency.")
+	}
+	if lastWaterDate == "" {
+		return errors.New("Invalid last watering date.")
+	}
+	if lastFertilizeDate == "" {
+		return errors.New("Invalid last fertilize date.")
+	}
+	return nil
+}
+
 func UpdatePlant(db *gorm.DB,
 	id int,
 	name string,
@@ -100,6 +117,11 @@ func UpdatePlant(db *gorm.DB,
 	isNewImage bool,
 	isPublic bool,
 	doNotify bool) error {
+
+	err := validatePlantInfo(name, wateringFrequency, lastWaterDate, lastFertilizeDate)
+	if err != nil {
+		return err
+	}
 	var existingplant PlantModel
 	existingplant.Id = id
 	db.First(&existingplant)
@@ -137,20 +159,9 @@ func AddPlant(db *gorm.DB,
 	username string,
 	isPublic bool,
 	doNotify bool) error {
-	if name == "" {
-		return errors.New("Invalid plant name.")
-	}
-	if wateringFrequency == 0 {
-		return errors.New("Invalid watering frequency.")
-	}
-	// if fertilizingFrequency == 0 {
-	// 	return errors.New("Invalid fertilizing frequency.")
-	// }
-	if lastWaterDate == "" {
-		return errors.New("Invalid last watering date.")
-	}
-	if lastFertilizeDate == "" {
-		return errors.New("Invalid last fertilize date.")
+	err := validatePlantInfo(name, wateringFrequency, lastWaterDate, lastFertilizeDate)
+	if err != nil {
+		return err
 	}
 	// Delete old records if the limit has been reached
 	var count int64
@@ -177,7 +188,7 @@ func AddPlant(db *gorm.DB,
 
 	log.Printf("Adding plant %s", plant)
 
-	err := db.Create(&plant).Error
+	err = db.Create(&plant).Error
 	if err != nil {
 		return err
 	}
