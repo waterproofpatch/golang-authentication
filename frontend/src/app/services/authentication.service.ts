@@ -29,9 +29,6 @@ export class AuthenticationService extends BaseService {
   // this status string is for modals to display login or registration status messages.
   status$ = new Subject<string>();
 
-  // for auth interceptor to monitor status of refresh
-  refreshStatus$: Subject<boolean> = new Subject<boolean>();
-
   // UI can subscribe to this to reflect authentication state
   isAuthenticated$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
@@ -60,7 +57,7 @@ export class AuthenticationService extends BaseService {
     this.isAuthenticated$.next(false)
   }
 
-  private setToken(token: string): void {
+  public setToken(token: string): void {
     sessionStorage.setItem(this.TOKEN_KEY, token);
     this.isAuthenticated$.next(true)
   }
@@ -153,23 +150,24 @@ export class AuthenticationService extends BaseService {
   }
 
   refresh() {
-    this.authenticationApiService.refreshHttp().pipe(
-      catchError((error: any) => {
-        this.refreshStatus$.next(false)
-        if (error instanceof HttpErrorResponse) {
-          this.error$.next(error.error.error_message);
-        } else {
-          this.error$.next('Unexpected error');
-        }
-        return throwError(error);
-      })
-    )
-      .subscribe((x) => {
-        console.log('refresh completed OK, setting token to ' + x.token);
-        this.setToken(x.token)
-        this.refreshStatus$.next(true)
-        this.error$.next(''); // send a benign event so observers can close modals
-      });
+    return this.authenticationApiService.refreshHttp()
+    // this.authenticationApiService.refreshHttp().pipe(
+    //   catchError((error: any) => {
+    //     this.refreshStatus$.next(false)
+    //     if (error instanceof HttpErrorResponse) {
+    //       this.error$.next(error.error.error_message);
+    //     } else {
+    //       this.error$.next('Unexpected error');
+    //     }
+    //     return throwError(error);
+    //   })
+    // )
+    //   .subscribe((x) => {
+    //     console.log('refresh completed OK, setting token to ' + x.token);
+    //     this.setToken(x.token)
+    //     this.refreshStatus$.next(true)
+    //     this.error$.next(''); // send a benign event so observers can close modals
+    //   });
   }
 
   register(
