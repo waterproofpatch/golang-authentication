@@ -86,12 +86,13 @@
 					Picture</button>
 				<input hidden (change)="onImageSelected($event)" #fileInput type="file" id="file">
 				<img id="preview" [src]="selectedImagePreview_safe" />
-				<div class="button-group">
+				<div class="button-group" *ngIf="!isProcessingAddOrUpdate">
 					<button *ngIf="editingPlant" mat-button mat-raised-button color="primary"
 						type="submit">Update</button>
 					<button *ngIf="!editingPlant" mat-button mat-raised-button color="primary"
 						type="submit">Add</button>
 				</div>
+				<mat-spinner *ngIf="isProcessingAddOrUpdate"></mat-spinner>
 
 			</form>
 		</div>

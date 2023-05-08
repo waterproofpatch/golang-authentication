@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { PlantsService } from 'src/app/services/plants.service';
 import Plant from 'src/app/services/plants.service';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -23,6 +23,8 @@ export class PlantsComponent {
   public fertilizingFrequencyOptions = Array.from({ length: 60 }, (_, i) => i + 0);
   public editMode = EditMode
 
+
+
   // the currently editing plants last water date
   editingPlantLastWaterDate = new FormControl(new Date());
   editingPlantLastFertilizeDate = new FormControl(new Date());
@@ -40,6 +42,9 @@ export class PlantsComponent {
 
   // whether or not the plants page is waiting for the backend
   isLoading: boolean = false;
+
+  // whether or not the backend is processing a form
+  isProcessingAddOrUpdate: boolean = false;
 
   // whether or not the edit/add plant form is open
   addOrEditMode: EditMode = EditMode.NEITHER
@@ -183,30 +188,16 @@ export class PlantsComponent {
     }
   }
 
+  /**
+   * called from the html form when 'submit' button is clicked.
+   * 
+   */
   addPlant() {
     if (this.form.invalid) {
       console.log("Invalid form!");
       return;
     }
-    if (this.addOrEditMode == EditMode.EDIT && this.editingPlant) {
-      console.log("A plant has been edited (not added)")
-      var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '',
-        this.form.controls.wateringFrequency.value || 0,
-        this.form.controls.fertilizingFrequency.value || 0,
-        this.editingPlantLastWaterDate.value?.toDateString() || '',
-        this.editingPlantLastFertilizeDate.value?.toDateString() || '',
-        this.form.controls.publicOrPrivate.value == "public" || false,
-        this.form.controls.doNotify.value == true || false)
-      plant.id = this.editingPlant.id
-      this.plantsService.updatePlant(plant, this.selectedImage)
-      this.editingPlant = null
-      this.addOrEditMode = EditMode.NEITHER;
-      this.selectedImage = null
-      this.selectedImagePreview = "/assets/placeholder.jpg"
-      this.selectedImagePreview_safe = null
-      return
-    }
-    // Perform actions when the form is submitted
+    this.isProcessingAddOrUpdate = true
     var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '',
       this.form.controls.wateringFrequency.value || 0,
       this.form.controls.fertilizingFrequency.value || 0,
@@ -214,11 +205,26 @@ export class PlantsComponent {
       this.editingPlantLastFertilizeDate.value?.toDateString() || '',
       this.form.controls.publicOrPrivate.value == "public" || false,
       this.form.controls.doNotify.value == true || false)
-    this.plantsService.addPlant(plant, this.selectedImage)
-    this.addOrEditMode = EditMode.NEITHER;
-    this.selectedImage = null
-    this.selectedImagePreview = "/assets/placeholder.jpg"
-    this.selectedImagePreview_safe = null
+
+    this.plantsService.formProcessingSucceeded.subscribe((x) => {
+      this.isProcessingAddOrUpdate = false;
+      // a backend error results in x coming in as false - don't hide the form
+      if (x) {
+        this.editingPlant = null
+        this.addOrEditMode = EditMode.NEITHER;
+        this.selectedImage = null
+        this.selectedImagePreview = "/assets/placeholder.jpg"
+        this.selectedImagePreview_safe = null
+      }
+    })
+    if (this.addOrEditMode == EditMode.EDIT && this.editingPlant) {
+      console.log("A plant has been edited (not added)")
+      plant.id = this.editingPlant.id
+      this.plantsService.updatePlant(plant, this.selectedImage)
+    } else {
+      this.plantsService.addPlant(plant, this.selectedImage)
+    }
+
   }
 
   /**

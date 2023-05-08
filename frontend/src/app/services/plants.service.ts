@@ -30,6 +30,7 @@ export enum PlantCareType {
 })
 export class PlantsService extends BaseService {
   isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  formProcessingSucceeded: Subject<boolean> = new Subject<boolean>()
   imageCache: Map<number, Blob> = new Map<number, Blob>();
 
   /**
@@ -185,7 +186,6 @@ export class PlantsService extends BaseService {
    * @param image optional new image to use.
    */
   public updatePlant(plant: Plant, image: File | null): void {
-    this.isLoading.next(true)
     const formData = new FormData();
     if (image) {
       formData.append('image', image, image.name);
@@ -202,16 +202,20 @@ export class PlantsService extends BaseService {
       .putFormData(formData)
       .pipe(
         catchError((error: any) => {
-          this.isLoading.next(false)
+          this.formProcessingSucceeded.next(false)
           if (error instanceof HttpErrorResponse) {
             this.error$.next(error.error.error_message);
           } else {
             this.error$.next('Unexpected error');
           }
-          return throwError(error);
+          return of(null)
         })
       )
       .subscribe((x) => {
+        if (x == null) {
+          return
+        }
+        this.formProcessingSucceeded.next(true)
         this.updatePlantsList(x)
       });
   }
@@ -222,7 +226,6 @@ export class PlantsService extends BaseService {
    * @param image optional the image file
    */
   public addPlant(plant: Plant, image: File | null): void {
-    this.isLoading.next(true)
     const formData = new FormData();
     if (image) {
       formData.append('image', image, image.name);
@@ -238,7 +241,7 @@ export class PlantsService extends BaseService {
       .postFormData(formData)
       .pipe(
         catchError((error: any) => {
-          this.isLoading.next(false)
+          this.formProcessingSucceeded.next(false)
           if (error instanceof HttpErrorResponse) {
             this.error$.next(error.error.error_message);
           } else {
@@ -253,6 +256,7 @@ export class PlantsService extends BaseService {
           console.log("NULL!")
           return;
         }
+        this.formProcessingSucceeded.next(true)
         this.updatePlantsList(x)
       });
   }
