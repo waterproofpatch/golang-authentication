@@ -31,7 +31,7 @@ func startServing(port int, router *mux.Router) {
 
 	methods := []string{"GET", "POST", "PUT", "DELETE"}
 	headers := []string{"Content-Type", "Access-Control-Allow-Origin", "Authorization"}
-	origins := []string{"http://localhost:4200"}
+	origins := []string{"http://localhost:4200", "https://antlion.azurewebsites.net", "http://antlion.azurewebsites.net"}
 	srv := &http.Server{
 		// Handler: router,
 		Handler: handlers.CORS(handlers.AllowCredentials(), handlers.AllowedMethods(methods), handlers.AllowedHeaders(headers), handlers.AllowedOrigins(origins))(router),

@@ -37,6 +37,10 @@ export class AuthInterceptorService implements HttpInterceptor {
                 );
                 break;
               case 401: // login or token expired
+                if (!this.authenticationService.isAuthenticated$.value) {
+                  this.dialogService.displayErrorDialog("Invalid credentials.")
+                  break
+                }
                 if (!this.isRefreshing) {
                   this.isRefreshing = true
                   return this.authenticationService.refresh().pipe(switchMap((token) => {
