@@ -1,5 +1,5 @@
 import { catchError, switchMap } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { throwError, tap } from 'rxjs';
 import { Injectable, Injector } from '@angular/core';
 import { HttpInterceptor, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from './authentication.service';
@@ -24,6 +24,12 @@ export class AuthInterceptorService implements HttpInterceptor {
     });
 
     return next.handle(authRequest).pipe(
+      tap((x: any) => {
+        if (x.hasOwnProperty('body') && x.body.hasOwnProperty('token')) {
+          console.log("Got a token! " + x.body.token)
+          this.authenticationService.setToken(x.body.token)
+        }
+      }),
       catchError((error) => {
         if (error instanceof HttpErrorResponse) {
           if (error.error instanceof ErrorEvent) {
@@ -45,7 +51,6 @@ export class AuthInterceptorService implements HttpInterceptor {
                   this.isRefreshing = true
                   return this.authenticationService.refresh().pipe(switchMap((token) => {
                     this.isRefreshing = false
-                    this.authenticationService.setToken(token.token)
                     const authRequest2 = req.clone({
                       headers: req.headers.append(
                         'Authorization',

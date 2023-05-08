@@ -151,23 +151,6 @@ export class AuthenticationService extends BaseService {
 
   refresh() {
     return this.authenticationApiService.refreshHttp()
-    // this.authenticationApiService.refreshHttp().pipe(
-    //   catchError((error: any) => {
-    //     this.refreshStatus$.next(false)
-    //     if (error instanceof HttpErrorResponse) {
-    //       this.error$.next(error.error.error_message);
-    //     } else {
-    //       this.error$.next('Unexpected error');
-    //     }
-    //     return throwError(error);
-    //   })
-    // )
-    //   .subscribe((x) => {
-    //     console.log('refresh completed OK, setting token to ' + x.token);
-    //     this.setToken(x.token)
-    //     this.refreshStatus$.next(true)
-    //     this.error$.next(''); // send a benign event so observers can close modals
-    //   });
   }
 
   register(
