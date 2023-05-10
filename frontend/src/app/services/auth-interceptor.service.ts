@@ -57,7 +57,7 @@ export class AuthInterceptorService implements HttpInterceptor {
                         'Bearer ' + token.token
                       ),
                     });
-                    console.log("Trying request again with new token " + token.token)
+                    console.log("Trying request " + authRequest2.urlWithParams + " again with new token " + token.token)
                     return next.handle(authRequest2)
                   }), catchError((err) => {
                     this.isRefreshing = false
