@@ -94,19 +94,19 @@ func (h *Hub) broadcastClientLeave(username string) {
 	h.broadcastMessage(&message)
 }
 
-func (h *Hub) broadcastClientJoin(client *Client) {
+func (h *Hub) broadcastClientJoin(joiningClient *Client) {
 	var message Message
 	message.Type = USER_JOIN
-	message.Content = client.username
+	message.Content = joiningClient.username
 	message.Timestamp = formattedTime()
 	message.From = "Server"
 	message.Channel = "Broadcast"
 	message.Authenticated = true
 	for _client := range h.clients {
-		if _client == client {
+		if _client == joiningClient {
 			continue
 		}
-		fmt.Printf("Broadcasting USER_JOIN (%s) message to client %s\n", client.username, _client.username)
+		fmt.Printf("Broadcasting USER_JOIN (%s) message to client %s\n", joiningClient.username, _client.username)
 		select {
 		case _client.send <- &message:
 		default:

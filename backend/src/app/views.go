@@ -389,9 +389,11 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// client looks legit, let them in
+	fmt.Println("Client looks alright, creating a client and registering it with the hub")
 	client := &Client{hub: hub, conn: conn, send: make(chan *Message), channel: channel, username: jwtData.Username}
 	client.hub.register <- client
 
+	fmt.Println("Starting pumps...")
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.
 	go client.writePump()
@@ -401,6 +403,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	db := authentication.GetDb()
 	var messages []MessageModel
 	db.Find(&messages)
+	fmt.Println("Flushing existing messages to client...")
 	for _, message := range messages {
 		if message.Channel == client.channel {
 			// don't send pms that aren't for this client

@@ -76,6 +76,7 @@ func (c *Client) readPump() {
 			}
 			break
 		}
+		fmt.Printf("Read a message from\n" + c.username)
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 		var typedMessage Message
 		json.Unmarshal(message, &typedMessage)

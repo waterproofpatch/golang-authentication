@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { WebsocketService } from 'src/app/services/websocket.service';
 import { AfterViewInit } from '@angular/core';
 import { Message, MessageType, User } from 'src/app/services/websocket.service';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, throwError } from 'rxjs';
 import { map } from 'rxjs';
 import { DialogService } from 'src/app/services/dialog.service';
 import { ActivatedRoute } from '@angular/router';
@@ -32,23 +32,24 @@ export class ChatComponent implements AfterViewInit {
       this.router.navigateByUrl('/authentication?mode=login');
       return
     }
-    this.subscribeToGetMessages()
     this.channel = sessionStorage.getItem("channel") || "public"
     this.route.queryParams.subscribe((params) => {
       if (params['channel'] != '' && params['channel'] != undefined) {
         this.channel = params['channel']
       }
     });
+
+    // listen for notifications of connection
     this.chatService.isConnected.subscribe((isConnected: boolean) => {
+      // handle a disconnect
       if (!isConnected) {
         this.users = []
         this.messages = []
         this.selectedUsernames = []
       }
     })
-    if (this.channel != "") {
-      this.joinChannel()
-    }
+
+    // if we detect a logout, leave the channel
     this.authenticationService.isAuthenticated$.subscribe((x) => {
       if (!x) {
         console.log("No longer authenticated, leaving channel!")
@@ -57,6 +58,13 @@ export class ChatComponent implements AfterViewInit {
         setTimeout(() => this.router.navigateByUrl('/authentication?mode=login'), 0)
       }
     })
+
+    // this.subscribeToGetMessages()
+
+    // if we've got a channel to join, do so right away
+    if (this.channel != "") {
+      this.joinChannel()
+    }
   }
   ngAfterViewInit() {
     this.scrollToBottom();
@@ -114,19 +122,30 @@ export class ChatComponent implements AfterViewInit {
   // called at the beginning to get messages from socket
   subscribeToGetMessages() {
     this.chatService.getMessages().pipe(
+      catchError((error: any) => {
+        console.log("Catching error in chatService.getMessages: " + error)
+        return throwError(error)
+      }),
       map((message: string) => {
+        console.log("Mapping message to JSON...")
         return JSON.parse(message)
       })
     ).subscribe((message: Message) => {
+      // handle the server telling us that a user has joined
       if (message.type == MessageType.USER_JOIN) {
+        console.log("Handling USER_JOIN message...")
         let user = { username: message.content }
         this.users.push(user)
         return;
       }
+      // handle the server telling us that a user has left
       if (message.type == MessageType.USER_LEAVE) {
+        console.log("Handling USER_LEAVE message...")
         this.users = this.users.filter(obj => { return obj.username !== message.content });
         return;
       }
+      console.log("Handling general chat message message...")
+      // if we make it this far, it's assumed that it's a general chat message
       this.messages.push(message);
 
       // handle another user sending us a PM by opening a tab
@@ -134,6 +153,8 @@ export class ChatComponent implements AfterViewInit {
         console.log("Received a pm from " + message.from)
         this.pmUser(message.from)
       }
+
+      // update the view so the most recent message is at the bottom
       this.scrollToBottom()
     });
   }
@@ -149,13 +170,15 @@ export class ChatComponent implements AfterViewInit {
   }
 
   // join a different channel
-  joinChannel(): void {
+  async joinChannel(): Promise<void> {
     if (this.channel == "") {
       this.dialogService.displayErrorDialog("Invalid channel.")
       return;
     }
     sessionStorage.setItem("channel", this.channel)
-    this.chatService.joinChannel(this.channel)
+    await this.chatService.joinChannel(this.channel)
+
+    // we need to subscribe after a socket is set up.
     this.subscribeToGetMessages()
   }
 

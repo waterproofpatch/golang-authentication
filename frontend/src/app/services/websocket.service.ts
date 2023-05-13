@@ -39,11 +39,13 @@ export class WebsocketService {
   constructor(private dialogService: DialogService, private authenticationService: AuthenticationService, private router: Router) {
   }
 
-  public joinChannel(channel: string): void {
+  public async joinChannel(channel: string): Promise<void> {
     if (this.socket) {
       this.leaveChannel()
     }
-    var token = this.authenticationService.token
+    console.log("Joining channel after we get a fresh token...")
+    var token = await this.authenticationService.getFreshToken()
+    console.log("Okay, got a fresh token: " + token)
     var url = ""
     if (token) {
       url = `${environment.wsUrl}?channel=${channel}&token=Bearer ${token}`
@@ -86,13 +88,14 @@ export class WebsocketService {
 
   public sendMessage(message: Message): void {
     // send an authenticated message
-    if (this.authenticationService.isAuthenticated$.value && this.authenticationService.token) {
+    if (this.authenticationService.isAuthenticated$.value) {
       message.token = "Bearer " + this.authenticationService.token
     }
     if (!this.socket) {
       this.dialogService.displayErrorDialog("Not connected. Join a channel first.")
       return
     }
+    console.log("Sending message " + message.content)
     this.socket.send(JSON.stringify(message));
   }
 
