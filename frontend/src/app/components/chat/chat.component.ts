@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { WebsocketService } from 'src/app/services/websocket.service';
 import { AfterViewInit } from '@angular/core';
@@ -16,7 +16,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css']
 })
-export class ChatComponent implements AfterViewInit {
+export class ChatComponent implements AfterViewInit, OnDestroy {
   @ViewChild('scrollMe') private scrollContainer: ElementRef | undefined;
   channel: string = '';
   message: string = '';
@@ -24,6 +24,7 @@ export class ChatComponent implements AfterViewInit {
   selectedUsernames: string[] = [];
   messages: Message[] = [];
   users: User[] = [];
+  chatSubscription: any
 
   constructor(private route: ActivatedRoute, private chatService: WebsocketService, private dialogService: DialogService, public authenticationService: AuthenticationService, private router: Router) { }
 
@@ -70,6 +71,13 @@ export class ChatComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.scrollToBottom();
   }
+
+  ngOnDestroy(): void {
+    console.log("Destroying component...")
+    this.leaveChannel()
+    this.chatSubscription.unsubscribe()
+  }
+
 
   // scroll to latest message
   scrollToBottom(): void {
@@ -121,7 +129,7 @@ export class ChatComponent implements AfterViewInit {
   }
 
   private subscribeToGetMessages(): void {
-    this.chatService.messages$.subscribe((message: Message | null) => {
+    this.chatSubscription = this.chatService.messages$.subscribe((message: Message | null) => {
       if (!message) {
         return;
       }
@@ -176,7 +184,6 @@ export class ChatComponent implements AfterViewInit {
   // leave the current channel
   leaveChannel(): void {
     this.chatService.leaveChannel()
-    this.users = []
   }
 
   // what channel we're currently connected to

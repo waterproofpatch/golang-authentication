@@ -139,7 +139,7 @@ func (h *Hub) run() {
 				fmt.Printf("Failed parsing token from message: %s\n", errorMsg)
 				cm := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "Not authenticated.")
 				if err := messageTuple.Client.conn.WriteMessage(websocket.CloseMessage, cm); err != nil {
-					fmt.Printf("Error: %v\n", err)
+					fmt.Printf("Error in broadcast, failed parsing token: %v\n", err)
 				}
 				messageTuple.Client.conn.Close()
 
