@@ -389,8 +389,8 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// client looks legit, let them in
-	fmt.Println("Client looks alright, creating a client and registering it with the hub")
 	client := &Client{hub: hub, conn: conn, send: make(chan *Message), channel: channel, username: jwtData.Username}
+	fmt.Println("(2) Client looks alright, creating a client and registering it with the hub")
 	client.hub.register <- client
 
 	fmt.Println("Starting pumps...")
