@@ -99,8 +99,13 @@ export class WebsocketService {
     this.currentChannel.next("")
   }
 
-  public sendMessage(message: Message): void {
+  public async sendMessage(message: Message): Promise<void> {
     // send an authenticated message
+    if (this.authenticationService.isTokenExpired()) {
+      console.log("Sending message but token is expired, lets refresh it...")
+      await this.authenticationService.getFreshToken()
+      console.log("Okay, got fresh token, proceed with sendMessage")
+    }
     if (this.authenticationService.isAuthenticated$.value) {
       message.token = "Bearer " + this.authenticationService.token
     }
