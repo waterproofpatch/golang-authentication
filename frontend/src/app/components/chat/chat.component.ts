@@ -59,7 +59,8 @@ export class ChatComponent implements AfterViewInit {
       }
     })
 
-    // this.subscribeToGetMessages()
+    // subscribe once to watch for messages
+    this.subscribeToGetMessages()
 
     // if we've got a channel to join, do so right away
     if (this.channel != "") {
@@ -119,18 +120,11 @@ export class ChatComponent implements AfterViewInit {
     console.log("PMing " + this.pmUsername)
   }
 
-  // called at the beginning to get messages from socket
-  subscribeToGetMessages() {
-    this.chatService.getMessages().pipe(
-      catchError((error: any) => {
-        console.log("Catching error in chatService.getMessages: " + error)
-        return throwError(error)
-      }),
-      map((message: string) => {
-        console.log("Mapping message to JSON...")
-        return JSON.parse(message)
-      })
-    ).subscribe((message: Message) => {
+  private subscribeToGetMessages(): void {
+    this.chatService.messages$.subscribe((message: Message | null) => {
+      if (!message) {
+        return;
+      }
       // handle the server telling us that a user has joined
       if (message.type == MessageType.USER_JOIN) {
         console.log("Handling USER_JOIN message...")
@@ -156,12 +150,12 @@ export class ChatComponent implements AfterViewInit {
 
       // update the view so the most recent message is at the bottom
       this.scrollToBottom()
-    });
+    })
   }
 
   // whether or not the socket is connected
   isConnected(): Observable<boolean> {
-    return this.chatService.isConnected || this.authenticationService.isAuthenticated$
+    return this.chatService.isConnected
   }
 
   // whether or not the socket is connected
@@ -177,9 +171,6 @@ export class ChatComponent implements AfterViewInit {
     }
     sessionStorage.setItem("channel", this.channel)
     await this.chatService.joinChannel(this.channel)
-
-    // we need to subscribe after a socket is set up.
-    this.subscribeToGetMessages()
   }
 
   // leave the current channel

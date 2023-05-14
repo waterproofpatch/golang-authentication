@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { AuthenticationService } from './authentication.service';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { DialogService } from './dialog.service';
+import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+
 
 export enum MessageType {
   USER = 1, // from the user
@@ -32,7 +34,8 @@ export interface User {
   providedIn: 'root'
 })
 export class WebsocketService {
-  private socket: WebSocket | null = null;
+  private socket: WebSocketSubject<Message> | null = null
+  public messages$: BehaviorSubject<Message | null> = new BehaviorSubject<Message | null>(null)
   public currentChannel: BehaviorSubject<string> = new BehaviorSubject<string>("")
   public isConnected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
 
@@ -54,25 +57,26 @@ export class WebsocketService {
       this.router.navigateByUrl('/authentication?mode=login');
       return
     }
-    this.socket = new WebSocket(url);
-    this.socket.onerror = (event) => {
-      // this.dialogService.displayErrorDialog("Error: " + event)
-      console.log(`Error in websocket: ${event}`)
-      this.isConnected.next(false);
-    };
-    this.socket.onopen = (event) => {
-      console.log("onopen!")
-      this.isConnected.next(true);
-    }
-    this.socket.onclose = (event) => {
-      console.log("onclose!")
-      this.isConnected.next(false);
-      // 1000 is normal closure; e.g. triggered by the frontend client
-      if (event.code != 1000) {
-        console.log("Event: " + event)
-        this.dialogService.displayErrorDialog('WebSocket closed:' + event.code + ', ' + event.reason)
-      }
-    };
+    this.socket = webSocket<Message>({
+      url: url,
+      openObserver: {
+        next: () => {
+          console.log("connection ok");
+          this.isConnected.next(true);
+        },
+      },
+      closeObserver: {
+        next: (closeEvent) => {
+          console.log("CloseEvent: " + closeEvent.code + ": " + closeEvent.reason)
+          this.dialogService.displayErrorDialog("Remote endpoint closed: " + closeEvent.reason)
+          this.isConnected.next(false);
+        }
+      },
+    })
+    this.socket.subscribe((message: Message) => {
+      console.log("Handle message " + message)
+      this.messages$.next(message)
+    });
     this.currentChannel.next(channel)
   }
 
@@ -81,7 +85,8 @@ export class WebsocketService {
     if (!this.socket) {
       return;
     }
-    this.socket.close(1000, "Voluntary disconnect")
+    // this.socket.close(1000, "Voluntary disconnect")
+    this.socket.complete()
     this.socket = null;
     this.isConnected.next(false)
     this.currentChannel.next("")
@@ -97,19 +102,6 @@ export class WebsocketService {
       return
     }
     console.log("Sending message " + message.content)
-    this.socket.send(JSON.stringify(message));
-  }
-
-  getMessages(): Observable<string> {
-    return new Observable<string>(observer => {
-      if (this.socket) {
-        this.socket.addEventListener('message', event => {
-          observer.next(event.data);
-        });
-      } else {
-        this.isConnected.next(false)
-        observer.error('WebSocket is not connected');
-      }
-    });
+    this.socket.next(message);
   }
 }

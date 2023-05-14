@@ -137,8 +137,17 @@ func (h *Hub) run() {
 			success, _, errorMsg := authentication.ParseToken(messageTuple.Message.Token, false)
 			if !success {
 				fmt.Printf("Failed parsing token from message: %s\n", errorMsg)
-				messageTuple.Client.conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "Please login or create an account."))
+				cm := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "Not authenticated.")
+				if err := messageTuple.Client.conn.WriteMessage(websocket.CloseMessage, cm); err != nil {
+					fmt.Printf("Error: %v\n", err)
+				}
 				messageTuple.Client.conn.Close()
+
+				if _, ok := h.clients[messageTuple.Client]; ok {
+					delete(h.clients, messageTuple.Client)
+					close(messageTuple.Client.send)
+				}
+				h.broadcastClientLeave(messageTuple.Client.username)
 				break
 			} else {
 				fmt.Printf("Message is from an authenticated user.")
