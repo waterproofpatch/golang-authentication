@@ -38,6 +38,7 @@ export class WebsocketService {
   public messages$: BehaviorSubject<Message | null> = new BehaviorSubject<Message | null>(null)
   public currentChannel: BehaviorSubject<string> = new BehaviorSubject<string>("")
   public isConnected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  private isCloseDueToClient: boolean = false
 
   constructor(private dialogService: DialogService, private authenticationService: AuthenticationService, private router: Router) {
   }
@@ -46,6 +47,7 @@ export class WebsocketService {
     if (this.socket) {
       this.leaveChannel()
     }
+    this.isCloseDueToClient = false
     console.log("Joining channel after we get a fresh token...")
     var token = await this.authenticationService.getFreshToken()
     console.log("Okay, got a fresh token: " + token)
@@ -68,6 +70,10 @@ export class WebsocketService {
       closeObserver: {
         next: (closeEvent) => {
           console.log("CloseEvent: " + closeEvent.code + ": " + closeEvent.reason)
+          // don't notify the user if they're the one initiating the close
+          if (this.isCloseDueToClient) {
+            return
+          }
           this.dialogService.displayErrorDialog("Remote endpoint closed: " + closeEvent.reason)
           this.isConnected.next(false);
         }
@@ -86,6 +92,7 @@ export class WebsocketService {
       return;
     }
     // this.socket.close(1000, "Voluntary disconnect")
+    this.isCloseDueToClient = true
     this.socket.complete()
     this.socket = null;
     this.isConnected.next(false)
