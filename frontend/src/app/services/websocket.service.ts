@@ -69,6 +69,7 @@ export class WebsocketService {
       this.isConnected.next(false);
       // 1000 is normal closure; e.g. triggered by the frontend client
       if (event.code != 1000) {
+        console.log("Event: " + event)
         this.dialogService.displayErrorDialog('WebSocket closed:' + event.code + ', ' + event.reason)
       }
     };
