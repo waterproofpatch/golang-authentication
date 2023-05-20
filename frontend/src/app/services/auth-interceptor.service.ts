@@ -59,13 +59,17 @@ export class AuthInterceptorService implements HttpInterceptor {
                     });
                     console.log("Trying request " + authRequest2.urlWithParams + " again with new token " + token.token)
                     return next.handle(authRequest2)
-                  }), catchError((err) => {
-                    this.isRefreshing = false
-                    this.authenticationService.logout()
-                    this.dialogService.displayErrorDialog("Failed obtaining new access token. Must log back in again.")
-                    console.log("Error on refresh: " + err)
-                    return throwError(err)
                   }))
+                  // catchError((err) => {
+                  //   console.log("Error on refresh, code is: " + err.status)
+                  //   this.isRefreshing = false
+                  //   if (err.status == 401) {
+                  //     this.authenticationService.logout()
+                  //     this.dialogService.displayErrorDialog("Failed obtaining new access token. Must log back in again.")
+                  //   }
+                  //   // let main error handling code catch this
+                  //   return throwError(err)
+                  // }))
                 }
                 break;
               case 403: //forbidden
