@@ -183,7 +183,6 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		json.NewEncoder(w).Encode(plants)
 		break
 	case "PUT":
-		fmt.Println("Sleeping...")
 		plantId, err := strconv.Atoi(r.FormValue("id"))
 		var isNewImage = false
 		if err != nil {
