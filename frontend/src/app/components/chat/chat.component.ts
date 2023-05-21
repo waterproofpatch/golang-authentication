@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { WebsocketService } from 'src/app/services/websocket.service';
 import { AfterViewInit } from '@angular/core';
 import { Message, MessageType, User } from 'src/app/services/websocket.service';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, throwError } from 'rxjs';
 import { map } from 'rxjs';
 import { DialogService } from 'src/app/services/dialog.service';
 import { ActivatedRoute } from '@angular/router';
@@ -16,7 +16,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css']
 })
-export class ChatComponent implements AfterViewInit {
+export class ChatComponent implements AfterViewInit, OnDestroy {
   @ViewChild('scrollMe') private scrollContainer: ElementRef | undefined;
   channel: string = '';
   message: string = '';
@@ -24,6 +24,7 @@ export class ChatComponent implements AfterViewInit {
   selectedUsernames: string[] = [];
   messages: Message[] = [];
   users: User[] = [];
+  chatSubscription: any
 
   constructor(private route: ActivatedRoute, private chatService: WebsocketService, private dialogService: DialogService, public authenticationService: AuthenticationService, private router: Router) { }
 
@@ -32,23 +33,24 @@ export class ChatComponent implements AfterViewInit {
       this.router.navigateByUrl('/authentication?mode=login');
       return
     }
-    this.subscribeToGetMessages()
     this.channel = sessionStorage.getItem("channel") || "public"
     this.route.queryParams.subscribe((params) => {
       if (params['channel'] != '' && params['channel'] != undefined) {
         this.channel = params['channel']
       }
     });
+
+    // listen for notifications of connection
     this.chatService.isConnected.subscribe((isConnected: boolean) => {
+      // handle a disconnect
       if (!isConnected) {
         this.users = []
         this.messages = []
         this.selectedUsernames = []
       }
     })
-    if (this.channel != "") {
-      this.joinChannel()
-    }
+
+    // if we detect a logout, leave the channel
     this.authenticationService.isAuthenticated$.subscribe((x) => {
       if (!x) {
         console.log("No longer authenticated, leaving channel!")
@@ -57,10 +59,25 @@ export class ChatComponent implements AfterViewInit {
         setTimeout(() => this.router.navigateByUrl('/authentication?mode=login'), 0)
       }
     })
+
+    // subscribe once to watch for messages
+    this.subscribeToGetMessages()
+
+    // if we've got a channel to join, do so right away
+    if (this.channel != "") {
+      this.joinChannel()
+    }
   }
   ngAfterViewInit() {
     this.scrollToBottom();
   }
+
+  ngOnDestroy(): void {
+    console.log("Destroying component...")
+    this.leaveChannel()
+    this.chatSubscription.unsubscribe()
+  }
+
 
   // scroll to latest message
   scrollToBottom(): void {
@@ -111,22 +128,26 @@ export class ChatComponent implements AfterViewInit {
     console.log("PMing " + this.pmUsername)
   }
 
-  // called at the beginning to get messages from socket
-  subscribeToGetMessages() {
-    this.chatService.getMessages().pipe(
-      map((message: string) => {
-        return JSON.parse(message)
-      })
-    ).subscribe((message: Message) => {
+  private subscribeToGetMessages(): void {
+    this.chatSubscription = this.chatService.messages$.subscribe((message: Message | null) => {
+      if (!message) {
+        return;
+      }
+      // handle the server telling us that a user has joined
       if (message.type == MessageType.USER_JOIN) {
+        console.log("Handling USER_JOIN message...")
         let user = { username: message.content }
         this.users.push(user)
         return;
       }
+      // handle the server telling us that a user has left
       if (message.type == MessageType.USER_LEAVE) {
+        console.log("Handling USER_LEAVE message...")
         this.users = this.users.filter(obj => { return obj.username !== message.content });
         return;
       }
+      console.log("Handling general chat message message...")
+      // if we make it this far, it's assumed that it's a general chat message
       this.messages.push(message);
 
       // handle another user sending us a PM by opening a tab
@@ -134,13 +155,15 @@ export class ChatComponent implements AfterViewInit {
         console.log("Received a pm from " + message.from)
         this.pmUser(message.from)
       }
+
+      // update the view so the most recent message is at the bottom
       this.scrollToBottom()
-    });
+    })
   }
 
   // whether or not the socket is connected
   isConnected(): Observable<boolean> {
-    return this.chatService.isConnected || this.authenticationService.isAuthenticated$
+    return this.chatService.isConnected
   }
 
   // whether or not the socket is connected
@@ -149,20 +172,18 @@ export class ChatComponent implements AfterViewInit {
   }
 
   // join a different channel
-  joinChannel(): void {
+  async joinChannel(): Promise<void> {
     if (this.channel == "") {
       this.dialogService.displayErrorDialog("Invalid channel.")
       return;
     }
     sessionStorage.setItem("channel", this.channel)
-    this.chatService.joinChannel(this.channel)
-    this.subscribeToGetMessages()
+    await this.chatService.joinChannel(this.channel)
   }
 
   // leave the current channel
   leaveChannel(): void {
     this.chatService.leaveChannel()
-    this.users = []
   }
 
   // what channel we're currently connected to

@@ -72,10 +72,11 @@ func (c *Client) readPump() {
 		_, message, err := c.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				log.Printf("error: %v", err)
+				log.Printf("error in readPump, unexpected error: %v", err)
 			}
 			break
 		}
+		fmt.Printf("Read a message from\n" + c.username)
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 		var typedMessage Message
 		json.Unmarshal(message, &typedMessage)

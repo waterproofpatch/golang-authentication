@@ -62,6 +62,7 @@ def wait_for_api(function_scoped_container_getter, port: int, admin_username: st
             "DEFAULT_ADMIN_USERNAME": admin_username,
             "DEFAULT_ADMIN_EMAIL": admin_email,
             "DEFAULT_ADMIN_PASSWORD": admin_password,
+            "REFRESH_SECRET": "456",
             "SECRET": "123",
             "DROP_TABLES": "true",
             "PORT": port,

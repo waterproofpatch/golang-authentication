@@ -94,19 +94,19 @@ func (h *Hub) broadcastClientLeave(username string) {
 	h.broadcastMessage(&message)
 }
 
-func (h *Hub) broadcastClientJoin(client *Client) {
+func (h *Hub) broadcastClientJoin(joiningClient *Client) {
 	var message Message
 	message.Type = USER_JOIN
-	message.Content = client.username
+	message.Content = joiningClient.username
 	message.Timestamp = formattedTime()
 	message.From = "Server"
 	message.Channel = "Broadcast"
 	message.Authenticated = true
 	for _client := range h.clients {
-		if _client == client {
+		if _client == joiningClient {
 			continue
 		}
-		fmt.Printf("Broadcasting USER_JOIN (%s) message to client %s\n", client.username, _client.username)
+		fmt.Printf("Broadcasting USER_JOIN (%s) message to client %s\n", joiningClient.username, _client.username)
 		select {
 		case _client.send <- &message:
 		default:
@@ -137,9 +137,18 @@ func (h *Hub) run() {
 			success, _, errorMsg := authentication.ParseToken(messageTuple.Message.Token, false)
 			if !success {
 				fmt.Printf("Failed parsing token from message: %s\n", errorMsg)
-				messageTuple.Client.conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "Please login or create an account."))
+				cm := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "Not authenticated.")
+				if err := messageTuple.Client.conn.WriteMessage(websocket.CloseMessage, cm); err != nil {
+					fmt.Printf("Error in broadcast, failed parsing token: %v\n", err)
+				}
 				messageTuple.Client.conn.Close()
-				return
+
+				if _, ok := h.clients[messageTuple.Client]; ok {
+					delete(h.clients, messageTuple.Client)
+					close(messageTuple.Client.send)
+				}
+				h.broadcastClientLeave(messageTuple.Client.username)
+				break
 			} else {
 				fmt.Printf("Message is from an authenticated user.")
 				messageTuple.Message.Authenticated = true

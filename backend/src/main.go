@@ -31,9 +31,10 @@ func startServing(port int, router *mux.Router) {
 
 	methods := []string{"GET", "POST", "PUT", "DELETE"}
 	headers := []string{"Content-Type", "Access-Control-Allow-Origin", "Authorization"}
+	origins := []string{"http://localhost:4200", "https://antlion.azurewebsites.net", "http://antlion.azurewebsites.net"}
 	srv := &http.Server{
 		// Handler: router,
-		Handler: handlers.CORS(handlers.AllowedMethods(methods), handlers.AllowedHeaders(headers))(router),
+		Handler: handlers.CORS(handlers.AllowCredentials(), handlers.AllowedMethods(methods), handlers.AllowedHeaders(headers), handlers.AllowedOrigins(origins))(router),
 		Addr:    portStr,
 		// Good practice: enforce timeouts for servers you create!
 		WriteTimeout: 15 * time.Second,
@@ -67,8 +68,9 @@ func main() {
 	log.Printf("Default admin user name will be %s", os.Getenv("DEFAULT_ADMIN_USERNAME"))
 
 	// must happen before we get the db
-	authentication.Init(os.Getenv("SECRET"),
-		"TEMPORARY",
+	authentication.Init(
+		os.Getenv("SECRET"),
+		os.Getenv("REFRESH_SECRET"),
 		os.Getenv("DEFAULT_ADMIN_EMAIL"),
 		os.Getenv("DEFAULT_ADMIN_USERNAME"),
 		os.Getenv("DEFAULT_ADMIN_PASSWORD"),

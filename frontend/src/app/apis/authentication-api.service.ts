@@ -10,8 +10,14 @@ import { BaseService } from '../services/base.service';
 export class AuthenticationApiService extends BaseService {
   loginApiUrl = '/api/login';
   registerApiUrl = '/api/register';
+  refreshApiUrl = '/api/refresh';
+
   constructor(private http: HttpClient) {
     super();
+  }
+
+  refreshHttp(): Observable<any> {
+    return this.http.get(this.getUrlBase() + this.refreshApiUrl, this.httpOptions)
   }
 
   registerHttp(

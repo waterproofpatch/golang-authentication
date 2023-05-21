@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subject, BehaviorSubject, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import jwt_decode from 'jwt-decode';
 import { JwtPayload } from 'jwt-decode';
@@ -43,12 +42,7 @@ export class AuthenticationService extends BaseService {
   ) {
     super();
     if (this.token) {
-      if (this.isTokenExpired()) {
-        this.clearToken();
-        this.dialogService.displayErrorDialog("Token exipred. Log in again.")
-      } else {
-        this.isAuthenticated$.next(true);
-      }
+      this.isAuthenticated$.next(true);
     }
   }
 
@@ -57,16 +51,31 @@ export class AuthenticationService extends BaseService {
     this.isAuthenticated$.next(false)
   }
 
-  private setToken(token: string): void {
+  public setToken(token: string): void {
     sessionStorage.setItem(this.TOKEN_KEY, token);
     this.isAuthenticated$.next(true)
   }
 
+  public async getFreshToken(): Promise<string | null> {
+    if (this.isTokenExpired()) {
+      const result: string = await new Promise((resolve, reject) => {
+        this.refresh().subscribe((x) => {
+          console.log("Token refreshed, it is: " + x.token)
+          resolve(x.token)
+        })
+      })
+      console.log("Promise for new token resolved. Returning it.")
+      return result
+    } else {
+      console.log("Token isn't expired!")
+      return this.token
+    }
+  }
 
   /**
    * Reset registration state.
    */
-  resetRegistrationState(): void {
+  public resetRegistrationState(): void {
     this.registrationState$.next(IRegistrationState.None);
   }
 
@@ -74,7 +83,7 @@ export class AuthenticationService extends BaseService {
    *
    * @returns The username we're logged in with.
    */
-  username(): string {
+  public username(): string {
     if (!this.token) {
       return '';
     }
@@ -89,7 +98,7 @@ export class AuthenticationService extends BaseService {
    *
    * @returns The email address we're logged in with.
    */
-  email(): string {
+  public email(): string {
     if (!this.token) {
       return '';
     }
@@ -101,7 +110,11 @@ export class AuthenticationService extends BaseService {
     }
   }
 
-  isTokenExpired(): boolean {
+  /**
+   * 
+   * @returns True if the current token is expired.
+   */
+  public isTokenExpired(): boolean {
     if (!this.token) {
       return true;
     }
@@ -109,7 +122,12 @@ export class AuthenticationService extends BaseService {
     const currentTime = Date.now() / 1000; // convert to seconds
     return decodedToken.exp < currentTime;
   }
-  getExpirationTime(): string {
+
+  /**
+   * 
+   * @returns the token's expiration time, or the empty string if the token is unset.
+   */
+  public getExpirationTime(): string {
     if (!this.token) {
       return '';
     }
@@ -133,16 +151,12 @@ export class AuthenticationService extends BaseService {
     return expTime
   }
 
+  /**
+   * obtain the token
+   */
   get token() {
     return sessionStorage.getItem(this.TOKEN_KEY);
   }
-
-  /**
-   * Check with '.isAuthenticated' (no parens).
-   */
-  // get isAuthenticated() {
-  //   return !!sessionStorage.getItem(this.TOKEN_KEY);
-  // }
 
   logout(showModal?: boolean, redirectToLogin?: boolean) {
     this.clearToken()
@@ -156,7 +170,21 @@ export class AuthenticationService extends BaseService {
     this.router.navigateByUrl('/');
   }
 
-  register(
+  /**
+   * 
+   * @returns an observable for refreshing the token.
+   */
+  public refresh(): Observable<any> {
+    return this.authenticationApiService.refreshHttp()
+  }
+
+  /**
+   * 
+   * @param email the email to register with
+   * @param username the username to register with
+   * @param password the password to register with
+   */
+  public register(
     email: string,
     username: string,
     password: string,
@@ -181,7 +209,12 @@ export class AuthenticationService extends BaseService {
       });
   }
 
-  login(email: string, password: string) {
+  /**
+   * 
+   * @param email the email to use for logging in
+   * @param password the password to use for logging in
+   */
+  public login(email: string, password: string) {
     this.authenticationApiService
       .loginHttp(email, password)
       .pipe(
