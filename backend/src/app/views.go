@@ -116,7 +116,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			db.Where("email = ? OR is_public = ?", claims.Email, true).Find(&plants)
 			json.NewEncoder(w).Encode(plants)
 		}
-		break
+		return
 	case "DELETE":
 		if !hasPlantId {
 			authentication.WriteError(w, "Must provide id!", http.StatusBadRequest)
@@ -132,8 +132,6 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		db.Delete(&ImageModel{}, plant.ImageId)
 		fmt.Printf("Deleting plant id=%d\n", plant.Id)
 		db.Delete(&PlantModel{}, id)
-		db.Where("email = ? OR is_public = ?", claims.Email, true).Find(&plants)
-		json.NewEncoder(w).Encode(plants)
 		break
 	case "POST":
 		var imageId = uploadHandler(w, r)
@@ -176,14 +174,10 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			newPlant.DoNotify)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
-			break
+			return
 		}
-		db.Where("email = ? OR is_public = ?", claims.Email, true).Find(&plants)
-
-		json.NewEncoder(w).Encode(plants)
 		break
 	case "PUT":
-		fmt.Println("Sleeping...")
 		plantId, err := strconv.Atoi(r.FormValue("id"))
 		var isNewImage = false
 		if err != nil {
@@ -216,6 +210,14 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			newPlant.ImageId = imageId
 			isNewImage = true
 
+		}
+		moistValue := r.URL.Query().Get("moist")
+
+		// set the next water date to today plus one day so we remind
+		// the user to "check again soon".
+		if moistValue == "true" {
+			fmt.Printf("Marking plant %d as moist.\n", plant.ID)
+			break
 		}
 		// update to new values
 		newPlant.Name = r.FormValue("nameOfPlant")
@@ -259,10 +261,10 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			authentication.WriteError(w, err.Error(), 400)
 			return
 		}
-		db.Where("email = ? OR is_public = ?", claims.Email, true).Find(&plants)
-		json.NewEncoder(w).Encode(plants)
 		break
 	}
+	db.Where("email = ? OR is_public = ?", claims.Email, true).Find(&plants)
+	json.NewEncoder(w).Encode(plants)
 
 }
 

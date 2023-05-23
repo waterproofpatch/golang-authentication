@@ -180,6 +180,31 @@ export class PlantsService extends BaseService {
       });
   }
 
+  // plant's that have moist soil make a PUT request 
+  public markMoist(plant: Plant): void {
+    const formData = new FormData();
+    formData.append("id", plant.id.toString())
+    this.plantsApiService
+      .putMoist(formData)
+      .pipe(
+        catchError((error: any) => {
+          this.formProcessingSucceeded.next(false)
+          if (error instanceof HttpErrorResponse) {
+            this.error$.next(error.error.error_message);
+          } else {
+            this.error$.next('Unexpected error');
+          }
+          return of(null)
+        })
+      )
+      .subscribe((x) => {
+        if (x == null) {
+          return
+        }
+        this.formProcessingSucceeded.next(true)
+        this.updatePlantsList(x)
+      });
+  }
   /**
    * Update an existing plant.
    * @param plant the plant to update.

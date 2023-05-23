@@ -15,15 +15,14 @@ export class PlantsApiService extends BaseService {
   constructor(private http: HttpClient) {
     super();
   }
-  postPlantInfoData(plantName: string): Observable<any> {
-    // return this.http.post(this.getUrlBase() + this.plantsInfoApiUrl, formData, this.httpOptionsNonJson);
-    return this.http.post(this.getUrlBase() + this.plantsInfoApiUrl, { "plantName": plantName }, this.httpOptions);
-  }
   postFormData(formData: any): Observable<any> {
     return this.http.post(this.getUrlBase() + this.plantsApiUrl, formData, this.httpOptionsNonJson);
   }
   putFormData(formData: any): Observable<any> {
     return this.http.put(this.getUrlBase() + this.plantsApiUrl, formData, this.httpOptionsNonJson);
+  }
+  putMoist(formData: any): Observable<any> {
+    return this.http.put(this.getUrlBase() + this.plantsApiUrl + "?moist=true", formData, this.httpOptionsNonJson)
   }
   post(plant: Plant): Observable<any> {
     return this.http.post(this.getUrlBase() + this.plantsApiUrl, plant, this.httpOptions);

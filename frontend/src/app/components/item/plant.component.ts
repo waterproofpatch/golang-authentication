@@ -114,9 +114,11 @@ export class PlantComponent {
     }
     let water: boolean = false
     let fertilize: boolean = false
+    let moist: boolean = false
     var dialogRef = this.dialogService.displayPlantCareDialog("What did you do for " + this.plant.name + "?",
       water,
-      fertilize)
+      fertilize,
+      moist)
     if (this.plant == null) {
       console.log("Unexpected plant is NULL");
       return;
@@ -124,6 +126,11 @@ export class PlantComponent {
     dialogRef.afterClosed().subscribe((result: PlantCareDialogData) => {
       console.log("water: " + result.water)
       console.log("fertilize: " + result.fertilize)
+      console.log("moist: " + result.moist)
+      if (result.moist && (result.water || result.fertilize)) {
+        this.dialogService.displayErrorDialog("Only choose 'moist' when not choosing other care actions.")
+        return;
+      }
       if (result) {
         if (!this.plant) {
           return;
@@ -143,6 +150,11 @@ export class PlantComponent {
         if (result.fertilize) {
           console.log("Setting fertilize date to " + formattedDate);
           this.plant.lastFertilizeDate = formattedDate
+        }
+        if (result.moist) {
+          console.log("Plant is moist - only updating that attribute")
+          this.plantService.markMoist(this.plant)
+          return;
         }
 
         // not updating the image for this plant
