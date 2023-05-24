@@ -74,7 +74,7 @@ export class PlantsService extends BaseService {
     nextWaterDate.setTime(lastWaterDate.getTime() + frequencyInMsWater);
     nextFertilizeDate.setTime(lastFertilizeDate.getTime() + frequencyInMsFertilize);
     let wateringDate = PlantsService.FormatDate(nextWaterDate)
-    if (new Date(wateringDate) < new Date()) {
+    if (new Date(wateringDate) < new Date() && plant.lastMoistDate == '') {
       return true;
     }
     let fertilizingDate = PlantsService.FormatDate(nextFertilizeDate)
