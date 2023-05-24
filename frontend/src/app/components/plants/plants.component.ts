@@ -154,7 +154,8 @@ export class PlantsComponent {
       new Date().toDateString(),
       "", // starts off with no moist date, right now the user can't set this in add
       false,
-      true)
+      true,
+      [])
     this.setPlantFormData(this.editingPlant, null)
     this.addOrEditMode = EditMode.ADD;
   }
@@ -214,7 +215,8 @@ export class PlantsComponent {
       this.editingPlantLastFertilizeDate.value?.toDateString() || '',
       this.editingPlantLastMoistDate.value?.toDateString() || '',
       this.form.controls.publicOrPrivate.value == "public" || false,
-      this.form.controls.doNotify.value == true || false)
+      this.form.controls.doNotify.value == true || false,
+      [])
 
     this.plantsService.formProcessingSucceeded.subscribe((x) => {
       this.isProcessingAddOrUpdate = false;

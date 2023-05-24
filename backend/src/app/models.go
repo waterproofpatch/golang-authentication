@@ -8,6 +8,12 @@ import (
 	"gorm.io/gorm"
 )
 
+type PlantLogModel struct {
+	gorm.Model
+	Id      int    `json:"id"`
+	Log     string `json:"log"`
+	PlantID int    `json:"plantId"`
+}
 type ImageModel struct {
 	gorm.Model
 	ID   uint
@@ -26,19 +32,20 @@ type CommentModel struct {
 }
 type PlantModel struct {
 	gorm.Model
-	Id                   int    `json:"id"`
-	Email                string `json:"email"`
-	Username             string `json:"username"`
-	Name                 string `json:"name"`
-	WateringFrequency    int    `json:"wateringFrequency"`
-	FertilizingFrequency int    `json:"fertilizingFrequency"`
-	LastWaterDate        string `json:"lastWaterDate"`
-	LastFertilizeDate    string `json:"lastFertilizeDate"`
-	LastMoistDate        string `json:"lastMoistDate"`
-	LastNotifyDate       string `json:"lastNotifyDate"`
-	ImageId              uint   `json:"imageId"`
-	IsPublic             bool   `json:"isPublic"`
-	DoNotify             bool   `json:"doNotify"`
+	Id                   int             `json:"id"`
+	Email                string          `json:"email"`
+	Username             string          `json:"username"`
+	Name                 string          `json:"name"`
+	WateringFrequency    int             `json:"wateringFrequency"`
+	FertilizingFrequency int             `json:"fertilizingFrequency"`
+	LastWaterDate        string          `json:"lastWaterDate"`
+	LastFertilizeDate    string          `json:"lastFertilizeDate"`
+	LastMoistDate        string          `json:"lastMoistDate"`
+	LastNotifyDate       string          `json:"lastNotifyDate"`
+	ImageId              uint            `json:"imageId"`
+	IsPublic             bool            `json:"isPublic"`
+	DoNotify             bool            `json:"doNotify"`
+	Logs                 []PlantLogModel `json:"logs" gorm:"foreignKey:PlantID"`
 }
 type MessageModel struct {
 	gorm.Model
@@ -126,7 +133,7 @@ func UpdatePlant(db *gorm.DB,
 	}
 	var existingplant PlantModel
 	existingplant.Id = id
-	db.First(&existingplant)
+	db.Preload("Logs").First(&existingplant)
 	fmt.Printf("Existing plant: %s\n", existingplant)
 	if existingplant.ImageId != 0 && isNewImage {
 		fmt.Printf("isNewImage=%t, Must first remove old plant image ID=%d\n", isNewImage, existingplant.ImageId)
@@ -143,6 +150,12 @@ func UpdatePlant(db *gorm.DB,
 		fmt.Println("Last water date or watering frequency has changed, resetting last notify date and last moist date")
 		existingplant.LastNotifyDate = "" // reset
 		existingplant.LastMoistDate = ""  // reset
+		var plantLog = PlantLogModel{
+			Log: "Changed watering frequency or watering date.",
+		}
+		// existingplant.Logs = append(existingplant.Logs, plantLog)
+		db.Model(&existingplant).Association("Logs").Append(&plantLog)
+
 	}
 	existingplant.WateringFrequency = wateringFrequency
 	existingplant.FertilizingFrequency = fertilizingFrequency
@@ -187,7 +200,11 @@ func AddPlant(db *gorm.DB,
 		DoNotify:             doNotify,
 		LastWaterDate:        lastWaterDate,
 		LastFertilizeDate:    lastFertilizeDate,
+		LastMoistDate:        "",
 		LastNotifyDate:       "",
+		Logs: []PlantLogModel{
+			{Log: "Created plant!"},
+		},
 	}
 
 	log.Printf("Adding plant %s", plant)
@@ -230,4 +247,5 @@ func InitModels(db *gorm.DB) {
 	db.AutoMigrate(&MessageModel{})
 	db.AutoMigrate(&CommentModel{})
 	db.AutoMigrate(&ImageModel{})
+	db.AutoMigrate(&PlantLogModel{})
 }

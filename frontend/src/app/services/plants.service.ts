@@ -6,6 +6,12 @@ import { of, tap, Subject, throwError, Observable, BehaviorSubject } from 'rxjs'
 import { PlantsApiService } from '../apis/plants-api.service';
 import { BaseService } from './base.service';
 
+export interface PlantLog {
+  id: number;
+  log: string;
+  CreatedAt: string;
+}
+
 export default interface Plant {
   id: number;
   name: string;
@@ -19,6 +25,7 @@ export default interface Plant {
   imageId: number;
   isPublic: boolean;
   doNotify: boolean;
+  logs: PlantLog[];
 }
 
 export enum PlantCareType {
@@ -118,6 +125,7 @@ export class PlantsService extends BaseService {
       console.log(`imageId: ${plant.imageId}`);
       console.log(`isPublic: ${plant.isPublic}`);
       console.log(`doNotify: ${plant.doNotify}`);
+      console.log(`logs: ${plant.logs}`);
     }
 
     public static makePlant(name: string,
@@ -127,7 +135,8 @@ export class PlantsService extends BaseService {
       lastFertilizeDate: string,
       lastMoistDate: string,
       isPublic: boolean,
-      doNotify: boolean): Plant {
+      doNotify: boolean,
+      logs: PlantLog[]): Plant {
       const plant: Plant = {
         name: name,
         wateringFrequency: wateringFrequency,
@@ -141,6 +150,7 @@ export class PlantsService extends BaseService {
         imageId: 0, // TODO improve how this is set.
         isPublic: isPublic,
         doNotify: doNotify,
+        logs: logs,
       }
       return plant;
     }

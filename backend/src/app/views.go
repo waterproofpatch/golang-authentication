@@ -111,10 +111,10 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 	switch r.Method {
 	case "GET":
 		if hasPlantId {
-			db.Where("email = ? AND id = ?", claims.Email, id).Find(&plant)
+			db.Where("email = ? AND id = ?", claims.Email, id).Preload("Logs").Find(&plant)
 			json.NewEncoder(w).Encode(plant)
 		} else {
-			db.Where("email = ? OR is_public = ?", claims.Email, true).Find(&plants)
+			db.Where("email = ? OR is_public = ?", claims.Email, true).Preload("Logs").Find(&plants)
 			json.NewEncoder(w).Encode(plants)
 		}
 		return
@@ -270,7 +270,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		}
 		break
 	}
-	db.Where("email = ? OR is_public = ?", claims.Email, true).Find(&plants)
+	db.Where("email = ? OR is_public = ?", claims.Email, true).Preload("Logs").Find(&plants)
 	json.NewEncoder(w).Encode(plants)
 
 }
