@@ -44,6 +44,7 @@ export class PlantComponent {
   @Output() editModeEmitter = new EventEmitter<{ plant: Plant, imageUrl: string | null }>()
 
   // color for text for the 'next care date' - set to red for plants in need of care
+  backgroundColorMoist: string = 'orange';
   backgroundColorWater: string = 'black';
   backgroundColorFertilize: string = 'black';
 
@@ -146,6 +147,7 @@ export class PlantComponent {
         if (result.water) {
           console.log("Setting water date to " + formattedDate);
           this.plant.lastWaterDate = formattedDate
+          this.plant.lastMoistDate = '' // unset
         }
         if (result.fertilize) {
           console.log("Setting fertilize date to " + formattedDate);
@@ -180,7 +182,6 @@ export class PlantComponent {
    * @returns formatted @c date
    */
   private formatDate(date: Date): string {
-    console.log("Formatting date: " + date)
     const day = date.getDate().toString().padStart(2, '0'); // Get the day of the month (1-31) and pad it with a leading zero if necessary
     const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Get the month (0-11), add 1 to get the month as a number (1-12), and pad it with a leading zero if necessary
     const year = date.getFullYear().toString(); // Get the year (4 digits)
@@ -233,7 +234,6 @@ export class PlantComponent {
       return "N/A"
     }
     var nextMoistDate = new Date()
-    console.log("plant lastMoistDate: " + this.plant.lastMoistDate)
     var lastMoistDate = new Date(this.plant.lastMoistDate)
     nextMoistDate.setFullYear(lastMoistDate.getFullYear());
     nextMoistDate.setMonth(lastMoistDate.getMonth());

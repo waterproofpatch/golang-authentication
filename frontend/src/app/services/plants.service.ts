@@ -222,8 +222,9 @@ export class PlantsService extends BaseService {
     formData.append('nameOfPlant', plant.name)
     formData.append('wateringFrequency', plant.wateringFrequency.toString())
     formData.append('fertilizingFrequency', plant.fertilizingFrequency.toString())
-    formData.append('lastFertilizeDate', plant.lastFertilizeDate.toString())
+    formData.append('lastFertilizeDate', plant.lastFertilizeDate)
     formData.append('lastWateredDate', plant.lastWaterDate)
+    formData.append('lastMoistDate', plant.lastMoistDate)
     formData.append('isPublic', plant.isPublic.toString())
     formData.append('doNotify', plant.doNotify.toString())
     this.plantsApiService

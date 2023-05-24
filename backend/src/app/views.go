@@ -230,6 +230,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		newPlant.FertilizingFrequency, _ = strconv.Atoi(r.FormValue("fertilizingFrequency"))
 		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
 		newPlant.LastFertilizeDate = r.FormValue("lastFertilizeDate")
+		newPlant.LastMoistDate = r.FormValue("lastMoistDate")
 		doNotify, err := strconv.ParseBool(r.FormValue("doNotify"))
 		if err != nil {
 			// handle error
@@ -259,6 +260,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			newPlant.ImageId,
 			newPlant.LastWaterDate,
 			newPlant.LastFertilizeDate,
+			newPlant.LastMoistDate,
 			isNewImage,
 			newPlant.IsPublic,
 			newPlant.DoNotify)

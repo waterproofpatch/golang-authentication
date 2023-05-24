@@ -115,6 +115,7 @@ func UpdatePlant(db *gorm.DB,
 	imageId uint,
 	lastWaterDate string,
 	lastFertilizeDate string,
+	lastMoistDate string,
 	isNewImage bool,
 	isPublic bool,
 	doNotify bool) error {
@@ -136,10 +137,12 @@ func UpdatePlant(db *gorm.DB,
 	existingplant.DoNotify = doNotify
 	existingplant.IsPublic = isPublic
 	existingplant.ImageId = imageId
+	existingplant.LastMoistDate = lastMoistDate
 	existingplant.Name = name
 	if existingplant.LastWaterDate != lastWaterDate || existingplant.WateringFrequency != wateringFrequency {
 		fmt.Println("Last water date or watering frequency has changed, resetting last notify date")
 		existingplant.LastNotifyDate = "" // reset
+		existingplant.LastMoistDate = ""  // reset
 	}
 	existingplant.WateringFrequency = wateringFrequency
 	existingplant.FertilizingFrequency = fertilizingFrequency

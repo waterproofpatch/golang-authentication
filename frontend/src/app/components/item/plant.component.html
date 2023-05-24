@@ -56,7 +56,7 @@
 			</span>
 			<span class="right">
 				<mat-card-subtitle *ngIf="plant.lastMoistDate != ''"
-					[style.color]="backgroundColorWater">Check soil on:
+					[style.color]="backgroundColorMoist">Check soil on:
 					{{getNextMoistCheckDate()}}</mat-card-subtitle>
 				<mat-card-subtitle *ngIf="plant.lastMoistDate == ''"
 					[style.color]="backgroundColorWater">Water on:
