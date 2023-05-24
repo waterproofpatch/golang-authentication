@@ -141,22 +141,66 @@ func UpdatePlant(db *gorm.DB,
 	}
 
 	// imageId exists by now since we process the image before calling this function to update the plant
+	if existingplant.LastWaterDate != lastWaterDate || existingplant.WateringFrequency != wateringFrequency {
+		fmt.Println("Last water date or watering frequency has changed, resetting last notify date and last moist date")
+		existingplant.LastNotifyDate = "" // reset
+		existingplant.LastMoistDate = ""  // reset
+
+	}
+	if existingplant.IsPublic != isPublic {
+		logMsg := fmt.Sprintf("Plant changed from public=%t to public=%t", existingplant.IsPublic, isPublic)
+		var plantLog = PlantLogModel{
+			Log: logMsg,
+		}
+		db.Model(&existingplant).Association("Logs").Append(&plantLog)
+	}
+	if existingplant.Name != name {
+		logMsg := fmt.Sprintf("Name changed from %s to %s", existingplant.Name, name)
+		var plantLog = PlantLogModel{
+			Log: logMsg,
+		}
+		db.Model(&existingplant).Association("Logs").Append(&plantLog)
+	}
+	if existingplant.LastMoistDate != lastMoistDate {
+		logMsg := fmt.Sprintf("Last soil moist date changed from %s to %s", existingplant.LastMoistDate, lastMoistDate)
+		var plantLog = PlantLogModel{
+			Log: logMsg,
+		}
+		db.Model(&existingplant).Association("Logs").Append(&plantLog)
+	}
+	if existingplant.LastWaterDate != lastWaterDate {
+		logMsg := fmt.Sprintf("Last water date changed from %s to %s", existingplant.LastWaterDate, lastWaterDate)
+		var plantLog = PlantLogModel{
+			Log: logMsg,
+		}
+		db.Model(&existingplant).Association("Logs").Append(&plantLog)
+	}
+	if existingplant.LastFertilizeDate != lastFertilizeDate {
+		logMsg := fmt.Sprintf("Last fertilize date changed from %s to %s", existingplant.LastFertilizeDate, lastFertilizeDate)
+		var plantLog = PlantLogModel{
+			Log: logMsg,
+		}
+		db.Model(&existingplant).Association("Logs").Append(&plantLog)
+	}
+	if existingplant.WateringFrequency != wateringFrequency {
+		logMsg := fmt.Sprintf("Watering frequency changed from %d to %d days", existingplant.WateringFrequency, wateringFrequency)
+		var plantLog = PlantLogModel{
+			Log: logMsg,
+		}
+		db.Model(&existingplant).Association("Logs").Append(&plantLog)
+	}
+	if existingplant.FertilizingFrequency != fertilizingFrequency {
+		logMsg := fmt.Sprintf("Fertilizing frequency changed from %d to %d days", existingplant.FertilizingFrequency, fertilizingFrequency)
+		var plantLog = PlantLogModel{
+			Log: logMsg,
+		}
+		db.Model(&existingplant).Association("Logs").Append(&plantLog)
+	}
 	existingplant.DoNotify = doNotify
 	existingplant.IsPublic = isPublic
 	existingplant.ImageId = imageId
 	existingplant.LastMoistDate = lastMoistDate
 	existingplant.Name = name
-	if existingplant.LastWaterDate != lastWaterDate || existingplant.WateringFrequency != wateringFrequency {
-		fmt.Println("Last water date or watering frequency has changed, resetting last notify date and last moist date")
-		existingplant.LastNotifyDate = "" // reset
-		existingplant.LastMoistDate = ""  // reset
-		var plantLog = PlantLogModel{
-			Log: "Changed watering frequency or watering date.",
-		}
-		// existingplant.Logs = append(existingplant.Logs, plantLog)
-		db.Model(&existingplant).Association("Logs").Append(&plantLog)
-
-	}
 	existingplant.WateringFrequency = wateringFrequency
 	existingplant.FertilizingFrequency = fertilizingFrequency
 	existingplant.LastWaterDate = lastWaterDate
