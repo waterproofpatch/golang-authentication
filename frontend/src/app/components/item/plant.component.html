@@ -20,6 +20,8 @@
 			days</mat-card-subtitle>
 		<mat-card-subtitle *ngIf="plant.fertilizingFrequency > 0">Fertilize every {{plant.fertilizingFrequency}}
 			days</mat-card-subtitle>
+		<mat-card-subtitle *ngIf="plant.lastMoistDate != ''">Check soil on: {{getNextMoistCheckDate()}}
+			days</mat-card-subtitle>
 		<div class="menu-icon">
 
 			<button mat-icon-button [matBadgeHidden]="(numComments|async)==0"

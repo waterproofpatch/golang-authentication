@@ -75,7 +75,7 @@ export class PlantComponent {
         }
       }
     }
-    if (new Date(this.getNextWaterDate()) < new Date()) {
+    if (new Date(this.getNextWaterDate()) < new Date() && this.plant?.lastMoistDate == '') {
       if (this.plant) {
         console.log("plant " + this.plant.id + " is due for watering!")
         this.backgroundColorWater = "red"
@@ -86,7 +86,6 @@ export class PlantComponent {
       if (this.plant) {
         console.log("plant " + this.plant.id + " is due for moist soil check!")
         this.backgroundColorMoist = "red"
-        this.needsWatering = true
       }
     }
     this.numComments.next(0)
