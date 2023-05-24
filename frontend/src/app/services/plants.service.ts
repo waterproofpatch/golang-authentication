@@ -106,6 +106,7 @@ export class PlantsService extends BaseService {
       fertilizingFrequency: number,
       lastWateredDate: string,
       lastFertilizeDate: string,
+      lastMoistDate: string,
       isPublic: boolean,
       doNotify: boolean): Plant {
       const plant: Plant = {
@@ -114,7 +115,7 @@ export class PlantsService extends BaseService {
         fertilizingFrequency: fertilizingFrequency,
         lastWaterDate: lastWateredDate,
         lastFertilizeDate: lastFertilizeDate,
-        lastMoistDate: "", // set only when user marks as moist after creation
+        lastMoistDate: lastMoistDate,
         id: 0, // authoritative
         username: "", // authoritative
         email: "", // authoritative

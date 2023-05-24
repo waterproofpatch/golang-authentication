@@ -28,6 +28,7 @@ export class PlantsComponent {
   // the currently editing plants last water date
   editingPlantLastWaterDate = new FormControl(new Date());
   editingPlantLastFertilizeDate = new FormControl(new Date());
+  editingPlantLastMoistDate = new FormControl(new Date());
 
   // whether or not the view is condensed
   condensedView: boolean = false;
@@ -146,7 +147,14 @@ export class PlantsComponent {
 
   public switchToAddPlantMode(): void {
     console.log("Switching to add plant mode...")
-    this.editingPlant = PlantsService.PlantsFactory.makePlant("", 1, 0, new Date().toDateString(), new Date().toDateString(), false, true)
+    this.editingPlant = PlantsService.PlantsFactory.makePlant("",
+      1,
+      0,
+      new Date().toDateString(),
+      new Date().toDateString(),
+      "", // starts off with no moist date, right now the user can't set this in add
+      false,
+      true)
     this.setPlantFormData(this.editingPlant, null)
     this.addOrEditMode = EditMode.ADD;
   }
@@ -157,6 +165,7 @@ export class PlantsComponent {
     this.form.controls['fertilizingFrequency'].setValue(plant.fertilizingFrequency)
     this.editingPlantLastWaterDate = new FormControl(new Date(plant.lastWaterDate));
     this.editingPlantLastFertilizeDate = new FormControl(new Date(plant.lastFertilizeDate));
+    this.editingPlantLastMoistDate = new FormControl(new Date(plant.lastMoistDate));
     this.form.controls.publicOrPrivate.setValue(plant.isPublic ? "public" : "private")
     this.form.controls.doNotify.setValue(plant.doNotify ? true : false)
     if (imageUrl) {
@@ -203,6 +212,7 @@ export class PlantsComponent {
       this.form.controls.fertilizingFrequency.value || 0,
       this.editingPlantLastWaterDate.value?.toDateString() || '',
       this.editingPlantLastFertilizeDate.value?.toDateString() || '',
+      this.editingPlantLastMoistDate.value?.toDateString() || '',
       this.form.controls.publicOrPrivate.value == "public" || false,
       this.form.controls.doNotify.value == true || false)
 

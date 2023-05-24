@@ -140,7 +140,7 @@ func UpdatePlant(db *gorm.DB,
 	existingplant.LastMoistDate = lastMoistDate
 	existingplant.Name = name
 	if existingplant.LastWaterDate != lastWaterDate || existingplant.WateringFrequency != wateringFrequency {
-		fmt.Println("Last water date or watering frequency has changed, resetting last notify date")
+		fmt.Println("Last water date or watering frequency has changed, resetting last notify date and last moist date")
 		existingplant.LastNotifyDate = "" // reset
 		existingplant.LastMoistDate = ""  // reset
 	}

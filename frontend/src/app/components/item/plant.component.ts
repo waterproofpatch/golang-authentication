@@ -82,6 +82,13 @@ export class PlantComponent {
         this.needsWatering = true
       }
     }
+    if (new Date(this.getNextMoistCheckDate()) < new Date()) {
+      if (this.plant) {
+        console.log("plant " + this.plant.id + " is due for moist soil check!")
+        this.backgroundColorMoist = "red"
+        this.needsWatering = true
+      }
+    }
     this.numComments.next(0)
     this.commentsService.comments$.subscribe((x) => {
       console.log("Got " + x.length + " comments");
