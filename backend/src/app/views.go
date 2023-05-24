@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/waterproofpatch/go_authentication/authentication"
 
@@ -217,6 +218,10 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		// the user to "check again soon".
 		if moistValue == "true" {
 			fmt.Printf("Marking plant %d as moist.\n", plant.ID)
+			currentTime := time.Now()
+			formattedTime := currentTime.Format("Mon Jan 02 2006")
+			existingPlant.LastMoistDate = formattedTime
+			db.Save(&existingPlant)
 			break
 		}
 		// update to new values

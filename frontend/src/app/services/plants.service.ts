@@ -15,6 +15,7 @@ export default interface Plant {
   fertilizingFrequency: number;
   lastWaterDate: string;
   lastFertilizeDate: string;
+  lastMoistDate: string;
   imageId: number;
   isPublic: boolean;
   doNotify: boolean;
@@ -94,6 +95,7 @@ export class PlantsService extends BaseService {
       console.log(`fertilizingFrequency: ${plant.fertilizingFrequency}`);
       console.log(`lastWaterDate: ${plant.lastWaterDate}`);
       console.log(`lastFertilizeDate: ${plant.lastFertilizeDate}`);
+      console.log(`lastMoistDate: ${plant.lastMoistDate}`);
       console.log(`imageId: ${plant.imageId}`);
       console.log(`isPublic: ${plant.isPublic}`);
       console.log(`doNotify: ${plant.doNotify}`);
@@ -112,6 +114,7 @@ export class PlantsService extends BaseService {
         fertilizingFrequency: fertilizingFrequency,
         lastWaterDate: lastWateredDate,
         lastFertilizeDate: lastFertilizeDate,
+        lastMoistDate: "", // set only when user marks as moist after creation
         id: 0, // authoritative
         username: "", // authoritative
         email: "", // authoritative

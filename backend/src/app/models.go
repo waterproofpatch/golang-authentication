@@ -34,6 +34,7 @@ type PlantModel struct {
 	FertilizingFrequency int    `json:"fertilizingFrequency"`
 	LastWaterDate        string `json:"lastWaterDate"`
 	LastFertilizeDate    string `json:"lastFertilizeDate"`
+	LastMoistDate        string `json:"lastMoistDate"`
 	LastNotifyDate       string `json:"lastNotifyDate"`
 	ImageId              uint   `json:"imageId"`
 	IsPublic             bool   `json:"isPublic"`

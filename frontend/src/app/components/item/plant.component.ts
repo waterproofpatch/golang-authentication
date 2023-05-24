@@ -170,29 +170,17 @@ export class PlantComponent {
    * format the last water date to a string.
    * @returns formatted last water date
    */
-  transformLastPlantCareDate(careType: PlantCareType): string {
-    if (!this.plant) {
-      return "N/A"
-    }
-
-    let myDate = new Date()
-    switch (careType) {
-      case PlantCareType.FERTILIZE:
-        myDate = new Date(this.plant.lastFertilizeDate);
-        break;
-      case PlantCareType.WATER:
-        myDate = new Date(this.plant.lastWaterDate);
-        break;
-    }
+  transformLastPlantCareDate(date: string): string {
+    let myDate = new Date(date);
     return this.formatDate(myDate)
   }
 
   /**
-   * @param date to format
+   * @param date to format for display in HTML - not for sending to backend.
    * @returns formatted @c date
    */
   private formatDate(date: Date): string {
-
+    console.log("Formatting date: " + date)
     const day = date.getDate().toString().padStart(2, '0'); // Get the day of the month (1-31) and pad it with a leading zero if necessary
     const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Get the month (0-11), add 1 to get the month as a number (1-12), and pad it with a leading zero if necessary
     const year = date.getFullYear().toString(); // Get the year (4 digits)
@@ -234,6 +222,24 @@ export class PlantComponent {
     var frequencyInMs = this.plant.wateringFrequency * 24 * 60 * 60 * 1000;
     nextWaterDate.setTime(lastWaterDate.getTime() + frequencyInMs);
     return this.formatDate(nextWaterDate)
+  }
+  /**
+   * obtain a formatted next-moist-check-date from the difference between this plants last moist date 
+   * and one day.
+   * @returns the date to next check moist soil for this plant.
+   */
+  public getNextMoistCheckDate(): string {
+    if (!this.plant) {
+      return "N/A"
+    }
+    var nextMoistDate = new Date()
+    console.log("plant lastMoistDate: " + this.plant.lastMoistDate)
+    var lastMoistDate = new Date(this.plant.lastMoistDate)
+    nextMoistDate.setFullYear(lastMoistDate.getFullYear());
+    nextMoistDate.setMonth(lastMoistDate.getMonth());
+    var frequencyInMs = 1 * 24 * 60 * 60 * 1000;
+    nextMoistDate.setTime(lastMoistDate.getTime() + frequencyInMs);
+    return this.formatDate(nextMoistDate)
   }
 
   /**
