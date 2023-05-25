@@ -182,6 +182,10 @@ export class PlantComponent {
     let myDate = new Date(date);
     return this.formatDate(myDate)
   }
+  public getSortedLogs(): any {
+    var sortedLogs = this.plant?.logs.slice().sort((a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime());
+    return sortedLogs;
+  }
 
   /**
    * 

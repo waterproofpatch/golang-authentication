@@ -77,10 +77,11 @@
 					Log
 				</mat-panel-title>
 			</mat-expansion-panel-header>
-			<div *ngFor="let log of plant.logs">
+			<div *ngFor="let log of getSortedLogs()">
 				<h3 class="date">{{transformGormDatabaseDate(log.CreatedAt)}}</h3>
 				<p>{{log.log}}</p>
 			</div>
+
 
 
 		</mat-expansion-panel>
