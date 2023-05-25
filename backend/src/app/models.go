@@ -179,8 +179,7 @@ func UpdatePlant(db *gorm.DB,
 	if existingplant.LastWaterDate != lastWaterDate || existingplant.WateringFrequency != wateringFrequency {
 		fmt.Println("Last water date or watering frequency has changed, resetting last notify date and last moist date")
 		existingplant.LastNotifyDate = "" // reset
-		existingplant.LastMoistDate = ""  // reset
-
+		lastMoistDate = ""                // reset, applied later
 	}
 	if existingplant.IsPublic != isPublic {
 		logMsg := fmt.Sprintf("Plant changed from public=%t to public=%t", existingplant.IsPublic, isPublic)
