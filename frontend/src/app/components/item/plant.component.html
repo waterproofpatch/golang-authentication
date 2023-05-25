@@ -77,7 +77,14 @@
 					Log
 				</mat-panel-title>
 			</mat-expansion-panel-header>
-			<p *ngFor="let log of plant.logs">{{transformGormDatabaseDate(log.CreatedAt)}}: {{log.log}}</p>
+			<!-- <p *ngFor="let log of plant.logs">{{transformGormDatabaseDate(log.CreatedAt)}}: {{log.log}}</p> -->
+
+			<div *ngFor="let log of plant.logs">
+				<h3 class="date">{{transformGormDatabaseDate(log.CreatedAt)}}</h3>
+				<p>{{log.log}}</p>
+			</div>
+
+
 		</mat-expansion-panel>
 	</mat-accordion>
 

@@ -186,14 +186,23 @@ export class PlantComponent {
   /**
    * 
    * @param dbDate the date string from gorm, like from gorm.CreatedAt.
-   * Example dbDate: 023-05-24T05:31:40.232118Z
-   * @returns mm/dd/yyyy h:m:s formatted date string.
+   * Example dbDate: 2023-05-24T05:31:40.232118Z
+   * @returns mm/dd/yyyy h:m:s AM/PM formatted date string.
+   * Example return value: 5/24/2023 5:31:40 AM
    */
   public transformGormDatabaseDate(dbDate: string): string {
     const date = new Date(dbDate);
-    const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-    return formattedDate
+    let hours = date.getHours();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    const minutes = date.getMinutes();
+    const strMinutes = minutes < 10 ? '0' + minutes : minutes;
+    const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} ${hours}:${strMinutes}:${date.getSeconds()} ${ampm}`;
+    return formattedDate;
   }
+
+
 
   /**
    * @param date to format for display in HTML - not for sending to backend.
