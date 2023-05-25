@@ -221,10 +221,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			currentTime := time.Now()
 			formattedTime := currentTime.Format("Mon Jan 02 2006")
 			existingPlant.LastMoistDate = formattedTime
-			var plantLog = PlantLogModel{
-				Log: "Plant soil marked as moist.",
-			}
-			db.Model(&existingPlant).Association("Logs").Append(&plantLog)
+			addPlantLog(db, &existingPlant, "Plant soil marked as moist.")
 			db.Save(&existingPlant)
 			break
 		}

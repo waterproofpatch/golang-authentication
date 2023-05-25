@@ -71,6 +71,41 @@ func (i PlantModel) String() string {
 		i.DoNotify)
 }
 
+func deleteOldestPlantLog(db *gorm.DB, plant *PlantModel) error {
+	var count int64
+	result := db.Model(&PlantLogModel{}).Where("plant_id = ?", plant.Id).Count(&count)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if count > 10 {
+		var oldestLogs []PlantLogModel
+		result = db.Where("plant_id = ?", plant.Id).Order("created_at asc").Limit(int(count) - 10).Find(&oldestLogs)
+		if result.Error != nil {
+			return result.Error
+		}
+
+		for _, log := range oldestLogs {
+			result = db.Delete(&log)
+			if result.Error != nil {
+				return result.Error
+			}
+		}
+	} else {
+		fmt.Printf("Don't need to delete yet, only have %d log entries.\n", count)
+	}
+
+	return nil
+}
+
+func addPlantLog(db *gorm.DB, plant *PlantModel, logMsg string) {
+	deleteOldestPlantLog(db, plant)
+	var plantLog = PlantLogModel{
+		Log: logMsg,
+	}
+	db.Model(plant).Association("Logs").Append(&plantLog)
+}
+
 func AddMessage(db *gorm.DB, message *Message) error {
 	// Delete old records if the limit has been reached
 	var count int64
@@ -149,52 +184,31 @@ func UpdatePlant(db *gorm.DB,
 	}
 	if existingplant.IsPublic != isPublic {
 		logMsg := fmt.Sprintf("Plant changed from public=%t to public=%t", existingplant.IsPublic, isPublic)
-		var plantLog = PlantLogModel{
-			Log: logMsg,
-		}
-		db.Model(&existingplant).Association("Logs").Append(&plantLog)
+		addPlantLog(db, &existingplant, logMsg)
 	}
 	if existingplant.Name != name {
 		logMsg := fmt.Sprintf("Name changed from %s to %s", existingplant.Name, name)
-		var plantLog = PlantLogModel{
-			Log: logMsg,
-		}
-		db.Model(&existingplant).Association("Logs").Append(&plantLog)
+		addPlantLog(db, &existingplant, logMsg)
 	}
 	if existingplant.LastMoistDate != lastMoistDate {
 		logMsg := fmt.Sprintf("Last soil moist date changed from %s to %s", existingplant.LastMoistDate, lastMoistDate)
-		var plantLog = PlantLogModel{
-			Log: logMsg,
-		}
-		db.Model(&existingplant).Association("Logs").Append(&plantLog)
+		addPlantLog(db, &existingplant, logMsg)
 	}
 	if existingplant.LastWaterDate != lastWaterDate {
 		logMsg := fmt.Sprintf("Last water date changed from %s to %s", existingplant.LastWaterDate, lastWaterDate)
-		var plantLog = PlantLogModel{
-			Log: logMsg,
-		}
-		db.Model(&existingplant).Association("Logs").Append(&plantLog)
+		addPlantLog(db, &existingplant, logMsg)
 	}
 	if existingplant.LastFertilizeDate != lastFertilizeDate {
 		logMsg := fmt.Sprintf("Last fertilize date changed from %s to %s", existingplant.LastFertilizeDate, lastFertilizeDate)
-		var plantLog = PlantLogModel{
-			Log: logMsg,
-		}
-		db.Model(&existingplant).Association("Logs").Append(&plantLog)
+		addPlantLog(db, &existingplant, logMsg)
 	}
 	if existingplant.WateringFrequency != wateringFrequency {
 		logMsg := fmt.Sprintf("Watering frequency changed from %d to %d days", existingplant.WateringFrequency, wateringFrequency)
-		var plantLog = PlantLogModel{
-			Log: logMsg,
-		}
-		db.Model(&existingplant).Association("Logs").Append(&plantLog)
+		addPlantLog(db, &existingplant, logMsg)
 	}
 	if existingplant.FertilizingFrequency != fertilizingFrequency {
 		logMsg := fmt.Sprintf("Fertilizing frequency changed from %d to %d days", existingplant.FertilizingFrequency, fertilizingFrequency)
-		var plantLog = PlantLogModel{
-			Log: logMsg,
-		}
-		db.Model(&existingplant).Association("Logs").Append(&plantLog)
+		addPlantLog(db, &existingplant, logMsg)
 	}
 	existingplant.DoNotify = doNotify
 	existingplant.IsPublic = isPublic
