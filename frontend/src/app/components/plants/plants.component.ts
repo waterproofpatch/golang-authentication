@@ -165,12 +165,12 @@ export class PlantsComponent {
 
   private setPlantFormData(plant: Plant, imageUrl: string | null) {
     this.form.controls.name.setValue(plant.name)
+    this.form.controls.tag.setValue(plant.tag)
     this.form.controls['wateringFrequency'].setValue(plant.wateringFrequency)
     this.form.controls['fertilizingFrequency'].setValue(plant.fertilizingFrequency)
     this.editingPlantLastWaterDate = new FormControl(new Date(plant.lastWaterDate));
     this.editingPlantLastFertilizeDate = new FormControl(new Date(plant.lastFertilizeDate));
     this.editingPlantLastMoistDate = new FormControl(plant.lastMoistDate)
-    // this.form.controls['lastMoistDate'].setValue(plant.lastMoistDate)
     this.form.controls.publicOrPrivate.setValue(plant.isPublic ? "public" : "private")
     this.form.controls.doNotify.setValue(plant.doNotify ? true : false)
     if (imageUrl) {

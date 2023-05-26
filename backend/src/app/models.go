@@ -159,6 +159,7 @@ func UpdatePlant(db *gorm.DB,
 	lastWaterDate string,
 	lastFertilizeDate string,
 	lastMoistDate string,
+	tag string,
 	isNewImage bool,
 	isPublic bool,
 	doNotify bool) error {
@@ -206,6 +207,10 @@ func UpdatePlant(db *gorm.DB,
 		logMsg := fmt.Sprintf("Watering frequency changed from %d to %d days", existingplant.WateringFrequency, wateringFrequency)
 		addPlantLog(db, &existingplant, logMsg)
 	}
+	if existingplant.Tag != tag {
+		logMsg := fmt.Sprintf("Tag changed from %s to %s", existingplant.Tag, tag)
+		addPlantLog(db, &existingplant, logMsg)
+	}
 	if existingplant.FertilizingFrequency != fertilizingFrequency {
 		logMsg := fmt.Sprintf("Fertilizing frequency changed from %d to %d days", existingplant.FertilizingFrequency, fertilizingFrequency)
 		addPlantLog(db, &existingplant, logMsg)
@@ -215,6 +220,7 @@ func UpdatePlant(db *gorm.DB,
 	existingplant.ImageId = imageId
 	existingplant.LastMoistDate = lastMoistDate
 	existingplant.Name = name
+	existingplant.Tag = tag
 	existingplant.WateringFrequency = wateringFrequency
 	existingplant.FertilizingFrequency = fertilizingFrequency
 	existingplant.LastWaterDate = lastWaterDate
@@ -230,6 +236,7 @@ func AddPlant(db *gorm.DB,
 	imageId uint,
 	lastWaterDate string,
 	lastFertilizeDate string,
+	tag string,
 	email string,
 	username string,
 	isPublic bool,
@@ -260,6 +267,7 @@ func AddPlant(db *gorm.DB,
 		LastFertilizeDate:    lastFertilizeDate,
 		LastMoistDate:        "",
 		LastNotifyDate:       "",
+		Tag:                  tag,
 		Logs: []PlantLogModel{
 			{Log: "Created plant!"},
 		},

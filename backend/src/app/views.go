@@ -142,6 +142,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		var newPlant PlantModel
 		newPlant.ImageId = imageId
 		newPlant.Name = r.FormValue("nameOfPlant")
+		newPlant.Tag = r.FormValue("tag")
 		newPlant.WateringFrequency, _ = strconv.Atoi(r.FormValue("wateringFrequency"))
 		newPlant.FertilizingFrequency, _ = strconv.Atoi(r.FormValue("fertilizingFrequency"))
 		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
@@ -169,6 +170,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			newPlant.ImageId,
 			newPlant.LastWaterDate,
 			newPlant.LastFertilizeDate,
+			newPlant.Tag,
 			claims.Email,
 			claims.Username,
 			newPlant.IsPublic,
@@ -227,6 +229,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		}
 		// update to new values
 		newPlant.Name = r.FormValue("nameOfPlant")
+		newPlant.Tag = r.FormValue("tag")
 		newPlant.WateringFrequency, _ = strconv.Atoi(r.FormValue("wateringFrequency"))
 		newPlant.FertilizingFrequency, _ = strconv.Atoi(r.FormValue("fertilizingFrequency"))
 		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
@@ -262,6 +265,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			newPlant.LastWaterDate,
 			newPlant.LastFertilizeDate,
 			newPlant.LastMoistDate,
+			newPlant.Tag,
 			isNewImage,
 			newPlant.IsPublic,
 			newPlant.DoNotify)
