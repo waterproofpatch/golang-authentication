@@ -21,6 +21,8 @@ export enum EditMode {
 export class PlantsComponent {
   public wateringFrequencyOptions = Array.from({ length: 60 }, (_, i) => i + 1);
   public fertilizingFrequencyOptions = Array.from({ length: 60 }, (_, i) => i + 0);
+
+  // whether or not we're in edit mode
   public editMode = EditMode
 
   // the currently editing plants last water date
@@ -115,9 +117,9 @@ export class PlantsComponent {
     this.filters.set("onlyMyPlants", localStorage.getItem("onlyMyPlants") == "true" ? true : false)
     this.filters.set("needsCare", localStorage.getItem("needsCare") == "true" ? true : false)
 
+    // listen for plants so we can add all tags for selection
     this.plantsService.plants.subscribe((x) => {
       x.forEach((plant) => {
-        console.log("PLANT TAG SEEN: " + plant.tag)
         this.addTag(plant.tag)
       });
     })
