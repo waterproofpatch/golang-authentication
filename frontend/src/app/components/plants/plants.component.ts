@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Subject, tap } from 'rxjs';
 import { PlantsService } from 'src/app/services/plants.service';
 import Plant from 'src/app/services/plants.service';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -22,8 +22,6 @@ export class PlantsComponent {
   public wateringFrequencyOptions = Array.from({ length: 60 }, (_, i) => i + 1);
   public fertilizingFrequencyOptions = Array.from({ length: 60 }, (_, i) => i + 0);
   public editMode = EditMode
-
-
 
   // the currently editing plants last water date
   editingPlantLastWaterDate = new FormControl(new Date());
@@ -55,6 +53,7 @@ export class PlantsComponent {
 
   // list of view filters
   filters = new Map<string, boolean>();
+  tags: string[] = ["First Tag"]
 
   // the plant edit/add form
   form = new FormGroup({
@@ -72,7 +71,7 @@ export class PlantsComponent {
 
   constructor(
     private sanitizer: DomSanitizer,
-    private plantsService: PlantsService,
+    public plantsService: PlantsService,
     private formBuilder: FormBuilder,
     public authenticationService: AuthenticationService,
     private router: Router
@@ -116,6 +115,13 @@ export class PlantsComponent {
     this.filters.set("onlyMyPlants", localStorage.getItem("onlyMyPlants") == "true" ? true : false)
     this.filters.set("needsCare", localStorage.getItem("needsCare") == "true" ? true : false)
 
+    this.plantsService.plants.subscribe((x) => {
+      x.forEach((plant) => {
+        console.log("PLANT TAG SEEN: " + plant.tag)
+        this.addTag(plant.tag)
+      });
+    })
+
     // on init, ask for the list of plants
     this.getPlants()
   }
@@ -125,6 +131,19 @@ export class PlantsComponent {
     localStorage.setItem("isCondensed", isCondensed ? "true" : "false")
   }
 
+  public addTag(tag: string) {
+    if (!this.tags.includes(tag)) {
+      this.tags.push(tag);
+    }
+  }
+
+
+  public removeTag(tag: string) {
+    const index = this.tags.indexOf(tag);
+    if (index > -1) {
+      this.tags.splice(index, 1);
+    }
+  }
   public filterChange(filterName: string): void {
     this.filters.set(filterName, !this.filters.get(filterName))
     localStorage.setItem(filterName, (this.filters.get(filterName) ? "true" : false) || "n/a")
@@ -252,8 +271,5 @@ export class PlantsComponent {
     this.plantsService.getPlants()
   }
 
-  // html page subscribes to this via async
-  public get plants(): Subject<Plant[]> {
-    return this.plantsService.plants
-  }
+
 }

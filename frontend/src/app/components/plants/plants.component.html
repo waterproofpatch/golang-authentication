@@ -19,6 +19,12 @@
 				(change)="filterChange('onlyMyPlants')">Only My
 				Plants</mat-button-toggle>
 		</mat-button-toggle-group>
+		<mat-form-field>
+			<mat-label>Tags</mat-label>
+			<mat-select (selectionChange)="addTag($event.value)">
+				<mat-option *ngFor="let tag of tags" [value]="tag">{{tag}}</mat-option>
+			</mat-select>
+		</mat-form-field>
 
 		<button mat-button mat-raised-button color="primary" *ngIf="!isInEditOrAddMode()"
 			(click)="switchToAddPlantMode()">Add
@@ -104,7 +110,7 @@
 	</div>
 </div>
 
-<ng-container *ngIf="(plants| async) as plantList">
+<ng-container *ngIf="(plantsService.plants | async) as plantList">
 	<div class="plants" *ngIf="!isInEditOrAddMode()">
 		<div *ngFor="let plant of plantList">
 			<div
