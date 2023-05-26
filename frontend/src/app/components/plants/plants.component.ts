@@ -59,6 +59,7 @@ export class PlantsComponent {
   // the plant edit/add form
   form = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.min(3), Validators.max(30)]),
+    tag: new FormControl('', [Validators.required, Validators.min(3), Validators.max(30)]),
     publicOrPrivate: new FormControl('', [Validators.required]),
     doNotify: new FormControl(false),
     wateringFrequency: new FormControl(1, [Validators.required]),
@@ -83,7 +84,8 @@ export class PlantsComponent {
       wateringFrequency: [1],
       fertilizingFrequency: [0],
       lastWateredDate: [''],
-      lastFertilizedDate: ['']
+      lastFertilizedDate: [''],
+      tag: ['']
     });
   }
 
@@ -153,6 +155,7 @@ export class PlantsComponent {
       new Date().toDateString(),
       new Date().toDateString(),
       "", // starts off with no moist date, right now the user can't set this in add
+      "Generic",
       false,
       true,
       [])
@@ -215,6 +218,7 @@ export class PlantsComponent {
       this.editingPlantLastWaterDate.value?.toDateString() || '',
       this.editingPlantLastFertilizeDate.value?.toDateString() || '',
       this.editingPlantLastMoistDate.value || '',
+      this.form.controls.tag.value || '',
       this.form.controls.publicOrPrivate.value == "public" || false,
       this.form.controls.doNotify.value == true || false,
       [])

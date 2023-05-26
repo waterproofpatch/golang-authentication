@@ -35,6 +35,11 @@
 					<input matInput formControlName="name" #input maxlength="30">
 					<mat-hint align="end">{{input.value.length}}/30</mat-hint>
 				</mat-form-field>
+				<mat-form-field hintLabel="Max 30 characters" appearance="fill">
+					<mat-label>Type</mat-label>
+					<input matInput formControlName="tag" #input maxlength="30">
+					<mat-hint align="end">{{input.value.length}}/30</mat-hint>
+				</mat-form-field>
 
 				<mat-form-field appearance="fill">
 					<mat-label>Watering Frequency</mat-label>

@@ -22,6 +22,7 @@ export default interface Plant {
   lastWaterDate: string;
   lastFertilizeDate: string;
   lastMoistDate: string;
+  tag: string;
   imageId: number;
   isPublic: boolean;
   doNotify: boolean;
@@ -122,6 +123,7 @@ export class PlantsService extends BaseService {
       console.log(`lastWaterDate: ${plant.lastWaterDate}`);
       console.log(`lastFertilizeDate: ${plant.lastFertilizeDate}`);
       console.log(`lastMoistDate: ${plant.lastMoistDate}`);
+      console.log(`tag: ${plant.tag}`);
       console.log(`imageId: ${plant.imageId}`);
       console.log(`isPublic: ${plant.isPublic}`);
       console.log(`doNotify: ${plant.doNotify}`);
@@ -134,6 +136,7 @@ export class PlantsService extends BaseService {
       lastWateredDate: string,
       lastFertilizeDate: string,
       lastMoistDate: string,
+      tag: string,
       isPublic: boolean,
       doNotify: boolean,
       logs: PlantLog[]): Plant {
@@ -144,6 +147,7 @@ export class PlantsService extends BaseService {
         lastWaterDate: lastWateredDate,
         lastFertilizeDate: lastFertilizeDate,
         lastMoistDate: lastMoistDate,
+        tag: tag,
         id: 0, // authoritative
         username: "", // authoritative
         email: "", // authoritative
@@ -255,6 +259,7 @@ export class PlantsService extends BaseService {
     formData.append('lastFertilizeDate', plant.lastFertilizeDate)
     formData.append('lastWateredDate', plant.lastWaterDate)
     formData.append('lastMoistDate', plant.lastMoistDate)
+    formData.append('tag', plant.tag)
     formData.append('isPublic', plant.isPublic.toString())
     formData.append('doNotify', plant.doNotify.toString())
     this.plantsApiService
