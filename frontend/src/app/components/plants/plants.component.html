@@ -1,35 +1,40 @@
 <div class="container">
 	<div *ngIf="isLoading">Loading plants - hang tight...</div>
 	<div *ngIf="!isLoading">
+		<div class="button-controls">
 
-		<mat-button-toggle-group #group="matButtonToggleGroup">
-			<mat-button-toggle value="uncondensed" [checked]="!condensedView"
-				(change)="viewModeChanged(false)">
-				<mat-icon>unfold_more</mat-icon>
-			</mat-button-toggle>
-			<mat-button-toggle value="condensed" [checked]="condensedView" (change)="viewModeChanged(true)">
-				<mat-icon>unfold_less</mat-icon>
-			</mat-button-toggle>
-		</mat-button-toggle-group>
-		<mat-button-toggle-group name="filters" aria-label="Filters" multiple>
-			<mat-button-toggle value="needsCare" [checked]="filters.get('needsCare')"
-				(change)="filterChange('needsCare')">Needs
-				Care</mat-button-toggle>
-			<mat-button-toggle value="mineOnly" [checked]="filters.get('onlyMyPlants')"
-				(change)="filterChange('onlyMyPlants')">Only My
-				Plants</mat-button-toggle>
-		</mat-button-toggle-group>
-		<mat-form-field>
-			<mat-label>Tags</mat-label>
-			<mat-select (selectionChange)="addTag($event.value)">
-				<mat-option *ngFor="let tag of tags" [value]="tag">{{tag}}</mat-option>
-			</mat-select>
-		</mat-form-field>
+			<div *ngIf="!isInEditOrAddMode()">
+				<mat-button-toggle-group #group="matButtonToggleGroup">
+					<mat-button-toggle value="uncondensed" [checked]="!condensedView"
+						(change)="viewModeChanged(false)">
+						<mat-icon>unfold_more</mat-icon>
+					</mat-button-toggle>
+					<mat-button-toggle value="condensed" [checked]="condensedView"
+						(change)="viewModeChanged(true)">
+						<mat-icon>unfold_less</mat-icon>
+					</mat-button-toggle>
+				</mat-button-toggle-group>
+				<mat-button-toggle-group name="filters" aria-label="Filters" multiple>
+					<mat-button-toggle value="needsCare" [checked]="filters.get('needsCare')"
+						(change)="filterChange('needsCare')">Needs
+						Care</mat-button-toggle>
+					<mat-button-toggle value="mineOnly" [checked]="filters.get('onlyMyPlants')"
+						(change)="filterChange('onlyMyPlants')">Only My
+						Plants</mat-button-toggle>
+				</mat-button-toggle-group>
+				<mat-form-field>
+					<mat-label>Tags</mat-label>
+					<mat-select (selectionChange)="addTag($event.value)">
+						<mat-option *ngFor="let tag of tags" [value]="tag">{{tag}}</mat-option>
+					</mat-select>
+				</mat-form-field>
+			</div>
 
-		<button mat-button mat-raised-button color="primary" *ngIf="!isInEditOrAddMode()"
-			(click)="switchToAddPlantMode()">Add
-			Plant</button>
-		<div *ngIf="isInEditOrAddMode()">
+			<button mat-button mat-raised-button color="primary" *ngIf="!isInEditOrAddMode()"
+				(click)="switchToAddPlantMode()">Add
+				Plant</button>
+		</div>
+		<div class="button-controls" *ngIf="isInEditOrAddMode()">
 			<div class="button-group-top">
 				<button mat-button mat-raised-button color="warn" *ngIf="isInEditOrAddMode()"
 					(click)="cancelAddMode(); $event.preventDefault()">Cancel</button>
