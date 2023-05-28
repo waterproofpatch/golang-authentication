@@ -55,7 +55,7 @@ export class PlantsComponent {
 
   // list of view filters
   filters = new Map<string, boolean>();
-  tags: string[] = ["First Tag"]
+  tags: string[] = []
 
   // the plant edit/add form
   form = new FormGroup({
