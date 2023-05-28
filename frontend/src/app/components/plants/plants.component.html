@@ -24,7 +24,7 @@
 				</mat-button-toggle-group>
 				<mat-form-field>
 					<mat-label>Tags</mat-label>
-					<mat-select (selectionChange)="addTag($event.value)">
+					<mat-select (selectionChange)="addFilterTag($event.value)">
 						<mat-option *ngFor="let tag of tags" [value]="tag">{{tag}}</mat-option>
 					</mat-select>
 				</mat-form-field>
@@ -122,8 +122,8 @@
 <ng-container *ngIf="(plantsService.plants | async) as plantList">
 	<div class="plants" *ngIf="!isInEditOrAddMode()">
 		<div *ngFor="let plant of plantList">
-			<div
-				*ngIf="(!filters.get('onlyMyPlants') || plant.email == authenticationService.email()) && (!filters.get('needsCare') || needsCaring(plant))">
+			<div *ngIf="(!filters.get('onlyMyPlants') || plant.email == authenticationService.email()) && (!filters.get('needsCare') ||
+				needsCaring(plant)) && tagMatchesFilter(plant.tag)">
 				<app-plant [isCondensed]="condensedView"
 					(editModeEmitter)="switchToditPlantMode($event)" [plant]="plant"></app-plant>
 			</div>

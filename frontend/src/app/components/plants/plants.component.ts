@@ -55,7 +55,14 @@ export class PlantsComponent {
 
   // list of view filters
   filters = new Map<string, boolean>();
+
+  // list of tags that we're filtering on, if any
+  filterTags: string[] = []
+
+  // list of tags available for selection in either filtering or when editing a 
+  // plant
   tags: string[] = []
+
 
   // the plant edit/add form
   form = new FormGroup({
@@ -133,13 +140,23 @@ export class PlantsComponent {
     localStorage.setItem("isCondensed", isCondensed ? "true" : "false")
   }
 
+  public addFilterTag(tag: string) {
+    if (!this.filterTags.includes(tag)) {
+      this.filterTags.push(tag);
+    }
+  }
+
+  public tagMatchesFilter(tag: string) {
+    return this.filterTags.length === 0 || this.filterTags.includes(tag);
+  }
+
+
+
   public addTag(tag: string) {
     if (!this.tags.includes(tag)) {
       this.tags.push(tag);
     }
   }
-
-
   public removeTag(tag: string) {
     const index = this.tags.indexOf(tag);
     if (index > -1) {
