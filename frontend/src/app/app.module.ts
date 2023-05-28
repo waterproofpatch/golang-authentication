@@ -4,6 +4,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // <-- NgModel lives here
 
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { AuthenticationComponent } from './components/authentication/authentication.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -65,6 +66,7 @@ import { PlantCareDialogComponent } from './components/plant-care-dialog/plant-c
     MatProgressSpinnerModule,
     BrowserModule,
     MatBadgeModule,
+    MatAutocompleteModule,
     MatTabsModule,
     MatExpansionModule,
     AppRoutingModule,

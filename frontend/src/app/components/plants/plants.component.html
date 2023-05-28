@@ -46,11 +46,21 @@
 					<input matInput formControlName="name" #input maxlength="30">
 					<mat-hint align="end">{{input.value.length}}/30</mat-hint>
 				</mat-form-field>
+				<!-- <mat-form-field hintLabel="Max 30 characters" appearance="fill">
+					<mat-label>Tag</mat-label>
+					<mat-select formControlName="tag" name="tag">
+						<mat-option *ngFor="let tag of tags" [value]="tag">{{tag}}</mat-option>
+					</mat-select>
+				</mat-form-field> -->
 				<mat-form-field hintLabel="Max 30 characters" appearance="fill">
-					<mat-label>Type</mat-label>
-					<input matInput formControlName="tag" #input maxlength="30">
-					<mat-hint align="end">{{input.value.length}}/30</mat-hint>
+					<mat-label>Tag</mat-label>
+					<input matInput formControlName="tag" name="tag" [matAutocomplete]="auto">
+					<mat-autocomplete #auto="matAutocomplete">
+						<mat-option *ngFor="let tag of tags" [value]="tag">{{tag}}</mat-option>
+					</mat-autocomplete>
 				</mat-form-field>
+
+
 
 				<mat-form-field appearance="fill">
 					<mat-label>Watering Frequency</mat-label>
