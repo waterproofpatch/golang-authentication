@@ -19,3 +19,7 @@
 .active {
 	background-color: darkblue;
 }
+
+.active-menu {
+	background-color: gray;
+}

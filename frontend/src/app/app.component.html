@@ -16,13 +16,16 @@
 				routerLinkActive="active">Register</a>
 		</span>
 		<span *ngIf="authenticationService.isAuthenticated$ | async" class="nav-item">
-			<a mat-button (click)="authenticationService.logout()" routerLinkActive="active">Logout</a>
-		</span>
-		<span *ngIf="authenticationService.isAuthenticated$ | async" class="nav-item">
-			<a mat-button routerLink="/profile" routerLinkActive="active">Profile</a>
+			<button mat-button [matMenuTriggerFor]="profileMenu">Profile</button>
+			<mat-menu #profileMenu="matMenu">
+				<button mat-menu-item (click)="authenticationService.logout()">Logout</button>
+				<button mat-menu-item routerLink="/profile"
+					routerLinkActive="active-menu">Profile</button>
+			</mat-menu>
 		</span>
 	</mat-toolbar-row>
 </mat-toolbar>
+
 
 
 <router-outlet></router-outlet>
