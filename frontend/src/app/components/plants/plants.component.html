@@ -8,30 +8,38 @@
 				<mat-menu #filterMenu="matMenu">
 					<div class="menu-content">
 						<mat-radio-group #group="matRadioGroup">
-							<mat-radio-button value="uncondensed" [checked]="!condensedView"
-								(change)="viewModeChanged(false)"
-								(click)="$event.stopPropagation()">
-								Uncondensed
-							</mat-radio-button>
-							<mat-radio-button value="condensed" [checked]="condensedView"
-								(change)="viewModeChanged(true)"
-								(click)="$event.stopPropagation()">
-								Condensed
-							</mat-radio-button>
+							<div class="menu-item">
+								<mat-radio-button value="uncondensed"
+									[checked]="!condensedView"
+									(change)="viewModeChanged(false)"
+									(click)="$event.stopPropagation()">
+									Uncondensed
+								</mat-radio-button>
+							</div>
+							<div class="menu-item">
+								<mat-radio-button value="condensed"
+									[checked]="condensedView"
+									(change)="viewModeChanged(true)"
+									(click)="$event.stopPropagation()">
+									Condensed
+								</mat-radio-button>
+							</div>
 						</mat-radio-group>
-						<div>
+						<div class="menu-item">
 							<mat-checkbox value="needsCare"
 								[checked]="filters.get('needsCare')"
 								(change)="filterChange('needsCare')"
 								(click)="$event.stopPropagation()">Needs
 								Care</mat-checkbox>
+						</div>
+						<div class="menu-item">
 							<mat-checkbox value="mineOnly"
 								[checked]="filters.get('onlyMyPlants')"
 								(change)="filterChange('onlyMyPlants')"
 								(click)="$event.stopPropagation()">Only My
 								Plants</mat-checkbox>
 						</div>
-						<div>
+						<div class="menu-item">
 							<mat-form-field>
 								<mat-label>Tags</mat-label>
 								<mat-select
@@ -42,7 +50,7 @@
 								</mat-select>
 							</mat-form-field>
 						</div>
-						<div>
+						<div class="menu-item">
 							<mat-chip-listbox>
 								<mat-chip-option *ngFor="let tag of filterTags"
 									[removable]="true"
@@ -55,6 +63,7 @@
 						</div>
 					</div>
 				</mat-menu>
+
 			</div>
 
 			<button mat-button mat-raised-button color="primary" *ngIf="!isInEditOrAddMode()"
