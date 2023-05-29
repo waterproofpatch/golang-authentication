@@ -4,37 +4,57 @@
 		<div class="button-controls">
 
 			<div *ngIf="!isInEditOrAddMode()">
-				<mat-button-toggle-group #group="matButtonToggleGroup">
-					<mat-button-toggle value="uncondensed" [checked]="!condensedView"
-						(change)="viewModeChanged(false)">
-						<mat-icon>unfold_more</mat-icon>
-					</mat-button-toggle>
-					<mat-button-toggle value="condensed" [checked]="condensedView"
-						(change)="viewModeChanged(true)">
-						<mat-icon>unfold_less</mat-icon>
-					</mat-button-toggle>
-				</mat-button-toggle-group>
-				<mat-button-toggle-group name="filters" aria-label="Filters" multiple>
-					<mat-button-toggle value="needsCare" [checked]="filters.get('needsCare')"
-						(change)="filterChange('needsCare')">Needs
-						Care</mat-button-toggle>
-					<mat-button-toggle value="mineOnly" [checked]="filters.get('onlyMyPlants')"
-						(change)="filterChange('onlyMyPlants')">Only My
-						Plants</mat-button-toggle>
-				</mat-button-toggle-group>
-				<mat-form-field>
-					<mat-label>Tags</mat-label>
-					<mat-select (selectionChange)="addFilterTag($event.value)">
-						<mat-option *ngFor="let tag of tags" [value]="tag">{{tag}}</mat-option>
-					</mat-select>
-				</mat-form-field>
-				<mat-chip-listbox>
-					<mat-chip-option *ngFor="let tag of filterTags" [removable]="true"
-						(removed)="removeFilterTag(tag)">
-						{{tag}}
-						<mat-icon matChipRemove>cancel</mat-icon>
-					</mat-chip-option>
-				</mat-chip-listbox>
+				<button mat-button [matMenuTriggerFor]="filterMenu">Filters</button>
+				<mat-menu #filterMenu="matMenu">
+					<div class="menu-content">
+						<mat-radio-group #group="matRadioGroup">
+							<mat-radio-button value="uncondensed" [checked]="!condensedView"
+								(change)="viewModeChanged(false)"
+								(click)="$event.stopPropagation()">
+								Uncondensed
+							</mat-radio-button>
+							<mat-radio-button value="condensed" [checked]="condensedView"
+								(change)="viewModeChanged(true)"
+								(click)="$event.stopPropagation()">
+								Condensed
+							</mat-radio-button>
+						</mat-radio-group>
+						<div>
+							<mat-checkbox value="needsCare"
+								[checked]="filters.get('needsCare')"
+								(change)="filterChange('needsCare')"
+								(click)="$event.stopPropagation()">Needs
+								Care</mat-checkbox>
+							<mat-checkbox value="mineOnly"
+								[checked]="filters.get('onlyMyPlants')"
+								(change)="filterChange('onlyMyPlants')"
+								(click)="$event.stopPropagation()">Only My
+								Plants</mat-checkbox>
+						</div>
+						<div>
+							<mat-form-field>
+								<mat-label>Tags</mat-label>
+								<mat-select
+									(selectionChange)="addFilterTag($event.value)"
+									(click)="$event.stopPropagation()">
+									<mat-option *ngFor="let tag of tags"
+										[value]="tag">{{tag}}</mat-option>
+								</mat-select>
+							</mat-form-field>
+						</div>
+						<div>
+							<mat-chip-listbox>
+								<mat-chip-option *ngFor="let tag of filterTags"
+									[removable]="true"
+									(removed)="removeFilterTag(tag)"
+									(click)="$event.stopPropagation()">
+									{{tag}}
+									<mat-icon matChipRemove>cancel</mat-icon>
+								</mat-chip-option>
+							</mat-chip-listbox>
+						</div>
+					</div>
+				</mat-menu>
 			</div>
 
 			<button mat-button mat-raised-button color="primary" *ngIf="!isInEditOrAddMode()"
