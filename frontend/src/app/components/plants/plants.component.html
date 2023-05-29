@@ -50,10 +50,10 @@
 								</mat-select>
 							</mat-form-field>
 						</div>
-						<div class="menu-item" style="text-align:center;">
-							<mat-chip-listbox style="text-align:center;">
-								<mat-chip-option style="text-align:center;"
-									*ngFor="let tag of filterTags"
+						<div class="menu-item" style="text-align: center;">
+							<mat-chip-listbox
+								style="display: inline-block; text-align: center;">
+								<mat-chip-option *ngFor="let tag of filterTags"
 									[removable]="true"
 									(removed)="removeFilterTag(tag)"
 									(click)="$event.stopPropagation()">
