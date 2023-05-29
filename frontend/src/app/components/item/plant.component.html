@@ -1,4 +1,5 @@
-<mat-card *ngIf="plant != null" [class.plant-mine]="plant.email==email" [class.plant-theirs]="plant.email != email">
+<mat-card *ngIf="plant != null" [class.plant-mine]="plant.username==username"
+	[class.plant-theirs]="plant.username != username">
 	<mat-card-header>
 		<div mat-card-avatar class="plant-header-image" *ngIf="isCondensed">
 			<img *ngIf="isImageLoading" mat-card-image [src]="'/assets/loading.gif'" alt="Photo">
@@ -31,14 +32,15 @@
 				<mat-icon>more_vert</mat-icon>
 			</button>
 			<mat-menu #menu="matMenu">
-				<button *ngIf="plant.email == email" mat-menu-item (click)="editPlant()"
+				<button *ngIf="plant.username == username" mat-menu-item (click)="editPlant()"
 					color="primary"><mat-icon>edit</mat-icon><span>Edit</span></button>
-				<button *ngIf="plant.email == email" mat-menu-item (click)="waterPlant()"
+				<button *ngIf="plant.username == username" mat-menu-item (click)="waterPlant()"
 					color="primary"><mat-icon style="color:blue;">
 						local_drink</mat-icon><span>Care</span></button>
 				<a mat-button [routerLink]="['/comments', plant.id]"><mat-icon>
 						comment</mat-icon><span>Comments</span></a>
-				<button *ngIf="plant.email == email" mat-menu-item (click)="deletePlant()" color="warn">
+				<button *ngIf="plant.username == username" mat-menu-item (click)="deletePlant()"
+					color="warn">
 					<mat-icon>delete_outline</mat-icon><span>Delete</span></button>
 			</mat-menu>
 		</div>
@@ -70,7 +72,7 @@
 			</span>
 		</div>
 	</mat-card-content>
-	<mat-accordion *ngIf="plant.email==email">
+	<mat-accordion *ngIf="plant.username==username">
 		<mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
 			<mat-expansion-panel-header>
 				<mat-panel-title>

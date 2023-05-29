@@ -25,7 +25,7 @@ type CommentModel struct {
 	gorm.Model
 	Id       int    `json:"id"`
 	PlantId  int    `json:"plantId"`
-	Email    string `json:"email"`
+	Email    string `json:"-"`
 	Username string `json:"username"`
 	Content  string `json:"content"`
 	Viewed   bool   `json:"viewed"`
@@ -33,7 +33,7 @@ type CommentModel struct {
 type PlantModel struct {
 	gorm.Model
 	Id                   int             `json:"id"`
-	Email                string          `json:"email"`
+	Email                string          `json:"-"`
 	Username             string          `json:"username"`
 	Name                 string          `json:"name"`
 	WateringFrequency    int             `json:"wateringFrequency"`

@@ -29,9 +29,9 @@ export class PlantComponent {
   // whether or not this plant is overdue for fertilizing
   needsFertilizing: boolean = false
 
-  // the email for our user from the authentication service
+  // the username for our user from the authentication service
   // TODO make this something we subscribe to
-  email: string = ''
+  username: string = ''
 
   // whether or not the image for this plant is in progress loading
   isImageLoading: boolean = false
@@ -60,7 +60,7 @@ export class PlantComponent {
   }
 
   ngOnInit() {
-    this.email = this.authenticationService.email()
+    this.username = this.authenticationService.username()
     if (!this.authenticationService.isAuthenticated$.value) {
       this.router.navigateByUrl('/authentication?mode=login');
       return
@@ -92,7 +92,7 @@ export class PlantComponent {
     this.commentsService.comments$.subscribe((x) => {
       console.log("Got " + x.length + " comments");
       for (let comment of x) {
-        if (comment.plantId == this.plant?.id && !comment.viewed && this.plant?.email == this.authenticationService.email()) {
+        if (comment.plantId == this.plant?.id && !comment.viewed && this.plant?.username == this.authenticationService.username()) {
 
           this.numComments.next(this.numComments.value + 1)
         }
