@@ -39,7 +39,7 @@
 								(click)="$event.stopPropagation()">Only My
 								Plants</mat-checkbox>
 						</div>
-						<div class="menu-item">
+						<div class="menu-item" style="text-align:center;">
 							<mat-form-field>
 								<mat-label>Tags</mat-label>
 								<mat-select
@@ -50,9 +50,10 @@
 								</mat-select>
 							</mat-form-field>
 						</div>
-						<div class="menu-item">
-							<mat-chip-listbox>
-								<mat-chip-option *ngFor="let tag of filterTags"
+						<div class="menu-item" style="text-align:center;">
+							<mat-chip-listbox style="text-align:center;">
+								<mat-chip-option style="text-align:center;"
+									*ngFor="let tag of filterTags"
 									[removable]="true"
 									(removed)="removeFilterTag(tag)"
 									(click)="$event.stopPropagation()">
