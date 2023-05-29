@@ -98,6 +98,9 @@ export class PlantsComponent {
   }
 
   ngOnInit(): void {
+    // set the filters
+    this.loadFiltersFromLocalStorage()
+
     // if the user isn't logged in, redirect them to login page
     if (!this.authenticationService.isAuthenticated$.value) {
       this.router.navigateByUrl('/authentication?mode=login');
@@ -119,11 +122,6 @@ export class PlantsComponent {
     // sanitize the selected preview image URL for display at the frontend
     this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
 
-    // set the UI from localStorage
-    this.condensedView = localStorage.getItem("isCondensed") == "true" ? true : false
-    this.filters.set("onlyMyPlants", localStorage.getItem("onlyMyPlants") == "true" ? true : false)
-    this.filters.set("needsCare", localStorage.getItem("needsCare") == "true" ? true : false)
-
     // listen for plants so we can add all tags for selection
     this.plantsService.plants.subscribe((x) => {
       x.forEach((plant) => {
@@ -135,6 +133,18 @@ export class PlantsComponent {
     this.getPlants()
   }
 
+  private loadFiltersFromLocalStorage(): void {
+    // set the UI from localStorage
+    this.condensedView = localStorage.getItem("isCondensed") == "true" ? true : false
+    this.filters.set("onlyMyPlants", localStorage.getItem("onlyMyPlants") == "true" ? true : false)
+    this.filters.set("needsCare", localStorage.getItem("needsCare") == "true" ? true : false)
+
+    var existingFilterTags = localStorage.getItem("filterTags")
+    if (existingFilterTags) {
+      this.filterTags = JSON.parse(existingFilterTags)
+    }
+  }
+
   public viewModeChanged(isCondensed: boolean): void {
     this.condensedView = isCondensed;
     localStorage.setItem("isCondensed", isCondensed ? "true" : "false")
@@ -144,12 +154,14 @@ export class PlantsComponent {
     if (!this.filterTags.includes(tag)) {
       this.filterTags.push(tag);
     }
+    localStorage.setItem('filterTags', JSON.stringify(this.filterTags))
   }
   public removeFilterTag(tag: string) {
     const index = this.filterTags.indexOf(tag);
     if (index > -1) {
       this.filterTags.splice(index, 1);
     }
+    localStorage.setItem('filterTags', JSON.stringify(this.filterTags))
   }
 
   public tagMatchesFilter(tag: string) {
