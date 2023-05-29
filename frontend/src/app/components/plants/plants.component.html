@@ -28,6 +28,13 @@
 						<mat-option *ngFor="let tag of tags" [value]="tag">{{tag}}</mat-option>
 					</mat-select>
 				</mat-form-field>
+				<mat-chip-listbox>
+					<mat-chip-option *ngFor="let tag of filterTags" [removable]="true"
+						(removed)="removeFilterTag(tag)">
+						{{tag}}
+						<mat-icon matChipRemove>cancel</mat-icon>
+					</mat-chip-option>
+				</mat-chip-listbox>
 			</div>
 
 			<button mat-button mat-raised-button color="primary" *ngIf="!isInEditOrAddMode()"

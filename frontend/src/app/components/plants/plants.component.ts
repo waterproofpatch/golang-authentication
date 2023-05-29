@@ -145,6 +145,12 @@ export class PlantsComponent {
       this.filterTags.push(tag);
     }
   }
+  public removeFilterTag(tag: string) {
+    const index = this.filterTags.indexOf(tag);
+    if (index > -1) {
+      this.filterTags.splice(index, 1);
+    }
+  }
 
   public tagMatchesFilter(tag: string) {
     return this.filterTags.length === 0 || this.filterTags.includes(tag);

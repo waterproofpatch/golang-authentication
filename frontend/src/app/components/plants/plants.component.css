@@ -35,6 +35,7 @@ form {
 }
 
 mat-form-field,
+mat-chip-listbox,
 button {
 	margin-top: 8px;
 	margin-bottom: 8px;
