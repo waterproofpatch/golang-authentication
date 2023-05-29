@@ -130,7 +130,7 @@ export class PlantsComponent {
     })
 
     // on init, ask for the list of plants
-    this.getPlants()
+    this.plantsService.getPlants()
   }
 
   private loadFiltersFromLocalStorage(): void {
@@ -243,7 +243,7 @@ export class PlantsComponent {
     this.addOrEditMode = EditMode.NEITHER;
     this.selectedImagePreview = "/assets/placeholder.jpg"
     this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
-    this.getPlants()
+    this.plantsService.getPlants()
   }
 
   /**
@@ -299,14 +299,4 @@ export class PlantsComponent {
     }
 
   }
-
-  /**
-   * Obtain a list of plants from the plant service. Users can subscribe to 'plants' to 
-   * monitor for changes to the plant services plants list.
-   */
-  private getPlants(): void {
-    this.plantsService.getPlants()
-  }
-
-
 }
