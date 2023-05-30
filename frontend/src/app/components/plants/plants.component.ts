@@ -133,7 +133,7 @@ export class PlantsComponent {
   private loadFiltersFromLocalStorage(): void {
     // set the UI from localStorage
     this.condensedView = localStorage.getItem("isCondensed") == "true" ? true : false
-    this.filters.set("onlyMyPlants", localStorage.getItem("onlyMyPlants") == "true" ? true : false)
+    this.filters.set("onlyMyPlants", localStorage.getItem("onlyMyPlants") == "true" ? this.authenticationService.isAuthenticated$.value : false)
     this.filters.set("needsCare", localStorage.getItem("needsCare") == "true" ? true : false)
 
     var existingFilterTags = localStorage.getItem("filterTags")

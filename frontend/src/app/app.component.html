@@ -16,7 +16,8 @@
 				routerLinkActive="active">Register</a>
 		</span>
 		<span *ngIf="authenticationService.isAuthenticated$ | async" class="nav-item">
-			<button mat-button [matMenuTriggerFor]="profileMenu">Profile</button>
+			<button mat-button [matMenuTriggerFor]="profileMenu">{{authenticationService.username()}} -
+				Profile</button>
 			<mat-menu #profileMenu="matMenu">
 				<button mat-menu-item (click)="authenticationService.logout()">Logout</button>
 				<button mat-menu-item routerLink="/profile"

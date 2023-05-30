@@ -32,8 +32,9 @@ export class CommentsComponent {
     this.commentsService.isLoading$.subscribe((x) => this.isLoading = x)
     this.commentsService.comments$.subscribe((x) => {
       this.comments = x; for (let comment of x) {
-        if (this.authenticationService.username() === comment.username)
+        if (this.authenticationService.isAuthenticated$.value) {
           this.commentsService.viewComment(comment)
+        }
       }
     })
   }
