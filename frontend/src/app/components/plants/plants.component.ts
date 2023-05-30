@@ -1,10 +1,8 @@
 import { Component } from '@angular/core';
-import { Subject, tap } from 'rxjs';
 import { PlantsService } from 'src/app/services/plants.service';
 import Plant from 'src/app/services/plants.service';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { Router } from '@angular/router';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 export enum EditMode {
@@ -83,7 +81,6 @@ export class PlantsComponent {
     public plantsService: PlantsService,
     private formBuilder: FormBuilder,
     public authenticationService: AuthenticationService,
-    private router: Router
   ) {
     this.form = this.formBuilder.group({
       publicOrPrivate: ['private'],
@@ -101,20 +98,20 @@ export class PlantsComponent {
     // set the filters
     this.loadFiltersFromLocalStorage()
 
-    // if the user isn't logged in, redirect them to login page
-    if (!this.authenticationService.isAuthenticated$.value) {
-      this.router.navigateByUrl('/authentication?mode=login');
-      return
-    }
+    // // if the user isn't logged in, redirect them to login page
+    // if (!this.authenticationService.isAuthenticated$.value) {
+    //   this.router.navigateByUrl('/authentication?mode=login');
+    //   return
+    // }
 
     // handle notifications to login status
-    this.authenticationService.isAuthenticated$.subscribe((x) => {
-      if (!x) {
-        this.router.navigateByUrl('/authentication?mode=login');
-        // setTimeout here is a kludge to make sure we actually redirect the user, rather than do nothing
-        setTimeout(() => this.router.navigateByUrl('/authentication?mode=login'), 0)
-      }
-    })
+    // this.authenticationService.isAuthenticated$.subscribe((x) => {
+    //   if (!x) {
+    //     this.router.navigateByUrl('/authentication?mode=login');
+    //     // setTimeout here is a kludge to make sure we actually redirect the user, rather than do nothing
+    //     setTimeout(() => this.router.navigateByUrl('/authentication?mode=login'), 0)
+    //   }
+    // })
 
     // the plant service lets us know if it's waiting on plants from the backend here
     this.plantsService.isLoading.subscribe((x) => { if (x) { this.isLoading = true } else { this.isLoading = false } })

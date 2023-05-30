@@ -164,6 +164,7 @@ export class AuthenticationService extends BaseService {
       this.dialogService.displayLogDialog('Logged out successfully.');
     }
     if (redirectToLogin) {
+      console.log("Redirecting to login via logout...")
       this.router.navigateByUrl('/authentication?mode=login');
       return;
     }

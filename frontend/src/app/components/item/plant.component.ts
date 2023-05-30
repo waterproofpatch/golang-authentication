@@ -61,10 +61,10 @@ export class PlantComponent {
 
   ngOnInit() {
     this.username = this.authenticationService.username()
-    if (!this.authenticationService.isAuthenticated$.value) {
-      this.router.navigateByUrl('/authentication?mode=login');
-      return
-    }
+    // if (!this.authenticationService.isAuthenticated$.value) {
+    //   this.router.navigateByUrl('/authentication?mode=login');
+    //   return
+    // }
     this.getImage()
     if (new Date(this.getNextFertilizeDate()) < new Date()) {
       if (this.plant) {

@@ -3,6 +3,7 @@ import { CommentsService } from 'src/app/services/comments.service';
 import Comment from 'src/app/services/comments.service';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 
 @Component({
   selector: 'app-comments',
@@ -19,8 +20,8 @@ export class CommentsComponent {
   constructor(
     private commentsService: CommentsService,
     private activatedRoute: ActivatedRoute,
-    private location: Location) {
-
+    private location: Location,
+    public authenticationService: AuthenticationService) {
   }
 
   ngOnInit() {
@@ -31,7 +32,8 @@ export class CommentsComponent {
     this.commentsService.isLoading$.subscribe((x) => this.isLoading = x)
     this.commentsService.comments$.subscribe((x) => {
       this.comments = x; for (let comment of x) {
-        this.commentsService.viewComment(comment)
+        if (this.authenticationService.username() === comment.username)
+          this.commentsService.viewComment(comment)
       }
     })
   }

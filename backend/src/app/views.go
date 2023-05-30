@@ -110,21 +110,22 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 
 	switch r.Method {
 	case "GET":
-		if hasPlantId {
+		if hasPlantId && claims != nil {
 			db.Where("email = ? AND id = ?", claims.Email, id).Preload("Logs").Find(&plant)
 			json.NewEncoder(w).Encode(plant)
-		} else {
-			db.Where("email = ? OR is_public = ?", claims.Email, true).Preload("Logs").Find(&plants)
-			json.NewEncoder(w).Encode(plants)
+			return
 		}
-		return
 	case "DELETE":
+		if claims == nil {
+			authentication.WriteError(w, "Must be logged in to delete plants.", http.StatusUnauthorized)
+			return
+		}
 		if !hasPlantId {
 			authentication.WriteError(w, "Must provide id!", http.StatusBadRequest)
 			break
 		}
 		db.Find(&plant, id)
-		if plant.Email != claims.Email {
+		if claims != nil && plant.Email != claims.Email {
 			fmt.Printf("User %s tried deleting plant belonging to %s\n", claims.Email, plant.Email)
 			authentication.WriteError(w, "This isn't your plant!", http.StatusBadRequest)
 			return
@@ -135,6 +136,10 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		db.Delete(&PlantModel{}, id)
 		break
 	case "POST":
+		if claims == nil {
+			authentication.WriteError(w, "Must be logged in to add plants.", http.StatusUnauthorized)
+			return
+		}
 		var imageId = uploadHandler(w, r)
 		if imageId == 0 {
 			fmt.Println("Upload did not contain an image.")
@@ -181,6 +186,10 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		}
 		break
 	case "PUT":
+		if claims == nil {
+			authentication.WriteError(w, "Must be logged in to edit plants.", http.StatusUnauthorized)
+			return
+		}
 		plantId, err := strconv.Atoi(r.FormValue("id"))
 		var isNewImage = false
 		if err != nil {
@@ -275,7 +284,13 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		}
 		break
 	}
-	db.Where("email = ? OR is_public = ?", claims.Email, true).Preload("Logs").Find(&plants)
+	if claims != nil {
+
+		db.Where("email = ? OR is_public = ?", claims.Email, true).Preload("Logs").Find(&plants)
+	} else {
+
+		db.Where("is_public = ?", true).Preload("Logs").Find(&plants)
+	}
 	json.NewEncoder(w).Encode(plants)
 
 }
@@ -296,6 +311,10 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 	case "GET":
 		break
 	case "DELETE":
+		if claims == nil {
+			authentication.WriteError(w, "Must be logged in to delete comments.", http.StatusUnauthorized)
+			return
+		}
 		q := r.URL.Query()
 		commentId := q.Get("commentId")
 		var comment CommentModel
@@ -310,6 +329,10 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		db.Delete(&comment)
 		break
 	case "POST":
+		if claims == nil {
+			authentication.WriteError(w, "Must be logged in to delete comments.", http.StatusUnauthorized)
+			return
+		}
 		// Declare a new Person struct.
 		var comment CommentModel
 		var plant PlantModel
@@ -334,6 +357,10 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		AddComment(db, comment.Content, claims.Email, claims.Username, comment.PlantId)
 		break
 	case "PUT":
+		if claims == nil {
+			authentication.WriteError(w, "Must be logged in to delete comments.", http.StatusUnauthorized)
+			return
+		}
 		q := r.URL.Query()
 		commentId := q.Get("commentId")
 		var comment CommentModel
@@ -455,12 +482,11 @@ func InitViews(router *mux.Router) {
 	hub := newHub()
 	go hub.run()
 
-	// router.HandleFunc("/api/upload", uploadHandler)
-	router.HandleFunc("/api/dashboard/{id:[0-9]+}", authentication.VerifiedOnly(dashboard)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-	router.HandleFunc("/api/dashboard", authentication.VerifiedOnly(dashboard)).Methods("GET", "POST", "PUT", "OPTIONS")
-	router.HandleFunc("/api/comments/{id:[0-9]+}", authentication.VerifiedOnly(comments)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-	router.HandleFunc("/api/plants", authentication.VerifiedOnly(plants)).Methods("GET", "POST", "PUT", "OPTIONS")
-	router.HandleFunc("/api/plants/{id:[0-9]+}", authentication.VerifiedOnly(plants)).Methods("GET", "POST", "DELETE", "PUT", "OPTIONS")
+	router.HandleFunc("/api/dashboard/{id:[0-9]+}", authentication.VerifiedOnly(dashboard, false)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+	router.HandleFunc("/api/dashboard", authentication.VerifiedOnly(dashboard, false)).Methods("GET", "POST", "PUT", "OPTIONS")
+	router.HandleFunc("/api/comments/{id:[0-9]+}", authentication.VerifiedOnly(comments, true)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+	router.HandleFunc("/api/plants", authentication.VerifiedOnly(plants, true)).Methods("GET", "POST", "PUT", "OPTIONS")
+	router.HandleFunc("/api/plants/{id:[0-9]+}", authentication.VerifiedOnly(plants, false)).Methods("GET", "POST", "DELETE", "PUT", "OPTIONS")
 	router.HandleFunc("/api/images/{id:[0-9]+}", images).Methods("GET", "OPTIONS")
 	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)

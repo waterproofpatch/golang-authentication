@@ -32,7 +32,8 @@
 								(click)="$event.stopPropagation()">Needs
 								Care</mat-checkbox>
 						</div>
-						<div class="menu-item">
+						<div class="menu-item"
+							*ngIf="authenticationService.isAuthenticated$ | async">
 							<mat-checkbox value="mineOnly"
 								[checked]="filters.get('onlyMyPlants')"
 								(change)="filterChange('onlyMyPlants')"
@@ -67,7 +68,8 @@
 
 			</div>
 
-			<button mat-button mat-raised-button color="primary" *ngIf="!isInEditOrAddMode()"
+			<button mat-button mat-raised-button color="primary"
+				*ngIf="!isInEditOrAddMode() && (authenticationService.isAuthenticated$ | async)"
 				(click)="switchToAddPlantMode()">Add
 				Plant</button>
 		</div>
