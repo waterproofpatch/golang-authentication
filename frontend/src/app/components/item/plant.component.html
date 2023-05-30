@@ -6,7 +6,7 @@
 			<img *ngIf="!isImageLoading && imageUrl != null" mat-card-image [src]="imageUrl" alt="Photo">
 			<img *ngIf="!isImageLoading && imageUrl == null" [src]="'/assets/placeholder.jpg'" alt="Image">
 		</div>
-		<mat-card-title>{{plant.name}} - {{plant.tag}}</mat-card-title>
+		<mat-card-title>{{plant.name}}</mat-card-title>
 		<mat-card-subtitle *ngIf="isCondensed">
 			<p *ngIf="isCondensed && needsWatering" [style.color]="backgroundColorWater">
 				Needs Watering</p>
@@ -16,7 +16,7 @@
 				[style.color]="backgroundColorFertilize">
 				Needs Fertilizing</p>
 		</mat-card-subtitle>
-		<mat-card-subtitle *ngIf="!isCondensed">by {{plant.username}}</mat-card-subtitle>
+		<mat-card-subtitle>{{plant.tag}} by <i>{{plant.username}}</i></mat-card-subtitle>
 		<mat-card-subtitle>Water every {{plant.wateringFrequency}}
 			days</mat-card-subtitle>
 		<mat-card-subtitle *ngIf="plant.fertilizingFrequency > 0">Fertilize every {{plant.fertilizingFrequency}}
