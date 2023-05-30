@@ -63,6 +63,30 @@
 								</mat-chip-option>
 							</mat-chip-listbox>
 						</div>
+						<div class="menu-item" style="text-align:center;">
+							<mat-form-field>
+								<mat-label>Usernames</mat-label>
+								<mat-select
+									(selectionChange)="addFilterUsername($event.value)"
+									(click)="$event.stopPropagation()">
+									<mat-option *ngFor="let username of usernames"
+										[value]="username">{{username}}</mat-option>
+								</mat-select>
+							</mat-form-field>
+						</div>
+						<div class="menu-item" style="text-align: center;">
+							<mat-chip-listbox
+								style="display: inline-block; text-align: center;">
+								<mat-chip-option
+									*ngFor="let username of filterUsernames"
+									[removable]="true"
+									(removed)="removeFilterUsername(username)"
+									(click)="$event.stopPropagation()">
+									{{username}}
+									<mat-icon matChipRemove>cancel</mat-icon>
+								</mat-chip-option>
+							</mat-chip-listbox>
+						</div>
 					</div>
 				</mat-menu>
 
@@ -162,7 +186,7 @@
 	<div class="plants" *ngIf="!isInEditOrAddMode()">
 		<div *ngFor="let plant of plantList">
 			<div *ngIf="(!filters.get('onlyMyPlants') || plant.username == authenticationService.username()) && (!filters.get('needsCare') ||
-				needsCaring(plant)) && tagMatchesFilter(plant.tag)">
+				needsCaring(plant)) && tagMatchesFilter(plant.tag) && usernameMatchesFilter(plant.username)">
 				<app-plant [isCondensed]="condensedView"
 					(editModeEmitter)="switchToditPlantMode($event)" [plant]="plant"></app-plant>
 			</div>

@@ -57,9 +57,16 @@ export class PlantsComponent {
   // list of tags that we're filtering on, if any
   filterTags: string[] = []
 
+  // list of usernames that we're filtering on, if any
+  filterUsernames: string[] = []
+
   // list of tags available for selection in either filtering or when editing a 
   // plant
   tags: string[] = []
+
+  // list of usernames available for selection in either filtering or when editing a 
+  // plant
+  usernames: string[] = []
 
 
   // the plant edit/add form
@@ -98,21 +105,6 @@ export class PlantsComponent {
     // set the filters
     this.loadFiltersFromLocalStorage()
 
-    // // if the user isn't logged in, redirect them to login page
-    // if (!this.authenticationService.isAuthenticated$.value) {
-    //   this.router.navigateByUrl('/authentication?mode=login');
-    //   return
-    // }
-
-    // handle notifications to login status
-    // this.authenticationService.isAuthenticated$.subscribe((x) => {
-    //   if (!x) {
-    //     this.router.navigateByUrl('/authentication?mode=login');
-    //     // setTimeout here is a kludge to make sure we actually redirect the user, rather than do nothing
-    //     setTimeout(() => this.router.navigateByUrl('/authentication?mode=login'), 0)
-    //   }
-    // })
-
     // the plant service lets us know if it's waiting on plants from the backend here
     this.plantsService.isLoading.subscribe((x) => { if (x) { this.isLoading = true } else { this.isLoading = false } })
 
@@ -123,6 +115,7 @@ export class PlantsComponent {
     this.plantsService.plants.subscribe((x) => {
       x.forEach((plant) => {
         this.addTag(plant.tag)
+        this.addUsername(plant.username)
       });
     })
 
@@ -140,6 +133,10 @@ export class PlantsComponent {
     if (existingFilterTags) {
       this.filterTags = JSON.parse(existingFilterTags)
     }
+    var existingFilterUsernames = localStorage.getItem("filterUsernames")
+    if (existingFilterUsernames) {
+      this.filterUsernames = JSON.parse(existingFilterUsernames)
+    }
   }
 
   public viewModeChanged(isCondensed: boolean): void {
@@ -147,6 +144,19 @@ export class PlantsComponent {
     localStorage.setItem("isCondensed", isCondensed ? "true" : "false")
   }
 
+  public addFilterUsername(username: string) {
+    if (!this.filterUsernames.includes(username)) {
+      this.filterUsernames.push(username);
+    }
+    localStorage.setItem('filterUsernames', JSON.stringify(this.filterUsernames))
+  }
+  public removeFilterUsername(username: string) {
+    const index = this.filterUsernames.indexOf(username);
+    if (index > -1) {
+      this.filterUsernames.splice(index, 1);
+    }
+    localStorage.setItem('filterUsernames', JSON.stringify(this.filterUsernames))
+  }
   public addFilterTag(tag: string) {
     if (!this.filterTags.includes(tag)) {
       this.filterTags.push(tag);
@@ -161,17 +171,30 @@ export class PlantsComponent {
     localStorage.setItem('filterTags', JSON.stringify(this.filterTags))
   }
 
+  public usernameMatchesFilter(username: string) {
+    return this.filterUsernames.length === 0 || this.filterUsernames.includes(username);
+  }
   public tagMatchesFilter(tag: string) {
     return this.filterTags.length === 0 || this.filterTags.includes(tag);
   }
 
-
-
+  public addUsername(username: string) {
+    if (!this.usernames.includes(username)) {
+      this.usernames.push(username);
+    }
+  }
   public addTag(tag: string) {
     if (!this.tags.includes(tag)) {
       this.tags.push(tag);
     }
   }
+  public removeUsername(username: string) {
+    const index = this.usernames.indexOf(username);
+    if (index > -1) {
+      this.usernames.splice(index, 1);
+    }
+  }
+
   public removeTag(tag: string) {
     const index = this.tags.indexOf(tag);
     if (index > -1) {
