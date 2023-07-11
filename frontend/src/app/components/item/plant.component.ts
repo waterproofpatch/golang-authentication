@@ -61,15 +61,10 @@ export class PlantComponent {
 
   ngOnInit() {
     this.username = this.authenticationService.username()
-    // if (!this.authenticationService.isAuthenticated$.value) {
-    //   this.router.navigateByUrl('/authentication?mode=login');
-    //   return
-    // }
     this.getImage()
     if (new Date(this.getNextFertilizeDate()) < new Date()) {
       if (this.plant) {
         if (this.plant.fertilizingFrequency > 0) {
-          console.log("plant " + this.plant.id + " is due for fertilizing!")
           this.backgroundColorFertilize = "red"
           this.needsFertilizing = true
         }
@@ -77,20 +72,19 @@ export class PlantComponent {
     }
     if (new Date(this.getNextWaterDate()) < new Date() && this.plant?.lastMoistDate == '') {
       if (this.plant) {
-        console.log("plant " + this.plant.id + " is due for watering!")
         this.backgroundColorWater = "red"
         this.needsWatering = true
       }
     }
     if (new Date(this.getNextMoistCheckDate()) < new Date()) {
       if (this.plant) {
-        console.log("plant " + this.plant.id + " is due for moist soil check!")
         this.backgroundColorMoist = "red"
       }
     }
     this.numComments.next(0)
+    console.log("plant " + this.plant?.id + " subbing comments")
     this.commentsService.comments$.subscribe((x) => {
-      console.log("Got " + x.length + " comments");
+      console.log("plantId=" + this.plant?.id + " got " + x.length + " comments");
       for (let comment of x) {
         if (comment.plantId == this.plant?.id && !comment.viewed && this.plant?.username == this.authenticationService.username()) {
 

@@ -162,7 +162,8 @@ export class PlantsService extends BaseService {
   // this error string is for modals to display login or registration errors.
   error$ = new Subject<string>();
 
-  plants = new Subject<Plant[]>();
+  plants$ = new Subject<Plant[]>();
+  plants: Plant[] = []
 
   constructor(
     private plantsApiService: PlantsApiService,
@@ -211,7 +212,7 @@ export class PlantsService extends BaseService {
       .subscribe((x) => {
         console.log('Got plants ' + x);
         x = x.sort((a: any, b: any) => a.id - b.id)
-        this.plants.next(x)
+        this.plants$.next(x)
         this.error$.next(''); // send a benign event so observers can close modals
         this.isLoading.next(false)
       });
@@ -354,13 +355,34 @@ export class PlantsService extends BaseService {
    * @param plants new plants.
    */
   private updatePlantsList(plants: Plant[]): void {
-    console.log("Here's the plant list we got from the server:")
     for (let p of plants) {
-      PlantsService.PlantsFactory.printPlant(p)
+      if (!this.plants.some(plant => plant.id === p.id)) {
+        console.log("New plant")
+        this.plants.push(p)
+      } else {
+        let plantToUpdate = this.plants.findIndex(plant => plant.id === p.id);
+        let hash1 = this.computeHash(this.plants[plantToUpdate])
+        let hash2 = this.computeHash(p)
+        if (hash2 != hash1) {
+          console.log("Need to update plant id=" + p.id)
+          this.plants[plantToUpdate] = p;
+        }
+      }
     }
     plants = plants.sort((a: any, b: any) => a.id - b.id)
-    this.plants.next(plants)
+    this.plants$.next(plants)
     this.error$.next(''); // send a benign event so observers can close modals
     this.isLoading.next(false)
+  }
+
+  private computeHash(plant: Plant): string {
+    let hash = 0;
+    let plantString = JSON.stringify(plant);
+    for (let i = 0; i < plantString.length; i++) {
+      let char = plantString.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash.toString();
   }
 }

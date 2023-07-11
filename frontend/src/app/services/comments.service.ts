@@ -97,6 +97,7 @@ export class CommentsService {
       });
   }
   public getComments(plantId: number): void {
+    console.log("Getting comments for plant id=" + plantId)
     this.isLoading$.next(true)
     this.commentsApiService
       .get(plantId)

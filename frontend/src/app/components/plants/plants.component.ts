@@ -112,7 +112,7 @@ export class PlantsComponent {
     this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
 
     // listen for plants so we can add all tags for selection
-    this.plantsService.plants.subscribe((x) => {
+    this.plantsService.plants$.subscribe((x) => {
       x.forEach((plant) => {
         this.addTag(plant.tag)
         this.addUsername(plant.username)
