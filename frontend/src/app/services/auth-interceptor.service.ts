@@ -48,18 +48,26 @@ export class AuthInterceptorService implements HttpInterceptor {
                   break
                 }
                 if (!this.isRefreshing) {
+                  console.log("Trying to use refresh token...")
                   this.isRefreshing = true
-                  return this.authenticationService.refresh().pipe(switchMap((token) => {
-                    this.isRefreshing = false
-                    const authRequest2 = req.clone({
-                      headers: req.headers.append(
-                        'Authorization',
-                        'Bearer ' + token.token
-                      ),
-                    });
-                    console.log("Trying request " + authRequest2.urlWithParams + " again with new token " + token.token)
-                    return next.handle(authRequest2)
-                  }))
+                  return this.authenticationService.refresh().pipe(
+                    catchError(error => {
+                      this.isRefreshing = false;
+                      console.log('Error refreshing token:', error);
+                      return throwError(error);
+                    }),
+                    switchMap((token) => {
+                      this.isRefreshing = false;
+                      const authRequest2 = req.clone({
+                        headers: req.headers.append(
+                          'Authorization',
+                          'Bearer ' + token.token
+                        ),
+                      });
+                      console.log("Trying request " + authRequest2.urlWithParams + " again with new token " + token.token);
+                      return next.handle(authRequest2);
+                    })
+                  );
                 } else {
                   console.log("We were refreshing and still got an error!")
                   this.dialogService.displayErrorDialog("Login expired.")
