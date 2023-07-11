@@ -63,14 +63,14 @@ export class AuthInterceptorService implements HttpInterceptor {
                 } else {
                   console.log("We were refreshing and still got an error!")
                   this.dialogService.displayErrorDialog("Login expired.")
-                  this.authenticationService.logout()
+                  this.authenticationService.logout(false, true)
                 }
                 break;
               case 403: //forbidden
                 this.dialogService.displayErrorDialog(
                   '403 - Forbidden: ' + error.error.error_message
                 );
-                this.authenticationService.logout();
+                this.authenticationService.logout(false, true);
                 break;
               default:
                 this.dialogService.displayErrorDialog(
