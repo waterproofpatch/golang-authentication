@@ -21,3 +21,12 @@ button {
 	margin-top: 8px;
 	margin-bottom: 8px;
 }
+
+.comment-form {
+	display: flex;
+	flex-direction: column;
+}
+
+.comment-form button {
+	width: 100%;
+}

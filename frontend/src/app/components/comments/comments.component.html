@@ -1,12 +1,13 @@
 <div class="container">
-
 	<button mat-button mat-raised-button color="primary" (click)="goBack()">Back</button>
 	<div *ngIf="authenticationService.isAuthenticated$ | async">
-		<mat-form-field appearance="fill">
-			<mat-label>Comment</mat-label>
-			<textarea (keyup.enter)="addComment()" [(ngModel)]="commentContent" matInput></textarea>
-		</mat-form-field>
-		<button mat-button mat-raised-button (click)="addComment()">Post</button>
+		<div class="comment-form">
+			<mat-form-field appearance="fill">
+				<mat-label>Comment</mat-label>
+				<textarea (keyup.enter)="addComment()" [(ngModel)]="commentContent" matInput></textarea>
+			</mat-form-field>
+			<button mat-button mat-raised-button (click)="addComment()">Post</button>
+		</div>
 
 		<mat-divider></mat-divider>
 	</div>
@@ -25,5 +26,4 @@
 				(click)="deleteComment(comment)">Delete</button>
 		</mat-card-actions>
 	</mat-card>
-
 </div>
