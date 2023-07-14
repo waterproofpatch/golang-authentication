@@ -292,7 +292,6 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 	json.NewEncoder(w).Encode(plants)
 }
 
-// comments by plant id
 func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -316,18 +315,20 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		var plant PlantModel
 		db.Where("id = ?", commentId).First(&comment)
 		db.Where("id = ?", comment.PlantID).First(&plant)
+
 		// users should be able to delete comments by others for their plant
 		if plant.Email != claims.Email && comment.Email != claims.Email {
 			authentication.WriteError(w, "This isn't your comment, nor a comment on your plant!", http.StatusBadRequest)
 			return
 		}
+
 		db.Delete(&comment)
-		break
 	case "POST":
 		if claims == nil {
-			authentication.WriteError(w, "Must be logged in to delete comments.", http.StatusUnauthorized)
+			authentication.WriteError(w, "Must be logged in to post comments.", http.StatusUnauthorized)
 			return
 		}
+
 		// Declare a new Person struct.
 		var comment CommentModel
 		var plant PlantModel
@@ -340,6 +341,7 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+
 		fmt.Printf("comment received: %v for plantId=%s", comment, comment.PlantID)
 
 		// make sure the plant is public
@@ -350,32 +352,26 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		}
 
 		AddComment(db, comment.Content, claims.Email, claims.Username, comment.PlantID)
-		break
 	case "PUT":
 		if claims == nil {
-			authentication.WriteError(w, "Must be logged in to delete comments.", http.StatusUnauthorized)
+			authentication.WriteError(w, "Must be logged in to update comments.", http.StatusUnauthorized)
 			return
 		}
+
 		q := r.URL.Query()
 		commentId := q.Get("commentId")
 		var comment CommentModel
 		var plant PlantModel
 		db.Where("id = ?", commentId).First(&comment)
 		db.Where("id = ?", comment.PlantID).First(&plant)
-		if plant.Email != claims.Email {
-			fmt.Printf("This comment belongs to plant owned by %s. You are %s, and this comment doesn't belong to a plant that is yours. This is not an error.", plant.Email, claims.Email)
-			break
-		} else {
+
+		if plant.Email == claims.Email {
 			comment.Viewed = true
 			db.Save(&comment)
-			break
+		} else {
+			fmt.Printf("This comment belongs to plant owned by %s. You are %s, and this comment doesn't belong to a plant that is yours. This is not an error.", plant.Email, claims.Email)
 		}
 	}
-
-	// var comments []CommentModel
-	// db.Where("plant_id = ?", plantId).Find(&comments)
-	// json.NewEncoder(w).Encode(comments)
-	return
 }
 
 func dashboard(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
