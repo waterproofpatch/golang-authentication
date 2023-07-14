@@ -28,26 +28,17 @@ export class CommentsComponent {
   }
 
   ngOnInit() {
+    this.commentsService.isLoading$.subscribe((x) => this.isLoading = x)
     this.activatedRoute.params.subscribe(params => {
       this.plantId = parseInt(params['plantId']);
-      this.plantsService.getPlant(this.plantId).subscribe((plant: Plant) => {
-        console.log("GOT PLANT FOR COMMENTS COMPONENT: " + plant.name + ", comments: " + plant.comments)
-        this.comments = plant.comments
-      })
-      // this.commentsService.getComments(this.plantId)
+      this.updateCommentsForPlant()
     });
-    this.commentsService.isLoading$.subscribe((x) => this.isLoading = x)
-    // this.commentsService.comments$.subscribe((x) => {
-    //   this.comments = x; for (let comment of x) {
-    //     if (this.authenticationService.isAuthenticated$.value) {
-    //       this.commentsService.viewComment(comment)
-    //     }
-    //   }
-    // })
   }
 
   private updateCommentsForPlant(): void {
+    this.isLoading = true;
     this.plantsService.getPlant(this.plantId).subscribe((plant: Plant) => {
+      this.isLoading = false;
       console.log("GOT PLANT FOR COMMENTS COMPONENT: " + plant.name + ", comments: " + plant.comments)
       // this.comments = plant.comments
       this.comments = plant.comments.sort((a: Comment, b: Comment) => {
