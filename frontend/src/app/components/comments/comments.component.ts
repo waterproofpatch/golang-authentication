@@ -40,13 +40,15 @@ export class CommentsComponent {
     this.plantsService.getPlant(this.plantId).subscribe((plant: Plant) => {
       this.isLoading = false;
       console.log("Got " + plant.comments.length + " comments for plantId=" + plant.id)
-      // this.comments = plant.comments
       this.comments = plant.comments.sort((a: Comment, b: Comment) => {
         if (!b.CreatedAt || !a.CreatedAt) {
           return 0;
         }
         return new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime();
       });
+      this.comments.forEach((x) => {
+        this.commentsService.viewComment(x)
+      })
     })
   }
 

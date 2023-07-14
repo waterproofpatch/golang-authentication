@@ -358,14 +358,13 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 			return
 		}
 
-		q := r.URL.Query()
-		commentId := q.Get("commentId")
 		var comment CommentModel
 		var plant PlantModel
 		db.Where("id = ?", commentId).First(&comment)
 		db.Where("id = ?", comment.PlantID).First(&plant)
 
 		if plant.Email == claims.Email {
+			fmt.Printf("Marking comment %v as viewed\n", comment)
 			comment.Viewed = true
 			db.Save(&comment)
 		} else {
