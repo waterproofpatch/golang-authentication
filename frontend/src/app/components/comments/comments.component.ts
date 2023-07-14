@@ -49,7 +49,13 @@ export class CommentsComponent {
   private updateCommentsForPlant(): void {
     this.plantsService.getPlant(this.plantId).subscribe((plant: Plant) => {
       console.log("GOT PLANT FOR COMMENTS COMPONENT: " + plant.name + ", comments: " + plant.comments)
-      this.comments = plant.comments
+      // this.comments = plant.comments
+      this.comments = plant.comments.sort((a: Comment, b: Comment) => {
+        if (!b.CreatedAt || !a.CreatedAt) {
+          return 0;
+        }
+        return new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime();
+      });
     })
   }
 
