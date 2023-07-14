@@ -39,7 +39,7 @@ export class CommentsComponent {
     this.isLoading = true;
     this.plantsService.getPlant(this.plantId).subscribe((plant: Plant) => {
       this.isLoading = false;
-      console.log("GOT PLANT FOR COMMENTS COMPONENT: " + plant.name + ", comments: " + plant.comments)
+      console.log("Got " + plant.comments.length + " comments for plantId=" + plant.id)
       // this.comments = plant.comments
       this.comments = plant.comments.sort((a: Comment, b: Comment) => {
         if (!b.CreatedAt || !a.CreatedAt) {

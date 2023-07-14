@@ -299,6 +299,7 @@ func AddComment(db *gorm.DB, content string, email string, username string, plan
 		Username: username,
 		Email:    email,
 		PlantID:  plantId,
+		Viewed:   false,
 	}
 	err := db.Create(&comment).Error
 	if err != nil {

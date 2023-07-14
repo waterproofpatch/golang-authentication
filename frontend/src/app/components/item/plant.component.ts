@@ -53,7 +53,6 @@ export class PlantComponent {
   constructor(private router: Router,
     private plantService: PlantsService,
     private dialogService: DialogService,
-    private commentsService: CommentsService,
     private authenticationService: AuthenticationService) {
     this.isCondensed = false // deafult value
 
@@ -82,10 +81,11 @@ export class PlantComponent {
       }
     }
     if (this.plant) {
-      console.log("comments for plant: " + this.plant.comments)
-      if (this.plant.comments) {
-        this.numComments.next(this.plant?.comments.length)
-      }
+      let unviewedComments = this.plant?.comments.filter(x =>
+        !x.viewed
+      ).length
+      console.log("plantId=" + this.plant.id + " has " + unviewedComments + " unviewed comments.")
+      this.numComments.next(unviewedComments)
     }
   }
 
