@@ -11,8 +11,15 @@ export interface PlantLog {
   log: string;
   CreatedAt: string;
 }
+export interface Comment {
+  id: number;
+  content: string;
+  username: string;
+  viewed: boolean;
+  CreatedAt: string;
+}
 
-export default interface Plant {
+export interface Plant {
   id: number;
   name: string;
   username: string;
@@ -27,6 +34,7 @@ export default interface Plant {
   isPublic: boolean;
   doNotify: boolean;
   logs: PlantLog[];
+  comments: Comment[];
 }
 
 export enum PlantCareType {
@@ -139,7 +147,8 @@ export class PlantsService extends BaseService {
       tag: string,
       isPublic: boolean,
       doNotify: boolean,
-      logs: PlantLog[]): Plant {
+      logs: PlantLog[],
+      comments: Comment[]): Plant {
       const plant: Plant = {
         name: name,
         wateringFrequency: wateringFrequency,
@@ -155,6 +164,7 @@ export class PlantsService extends BaseService {
         isPublic: isPublic,
         doNotify: doNotify,
         logs: logs,
+        comments: comments,
       }
       return plant;
     }
@@ -348,6 +358,10 @@ export class PlantsService extends BaseService {
       .subscribe((x) => {
         this.updatePlantsList(x)
       });
+  }
+
+  public getPlant(id: number): Observable<Plant> {
+    return this.plantsApiService.get(id = id)
   }
 
   /**

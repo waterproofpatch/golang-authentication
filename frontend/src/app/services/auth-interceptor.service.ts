@@ -25,7 +25,7 @@ export class AuthInterceptorService implements HttpInterceptor {
 
     return next.handle(authRequest).pipe(
       tap((x: any) => {
-        if (x.hasOwnProperty('body') && x.body.hasOwnProperty('token')) {
+        if (x.hasOwnProperty('body') && x.body != null && x.body.hasOwnProperty('token')) {
           console.log("Got a token! " + x.body.token)
           this.authenticationService.setToken(x.body.token)
         }

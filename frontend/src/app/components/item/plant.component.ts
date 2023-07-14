@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { DialogService, PlantCareDialogData } from 'src/app/services/dialog.service';
-import Plant, { PlantCareType, PlantsService } from 'src/app/services/plants.service';
+import { Plant, PlantCareType, PlantsService } from 'src/app/services/plants.service';
 import { EventEmitter } from '@angular/core';
 import { Output } from '@angular/core';
 import { CommentsService } from 'src/app/services/comments.service';
@@ -82,18 +82,18 @@ export class PlantComponent {
       }
     }
     this.numComments.next(0)
-    console.log("plant " + this.plant?.id + " subbing comments")
-    this.commentsService.comments$.subscribe((x) => {
-      console.log("plantId=" + this.plant?.id + " got " + x.length + " comments");
-      for (let comment of x) {
-        if (comment.plantId == this.plant?.id && !comment.viewed && this.plant?.username == this.authenticationService.username()) {
+    // console.log("plant " + this.plant?.id + " subbing comments")
+    // this.commentsService.comments$.subscribe((x) => {
+    //   console.log("plantId=" + this.plant?.id + " got " + x.length + " comments");
+    //   for (let comment of x) {
+    //     if (comment.plantId == this.plant?.id && !comment.viewed && this.plant?.username == this.authenticationService.username()) {
 
-          this.numComments.next(this.numComments.value + 1)
-        }
-      }
-    })
+    //       this.numComments.next(this.numComments.value + 1)
+    //     }
+    //   }
+    // })
     if (this.plant) {
-      this.commentsService.getComments(this.plant.id)
+      // this.commentsService.getComments(this.plant.id)
     }
   }
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, finalize } from 'rxjs';
 import { CommentsApiService } from '../api/comments-api.service';
 import { catchError, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -57,64 +57,60 @@ export class CommentsService {
     }
   }
 
-  public deleteComment(comment: Comment): void {
-    this.isLoading$.next(true)
-    this.commentsApiService
-      .delete(comment)
-      .pipe(
-        catchError((error: any) => {
-          this.isLoading$.next(false)
-          if (error instanceof HttpErrorResponse) {
-            this.error$.next(error.error.error_message);
-          } else {
-            this.error$.next('Unexpected error');
-          }
-          return throwError(error);
-        })
-      )
-      .subscribe((x) => {
-        this.updateCommentsList(x)
-      });
+  public deleteComment(id: number): Observable<any> {
+    this.isLoading$.next(true);
+    return this.commentsApiService.delete(id).pipe(
+      catchError((error: any) => {
+        if (error instanceof HttpErrorResponse) {
+          this.error$.next(error.error.error_message);
+        } else {
+          this.error$.next('Unexpected error');
+        }
+        return throwError(error);
+      }),
+      finalize(() => {
+        this.isLoading$.next(false);
+      })
+    );
   }
-  public postComment(comment: Comment): void {
-    this.isLoading$.next(true)
+
+  public postComment(comment: Comment): Observable<any> {
+    this.isLoading$.next(true);
     delete comment.CreatedAt;
-    this.commentsApiService
-      .post(comment)
-      .pipe(
-        catchError((error: any) => {
-          this.isLoading$.next(false)
-          if (error instanceof HttpErrorResponse) {
-            this.error$.next(error.error.error_message);
-          } else {
-            this.error$.next('Unexpected error');
-          }
-          return throwError(error);
-        })
-      )
-      .subscribe((x) => {
-        this.updateCommentsList(x)
-      });
+    return this.commentsApiService.post(comment).pipe(
+      catchError((error: any) => {
+        if (error instanceof HttpErrorResponse) {
+          this.error$.next(error.error.error_message);
+        } else {
+          this.error$.next('Unexpected error');
+        }
+        return throwError(error);
+      }),
+      finalize(() => {
+        this.isLoading$.next(false);
+      })
+    );
   }
-  public getComments(plantId: number): void {
-    console.log("Getting comments for plant id=" + plantId)
-    this.isLoading$.next(true)
-    this.commentsApiService
-      .get(plantId)
-      .pipe(
-        catchError((error: any) => {
-          if (error instanceof HttpErrorResponse) {
-            this.error$.next(error.error.error_message);
-          } else {
-            this.error$.next('Unexpected error');
-          }
-          return throwError(error);
-        })
-      )
-      .subscribe((x) => {
-        this.updateCommentsList(x)
-      });
-  }
+
+  // public getComments(plantId: number): void {
+  //   console.log("Getting comments for plant id=" + plantId)
+  //   this.isLoading$.next(true)
+  //   this.commentsApiService
+  //     .get(plantId)
+  //     .pipe(
+  //       catchError((error: any) => {
+  //         if (error instanceof HttpErrorResponse) {
+  //           this.error$.next(error.error.error_message);
+  //         } else {
+  //           this.error$.next('Unexpected error');
+  //         }
+  //         return throwError(error);
+  //       })
+  //     )
+  //     .subscribe((x) => {
+  //       this.updateCommentsList(x)
+  //     });
+  // }
 
   private updateCommentsList(comments: Comment[]): void {
     comments = comments.sort((a: any, b: any) => b.id - a.id)

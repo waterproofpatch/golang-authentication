@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { BaseService } from '../services/base.service';
-import Plant from '../services/plants.service';
+import { Plant } from '../services/plants.service';
 
 @Injectable({
   providedIn: 'root',
@@ -39,7 +39,7 @@ export class PlantsApiService extends BaseService {
   ): Observable<any> {
     if (id) {
       return this.http.get(
-        this.getUrlBase() + this.plantsApiUrl + "?id=" + id,
+        this.getUrlBase() + this.plantsApiUrl + "/" + id,
         this.httpOptions
       );
     } else {

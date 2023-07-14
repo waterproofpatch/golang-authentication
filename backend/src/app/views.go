@@ -3,6 +3,7 @@ package app
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -10,8 +11,6 @@ import (
 	"time"
 
 	"github.com/waterproofpatch/go_authentication/authentication"
-
-	"io/ioutil"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
@@ -110,8 +109,9 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 
 	switch r.Method {
 	case "GET":
-		if hasPlantId && claims != nil {
-			db.Where("email = ? AND id = ?", claims.Email, id).Preload("Logs").Find(&plant)
+		if hasPlantId {
+			result := db.Where("id = ?", id).Preload("Logs").Preload("Comments").Find(&plant)
+			fmt.Printf("%d record(s) found\n", result.RowsAffected)
 			json.NewEncoder(w).Encode(plant)
 			return
 		}
@@ -140,7 +140,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			authentication.WriteError(w, "Must be logged in to add plants.", http.StatusUnauthorized)
 			return
 		}
-		var imageId = uploadHandler(w, r)
+		imageId := uploadHandler(w, r)
 		if imageId == 0 {
 			fmt.Println("Upload did not contain an image.")
 		}
@@ -191,7 +191,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			return
 		}
 		plantId, err := strconv.Atoi(r.FormValue("id"))
-		var isNewImage = false
+		isNewImage := false
 		if err != nil {
 			authentication.WriteError(w, "Invalid plant ID", http.StatusBadRequest)
 			return
@@ -209,7 +209,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		var newPlant PlantModel
 
 		// conditionally upload a new image. An imageId of 0 means no image provided
-		var imageId = uploadHandler(w, r)
+		imageId := uploadHandler(w, r)
 
 		if imageId == 0 {
 			fmt.Println("Upload did not contain an image.")
@@ -285,14 +285,11 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		break
 	}
 	if claims != nil {
-
 		db.Where("email = ? OR is_public = ?", claims.Email, true).Preload("Logs").Find(&plants)
 	} else {
-
-		db.Where("is_public = ?", true).Preload("Logs").Find(&plants)
+		db.Where("is_public = ?", true).Preload("Logs").Preload("Comments").Find(&plants)
 	}
 	json.NewEncoder(w).Encode(plants)
-
 }
 
 // comments by plant id
@@ -301,9 +298,9 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 
 	vars := mux.Vars(r)
 	db := authentication.GetDb()
-	plantId, hasPlantId := vars["id"]
-	if !hasPlantId {
-		authentication.WriteError(w, "Invalid plant ID", http.StatusBadRequest)
+	commentId, hasCommentId := vars["id"]
+	if !hasCommentId {
+		authentication.WriteError(w, "Invalid commentId ID", http.StatusBadRequest)
 		return
 	}
 
@@ -315,12 +312,10 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 			authentication.WriteError(w, "Must be logged in to delete comments.", http.StatusUnauthorized)
 			return
 		}
-		q := r.URL.Query()
-		commentId := q.Get("commentId")
 		var comment CommentModel
 		var plant PlantModel
 		db.Where("id = ?", commentId).First(&comment)
-		db.Where("id = ?", comment.PlantId).First(&plant)
+		db.Where("id = ?", comment.PlantID).First(&plant)
 		// users should be able to delete comments by others for their plant
 		if plant.Email != claims.Email && comment.Email != claims.Email {
 			authentication.WriteError(w, "This isn't your comment, nor a comment on your plant!", http.StatusBadRequest)
@@ -345,16 +340,16 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		fmt.Printf("comment received: %v for plantId=%s", comment, plantId)
+		fmt.Printf("comment received: %v for plantId=%s", comment, comment.PlantID)
 
 		// make sure the plant is public
-		db.Where("id = ?", comment.PlantId).First(&plant)
+		db.Where("id = ?", comment.PlantID).First(&plant)
 		if !plant.IsPublic {
 			authentication.WriteError(w, "This plant is not public, you cannot comment on it!", http.StatusBadRequest)
 			return
 		}
 
-		AddComment(db, comment.Content, claims.Email, claims.Username, comment.PlantId)
+		AddComment(db, comment.Content, claims.Email, claims.Username, comment.PlantID)
 		break
 	case "PUT":
 		if claims == nil {
@@ -366,7 +361,7 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		var comment CommentModel
 		var plant PlantModel
 		db.Where("id = ?", commentId).First(&comment)
-		db.Where("id = ?", comment.PlantId).First(&plant)
+		db.Where("id = ?", comment.PlantID).First(&plant)
 		if plant.Email != claims.Email {
 			fmt.Printf("This comment belongs to plant owned by %s. You are %s, and this comment doesn't belong to a plant that is yours. This is not an error.", plant.Email, claims.Email)
 			break
@@ -377,11 +372,12 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		}
 	}
 
-	var comments []CommentModel
-	db.Where("plant_id = ?", plantId).Find(&comments)
-	json.NewEncoder(w).Encode(comments)
+	// var comments []CommentModel
+	// db.Where("plant_id = ?", plantId).Find(&comments)
+	// json.NewEncoder(w).Encode(comments)
 	return
 }
+
 func dashboard(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
 	switch r.Method {
 	case "GET":
@@ -409,7 +405,6 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	// upgrade the connection
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	conn, err := upgrader.Upgrade(w, r, nil)
-
 	if err != nil {
 		log.Println(err)
 		return
@@ -461,12 +456,11 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 			}
 			client.send <- &m
 		}
-
 	}
 	// tell all clients, including the one who just joined,
 	// that a new client has joined.
 	hub.broadcastClientJoin(client)
-	for connectedClient, _ := range hub.clients {
+	for connectedClient := range hub.clients {
 		var message Message
 		message.Type = USER_JOIN
 		message.Content = connectedClient.username
@@ -477,6 +471,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		client.send <- &message
 	}
 }
+
 func InitViews(router *mux.Router) {
 	fmt.Println("Starting websocket hub...")
 	hub := newHub()

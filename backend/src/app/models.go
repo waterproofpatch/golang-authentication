@@ -24,7 +24,7 @@ type ImageModel struct {
 type CommentModel struct {
 	gorm.Model
 	Id       int    `json:"id"`
-	PlantId  int    `json:"plantId"`
+	PlantID  int    `json:"plantId"`
 	Email    string `json:"-"`
 	Username string `json:"username"`
 	Content  string `json:"content"`
@@ -47,6 +47,7 @@ type PlantModel struct {
 	IsPublic             bool            `json:"isPublic"`
 	DoNotify             bool            `json:"doNotify"`
 	Logs                 []PlantLogModel `json:"logs" gorm:"foreignKey:PlantID"`
+	Comments             []CommentModel  `json:"comments" gorm:"foreignKey:PlantID"`
 }
 type MessageModel struct {
 	gorm.Model
@@ -101,7 +102,7 @@ func deleteOldestPlantLog(db *gorm.DB, plant *PlantModel) error {
 
 func addPlantLog(db *gorm.DB, plant *PlantModel, logMsg string) {
 	deleteOldestPlantLog(db, plant)
-	var plantLog = PlantLogModel{
+	plantLog := PlantLogModel{
 		Log: logMsg,
 	}
 	db.Model(plant).Association("Logs").Append(&plantLog)
@@ -134,7 +135,6 @@ func AddMessage(db *gorm.DB, message *Message) error {
 }
 
 func validatePlantInfo(plantName string, wateringFrequency int, lastWaterDate string, lastFertilizeDate string) error {
-
 	if plantName == "" {
 		return errors.New("Invalid plant name.")
 	}
@@ -162,8 +162,8 @@ func UpdatePlant(db *gorm.DB,
 	tag string,
 	isNewImage bool,
 	isPublic bool,
-	doNotify bool) error {
-
+	doNotify bool,
+) error {
 	err := validatePlantInfo(name, wateringFrequency, lastWaterDate, lastFertilizeDate)
 	if err != nil {
 		return err
@@ -240,7 +240,8 @@ func AddPlant(db *gorm.DB,
 	email string,
 	username string,
 	isPublic bool,
-	doNotify bool) error {
+	doNotify bool,
+) error {
 	err := validatePlantInfo(name, wateringFrequency, lastWaterDate, lastFertilizeDate)
 	if err != nil {
 		return err
@@ -254,7 +255,7 @@ func AddPlant(db *gorm.DB,
 		db.Order("id asc").Limit(int(count) - 50).Find(&plants)
 		db.Delete(&plants)
 	}
-	var plant = PlantModel{
+	plant := PlantModel{
 		Name:                 name,
 		WateringFrequency:    wateringFrequency,
 		FertilizingFrequency: fertilizingFrequency,
@@ -297,7 +298,7 @@ func AddComment(db *gorm.DB, content string, email string, username string, plan
 		Content:  content,
 		Username: username,
 		Email:    email,
-		PlantId:  plantId,
+		PlantID:  plantId,
 	}
 	err := db.Create(&comment).Error
 	if err != nil {
