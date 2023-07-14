@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { BaseService } from '../services/base.service';
-import Comment from '../services/comments.service';
+import { Comment } from '../services/comments.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,21 +20,7 @@ export class CommentsApiService extends BaseService {
   put(comment: Comment): Observable<any> {
     return this.http.put(this.getUrlBase() + this.commentsApiUrl + "/" + comment.id, comment, this.httpOptions);
   }
-  // get(
-  //   plantId: number,
-  // ): Observable<any> {
-  //   if (plantId) {
-  //     return this.http.get(
-  //       this.getUrlBase() + this.commentsApiUrl + "/" + plantId,
-  //       this.httpOptions
-  //     );
-  //   } else {
-  //     return this.http.get(
-  //       this.getUrlBase() + this.commentsApiUrl,
-  //       this.httpOptions
-  //     );
-  //   }
-  // }
+
   delete(
     id: number,
   ): Observable<any> {

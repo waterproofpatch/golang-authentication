@@ -4,7 +4,7 @@ import { CommentsApiService } from '../api/comments-api.service';
 import { catchError, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
-export default interface Comment {
+export interface Comment {
   id: number;
   CreatedAt?: string;
   plantId: number;
@@ -92,30 +92,5 @@ export class CommentsService {
     );
   }
 
-  // public getComments(plantId: number): void {
-  //   console.log("Getting comments for plant id=" + plantId)
-  //   this.isLoading$.next(true)
-  //   this.commentsApiService
-  //     .get(plantId)
-  //     .pipe(
-  //       catchError((error: any) => {
-  //         if (error instanceof HttpErrorResponse) {
-  //           this.error$.next(error.error.error_message);
-  //         } else {
-  //           this.error$.next('Unexpected error');
-  //         }
-  //         return throwError(error);
-  //       })
-  //     )
-  //     .subscribe((x) => {
-  //       this.updateCommentsList(x)
-  //     });
-  // }
-
-  private updateCommentsList(comments: Comment[]): void {
-    comments = comments.sort((a: any, b: any) => b.id - a.id)
-    this.comments$.next(comments)
-    this.isLoading$.next(false)
-  }
 }
 

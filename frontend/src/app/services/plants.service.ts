@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { of, tap, Subject, throwError, Observable, BehaviorSubject } from 'rxjs';
 
 import { PlantsApiService } from '../apis/plants-api.service';
+import { Comment } from './comments.service';
 import { BaseService } from './base.service';
 
 export interface PlantLog {
@@ -11,13 +12,13 @@ export interface PlantLog {
   log: string;
   CreatedAt: string;
 }
-export interface Comment {
-  id: number;
-  content: string;
-  username: string;
-  viewed: boolean;
-  CreatedAt: string;
-}
+// export interface Comment {
+//   id: number;
+//   content: string;
+//   username: string;
+//   viewed: boolean;
+//   CreatedAt: string;
+// }
 
 export interface Plant {
   id: number;
