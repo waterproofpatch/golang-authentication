@@ -285,7 +285,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		break
 	}
 	if claims != nil {
-		db.Where("email = ? OR is_public = ?", claims.Email, true).Preload("Logs").Find(&plants)
+		db.Where("email = ? OR is_public = ?", claims.Email, true).Preload("Logs").Preload("Comments").Find(&plants)
 	} else {
 		db.Where("is_public = ?", true).Preload("Logs").Preload("Comments").Find(&plants)
 	}

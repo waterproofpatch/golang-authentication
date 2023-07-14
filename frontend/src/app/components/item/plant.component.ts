@@ -81,19 +81,11 @@ export class PlantComponent {
         this.backgroundColorMoist = "red"
       }
     }
-    this.numComments.next(0)
-    // console.log("plant " + this.plant?.id + " subbing comments")
-    // this.commentsService.comments$.subscribe((x) => {
-    //   console.log("plantId=" + this.plant?.id + " got " + x.length + " comments");
-    //   for (let comment of x) {
-    //     if (comment.plantId == this.plant?.id && !comment.viewed && this.plant?.username == this.authenticationService.username()) {
-
-    //       this.numComments.next(this.numComments.value + 1)
-    //     }
-    //   }
-    // })
     if (this.plant) {
-      // this.commentsService.getComments(this.plant.id)
+      console.log("comments for plant: " + this.plant.comments)
+      if (this.plant.comments) {
+        this.numComments.next(this.plant?.comments.length)
+      }
     }
   }
 
