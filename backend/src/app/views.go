@@ -286,6 +286,19 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 	}
 	if claims != nil {
 		db.Where("email = ? OR is_public = ?", claims.Email, true).Preload("Logs").Preload("Comments").Find(&plants)
+
+		for i := range plants {
+			for j := range plants[i].Comments {
+				var count int64
+				db.Model(&UserCommentView{}).Where("email = ? AND comment_id = ?", claims.Email, plants[i].Comments[j].Id).Count(&count)
+				if count > 0 {
+					fmt.Printf("Returning comment %d as viewed=%v by %s\n", plants[i].Comments[j].Id, true, claims.Email)
+					plants[i].Comments[j].Viewed = true
+				} else {
+					fmt.Printf("returning comment %d as viewed=%v by %s\n", plants[i].Comments[j].Id, false, claims.Email)
+				}
+			}
+		}
 	} else {
 		db.Where("is_public = ?", true).Preload("Logs").Preload("Comments").Find(&plants)
 	}
@@ -346,8 +359,8 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 
 		// make sure the plant is public
 		db.Where("id = ?", comment.PlantID).First(&plant)
-		if !plant.IsPublic {
-			authentication.WriteError(w, "This plant is not public, you cannot comment on it!", http.StatusBadRequest)
+		if !plant.IsPublic && plant.Email != claims.Email {
+			authentication.WriteError(w, "This plant is not public and also not yours, you cannot comment on it!", http.StatusBadRequest)
 			return
 		}
 
@@ -359,16 +372,21 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		}
 
 		var comment CommentModel
-		var plant PlantModel
-		db.Where("id = ?", commentId).First(&comment)
-		db.Where("id = ?", comment.PlantID).First(&plant)
-
-		if plant.Email == claims.Email {
-			fmt.Printf("Marking comment %v as viewed\n", comment)
-			comment.Viewed = true
-			db.Save(&comment)
+		result := db.Where("id = ?", commentId).First(&comment)
+		if result.Error != nil {
+			fmt.Println("No comments found!")
 		} else {
-			fmt.Printf("This comment belongs to plant owned by %s. You are %s, and this comment doesn't belong to a plant that is yours. This is not an error.", plant.Email, claims.Email)
+			fmt.Printf("%v is viewing comment %s\n", claims.Email, commentId)
+			var count int64
+			db.Model(&UserCommentView{}).Where("email = ? AND comment_id = ?", claims.Email, comment.Id).Count(&count)
+			if count == 0 {
+				view := UserCommentView{
+					Email:     claims.Email,
+					CommentID: comment.Id,
+					ViewedAt:  time.Now(),
+				}
+				db.Create(&view)
+			}
 		}
 	}
 }
