@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -28,7 +29,7 @@ type CommentModel struct {
 	Email    string `json:"-"`
 	Username string `json:"username"`
 	Content  string `json:"content"`
-	Viewed   bool   `json:"viewed"`
+	Viewed   bool   `json:"viewed" gorm:"-"`
 }
 type PlantModel struct {
 	gorm.Model
@@ -58,6 +59,12 @@ type MessageModel struct {
 	Channel       string `json:"channel"`
 	PmUsername    string `json:"pmUsername"`
 	Authenticated bool   `json:"authenticated"`
+}
+
+type UserCommentView struct {
+	CommentID int
+	Email     string
+	ViewedAt  time.Time
 }
 
 // render a plant
@@ -316,4 +323,5 @@ func InitModels(db *gorm.DB) {
 	db.AutoMigrate(&CommentModel{})
 	db.AutoMigrate(&ImageModel{})
 	db.AutoMigrate(&PlantLogModel{})
+	db.AutoMigrate(&UserCommentView{})
 }
