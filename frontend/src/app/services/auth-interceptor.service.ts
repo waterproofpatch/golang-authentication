@@ -45,7 +45,7 @@ export class AuthInterceptorService implements HttpInterceptor {
               case 401: // login or token expired
                 if (!this.authenticationService.isAuthenticated$.value) {
                   this.dialogService.displayErrorDialog("Invalid credentials.")
-                  this.authenticationService.logout(false, true)
+                  this.authenticationService.logout(undefined, true)
                   break
                 }
                 if (!this.isRefreshing) {
@@ -71,15 +71,15 @@ export class AuthInterceptorService implements HttpInterceptor {
                   );
                 } else {
                   console.log("We were refreshing and still got an error!")
-                  this.dialogService.displayErrorDialog("Login expired.")
-                  this.authenticationService.logout(false, true)
+                  // this.dialogService.displayErrorDialog("Login expired.")
+                  this.authenticationService.logout("Login expired!", true)
                 }
                 break;
               case 403: //forbidden
                 this.dialogService.displayErrorDialog(
                   '403 - Forbidden: ' + error.error.error_message
                 );
-                this.authenticationService.logout(false, true);
+                this.authenticationService.logout(undefined, true);
                 break;
               default:
                 this.dialogService.displayErrorDialog(

@@ -102,6 +102,11 @@ export class PlantsComponent {
   }
 
   ngOnInit(): void {
+    if (this.authenticationService.isTokenExpired()) {
+      console.log("Token is expired!")
+    } else {
+      console.log("Token is not expired/not exist")
+    }
     // set the filters
     this.loadFiltersFromLocalStorage()
 

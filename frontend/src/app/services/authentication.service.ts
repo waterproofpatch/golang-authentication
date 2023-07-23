@@ -57,7 +57,7 @@ export class AuthenticationService extends BaseService {
   }
 
   public async getFreshToken(): Promise<string | null> {
-    if (this.isTokenExpired()) {
+    if (!this.token || this.isTokenExpired()) {
       const result: string = await new Promise((resolve, reject) => {
         this.refresh().subscribe((x) => {
           console.log("Token refreshed, it is: " + x.token)
@@ -112,11 +112,13 @@ export class AuthenticationService extends BaseService {
 
   /**
    * 
-   * @returns True if the current token is expired.
+   * @returns True if the current token is expired. 
+   * @returns False if the current token is not set.
    */
   public isTokenExpired(): boolean {
     if (!this.token) {
-      return true;
+      // non existent tokens cannot be expired
+      return false;
     }
     const decodedToken: any = jwt_decode(this.token);
     const currentTime = Date.now() / 1000; // convert to seconds
@@ -158,10 +160,10 @@ export class AuthenticationService extends BaseService {
     return sessionStorage.getItem(this.TOKEN_KEY);
   }
 
-  logout(showModal?: boolean, redirectToLogin?: boolean) {
+  logout(modalText?: string, redirectToLogin?: boolean) {
     this.clearToken()
-    if (showModal) {
-      this.dialogService.displayLogDialog('Logged out successfully.');
+    if (modalText) {
+      this.dialogService.displayLogDialog(modalText);
     }
     if (redirectToLogin) {
       console.log("Redirecting to login via logout...")

@@ -101,7 +101,7 @@ export class WebsocketService {
 
   public async sendMessage(message: Message): Promise<void> {
     // send an authenticated message
-    if (this.authenticationService.isTokenExpired()) {
+    if (!this.authenticationService.token || this.authenticationService.isTokenExpired()) {
       console.log("Sending message but token is expired, lets refresh it...")
       await this.authenticationService.getFreshToken()
       console.log("Okay, got fresh token, proceed with sendMessage")
