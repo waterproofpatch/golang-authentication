@@ -82,8 +82,8 @@ func (h *Hub) broadcastMessage(message *Message) {
 		}
 	}
 }
-func (h *Hub) broadcastClientLeave(username string) {
 
+func (h *Hub) broadcastClientLeave(username string) {
 	var message Message
 	message.Type = USER_LEAVE
 	message.Content = username
@@ -134,9 +134,9 @@ func (h *Hub) run() {
 			}
 			h.broadcastClientLeave(client.username)
 		case messageTuple := <-h.broadcast:
-			success, _, errorMsg := authentication.ParseToken(messageTuple.Message.Token, false)
+			success, _, errorMsg, reason := authentication.ParseToken(messageTuple.Message.Token, false)
 			if !success {
-				fmt.Printf("Failed parsing token from message: %s\n", errorMsg)
+				fmt.Printf("Failed parsing token from message: %s, reason=%s\n", errorMsg, reason)
 				cm := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "Not authenticated.")
 				if err := messageTuple.Client.conn.WriteMessage(websocket.CloseMessage, cm); err != nil {
 					fmt.Printf("Error in broadcast, failed parsing token: %v\n", err)

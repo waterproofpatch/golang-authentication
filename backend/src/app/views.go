@@ -413,7 +413,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	token := q.Get("token")
 
 	log.Printf("Processing new client for channel=%s", channel)
-	success, jwtData, errorMsg := authentication.ParseToken(token, false)
+	success, jwtData, errorMsg, reason := authentication.ParseToken(token, false)
 
 	// upgrade the connection
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
@@ -424,7 +424,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !success {
-		fmt.Printf("Client is not authenticated: %s.\n", errorMsg)
+		fmt.Printf("Client is not authenticated: %s, reason=%s.\n", errorMsg, reason)
 		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "Please login or create an account."))
 		conn.Close()
 		return
