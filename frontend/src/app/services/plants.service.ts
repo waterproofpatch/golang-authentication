@@ -1,7 +1,7 @@
 import { catchError } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { of, tap, Subject, throwError, Observable, BehaviorSubject } from 'rxjs';
+import { from, of, tap, Subject, throwError, Observable, BehaviorSubject } from 'rxjs';
 
 import { PlantsApiService } from '../apis/plants-api.service';
 import { Comment } from './comments.service';
@@ -199,16 +199,25 @@ export class PlantsService extends BaseService {
    * @param imageId the imageId to obtain.
    * @returns observable
    */
-  public getPlantImage(imageId: number): Observable<any> {
-    let blob = this.imageCache.get(imageId)
-    if (blob) {
-      console.log("Obtaining blob from cache...")
-      return of(blob)
-    }
-    return this.plantsApiService.getImage(imageId).pipe(
-      tap((imageContent: any) => {
-        console.log("Tapping... " + imageContent)
-        this.imageCache.set(imageId, imageContent)
+
+  getPlantImage(imageId: number): Observable<any> {
+    const request = new Request(`/my-data-store/${imageId}`);
+    return from(
+      caches.open('my-cache').then(cache => {
+        return cache.match(request).then(response => {
+          if (response) {
+            console.log(`Image with id ${imageId} found in cache`);
+            return response.blob();
+          } else {
+            console.log(`Image with id ${imageId} not found in cache, requesting from API`);
+            return this.plantsApiService.getImage(imageId).pipe(
+              tap(imageBlob => {
+                const imageResponse = new Response(imageBlob);
+                cache.put(request, imageResponse);
+              })
+            ).toPromise();
+          }
+        });
       })
     );
   }
