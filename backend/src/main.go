@@ -2,13 +2,14 @@
 package main
 
 import (
-	"app/app"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
+
+	"app/app"
 
 	"github.com/waterproofpatch/go_authentication/authentication"
 
@@ -31,7 +32,7 @@ func startServing(port int, router *mux.Router) {
 
 	methods := []string{"GET", "POST", "PUT", "DELETE"}
 	headers := []string{"Content-Type", "Access-Control-Allow-Origin", "Authorization"}
-	origins := []string{"http://localhost:4200", "https://antlion.azurewebsites.net", "http://antlion.azurewebsites.net"}
+	origins := []string{"http://localhost:4200", "https://localhost:4200", "https://antlion.azurewebsites.net", "http://antlion.azurewebsites.net"}
 	srv := &http.Server{
 		// Handler: router,
 		Handler: handlers.CORS(handlers.AllowCredentials(), handlers.AllowedMethods(methods), handlers.AllowedHeaders(headers), handlers.AllowedOrigins(origins))(router),
@@ -52,9 +53,9 @@ func main() {
 	// Stop the function by sending a message to the channel
 	// stopCh <- true
 
-	var router = makeRouter()
-	var dropTables = false
-	var port = DEFAULT_PORT
+	router := makeRouter()
+	dropTables := false
+	port := DEFAULT_PORT
 	if os.Getenv("DROP_TABLES") == "true" {
 		dropTables = true
 	}
@@ -79,7 +80,7 @@ func main() {
 		dropTables,
 		false)
 
-	var db = authentication.GetDb()
+	db := authentication.GetDb()
 
 	app.InitViews(router)
 	app.InitModels(db)

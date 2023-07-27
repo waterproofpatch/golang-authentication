@@ -5,13 +5,14 @@ import { ChatComponent } from './components/chat/chat.component';
 import { CommentsComponent } from './components/comments/comments.component';
 import { PlantsComponent } from './components/plants/plants.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { HttpsGuard } from './services/httpsguard.service';
 
 const routes: Routes = [
-  { path: 'authentication', component: AuthenticationComponent },
-  { path: 'home', component: PlantsComponent },
-  { path: 'chat', component: ChatComponent },
-  { path: 'profile', component: ProfileComponent },
-  { path: 'comments/:plantId', component: CommentsComponent },
+  { path: 'authentication', canActivate: [HttpsGuard], component: AuthenticationComponent },
+  { path: 'home', canActivate: [HttpsGuard], component: PlantsComponent },
+  { path: 'chat', canActivate: [HttpsGuard], component: ChatComponent },
+  { path: 'profile', canActivate: [HttpsGuard], component: ProfileComponent },
+  { path: 'comments/:plantId', canActivate: [HttpsGuard], component: CommentsComponent },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
 ];
 
