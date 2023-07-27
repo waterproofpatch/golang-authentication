@@ -6,6 +6,7 @@ import { of, tap, Subject, throwError, Observable, BehaviorSubject } from 'rxjs'
 import { PlantsApiService } from '../apis/plants-api.service';
 import { Comment } from './comments.service';
 import { BaseService } from './base.service';
+import { AuthenticationService } from './authentication.service';
 
 export interface PlantLog {
   id: number;
@@ -172,14 +173,25 @@ export class PlantsService extends BaseService {
   }
   // this error string is for modals to display login or registration errors.
   error$ = new Subject<string>();
-
   plants$ = new Subject<Plant[]>();
+
   plants: Plant[] = []
 
   constructor(
     private plantsApiService: PlantsApiService,
+    private authenticationService: AuthenticationService
   ) {
     super()
+    this.authenticationService.isAuthenticated$.subscribe((isAuth: boolean) => {
+      // if the user logs out after having previously loaded a plant list, update the plant list 
+      // so they're not seeing cached authenticated-only plants.
+      if (!isAuth) {
+
+        console.log("logout event detected, getting updated plants list...")
+        this.plants = []
+        this.getPlants();
+      }
+    })
   }
 
   /**
