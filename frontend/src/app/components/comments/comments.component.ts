@@ -46,9 +46,11 @@ export class CommentsComponent {
         }
         return new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime();
       });
-      this.comments.forEach((x) => {
-        this.commentsService.viewComment(x)
-      })
+      if (this.authenticationService.isAuthenticated$.value) {
+        this.comments.forEach((x) => {
+          this.commentsService.viewComment(x)
+        })
+      }
     })
   }
 

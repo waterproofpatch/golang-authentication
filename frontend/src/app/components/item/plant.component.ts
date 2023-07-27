@@ -80,7 +80,7 @@ export class PlantComponent {
         this.backgroundColorMoist = "red"
       }
     }
-    if (this.plant) {
+    if (this.plant && this.authenticationService.isAuthenticated$.value) {
       let unviewedComments = this.plant?.comments.filter(x =>
         !x.viewed
       ).length
