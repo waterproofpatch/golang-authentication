@@ -1,8 +1,11 @@
 package app
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"image"
+	"image/jpeg"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -24,7 +27,6 @@ func getApiKey() string {
 // returns 0 on failure, ImageModel.ID stored in database on success
 func uploadHandler(w http.ResponseWriter, r *http.Request) uint {
 	// Parse the multipart form in the request
-
 	err := r.ParseMultipartForm(10 << 20) // 10 MB maximum file size
 	if err != nil {
 		authentication.WriteError(w, "Invalid file size", http.StatusBadRequest)
@@ -46,13 +48,39 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) uint {
 		return 0
 	}
 
+	// Print the original file size
+	fmt.Printf("Original file size: %d bytes\n", len(fileData))
+
+	// Decode the image data into an image.Image
+	img, _, err := image.Decode(bytes.NewReader(fileData))
+	if err != nil {
+		authentication.WriteError(w, "Failed decoding image.", http.StatusBadRequest)
+		return 0
+	}
+
+	// Create a new buffer to hold the compressed image data
+	var buf bytes.Buffer
+
+	// Compress the image using the jpeg.Encode function
+	err = jpeg.Encode(&buf, img, &jpeg.Options{Quality: 75})
+	if err != nil {
+		authentication.WriteError(w, "Failed compressing image.", http.StatusBadRequest)
+		return 0
+	}
+
+	// Get the compressed image data as a byte slice
+	compressedFileData := buf.Bytes()
+
+	// Print the compressed file size
+	fmt.Printf("Compressed file size: %d bytes\n", len(compressedFileData))
+
 	// Open a connection to the database
 	db := authentication.GetDb()
 
 	// Create a new Image instance and set its fields
 	image := ImageModel{
 		Name: "image.jpg",
-		Data: fileData,
+		Data: compressedFileData,
 	}
 
 	// Insert the record into the database
