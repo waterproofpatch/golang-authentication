@@ -185,10 +185,13 @@ func UpdatePlant(db *gorm.DB,
 	}
 
 	// imageId exists by now since we process the image before calling this function to update the plant
-	if existingplant.LastWaterDate != lastWaterDate || existingplant.WateringFrequency != wateringFrequency {
-		fmt.Println("Last water date or watering frequency has changed, resetting last notify date and last moist date")
+	if existingplant.LastWaterDate != lastWaterDate || existingplant.WateringFrequency != wateringFrequency || existingplant.LastFertilizeDate != lastFertilizeDate {
+		fmt.Println("Resetting last email notification date since something has changed!")
 		existingplant.LastNotifyDate = "" // reset
-		lastMoistDate = ""                // reset, applied later
+		if existingplant.LastWaterDate != lastWaterDate || existingplant.WateringFrequency != wateringFrequency {
+			fmt.Println("Resetting last moist date since either last water date or watering frequency changed")
+			lastMoistDate = "" // reset, applied later
+		}
 	}
 	if existingplant.IsPublic != isPublic {
 		logMsg := fmt.Sprintf("Plant changed from public=%t to public=%t", existingplant.IsPublic, isPublic)

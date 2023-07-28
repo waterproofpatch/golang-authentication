@@ -225,11 +225,12 @@ export class PlantsComponent {
 
   public switchToAddPlantMode(): void {
     console.log("Switching to add plant mode...")
+    // these are the default settings for the plant to add.
     this.editingPlant = PlantsService.PlantsFactory.makePlant("",
       1,
       0,
-      new Date().toDateString(),
-      new Date().toDateString(),
+      new Date(),
+      new Date(),
       "", // starts off with no moist date, right now the user can't set this in add
       "Generic",
       false,
@@ -292,8 +293,8 @@ export class PlantsComponent {
     var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '',
       this.form.controls.wateringFrequency.value || 0,
       this.form.controls.fertilizingFrequency.value || 0,
-      this.editingPlantLastWaterDate.value?.toDateString() || '',
-      this.editingPlantLastFertilizeDate.value?.toDateString() || '',
+      this.editingPlantLastWaterDate.value || new Date(),
+      this.editingPlantLastFertilizeDate.value || new Date(),
       this.editingPlantLastMoistDate.value || '',
       this.form.controls.tag.value || '',
       this.form.controls.publicOrPrivate.value == "public" || false,

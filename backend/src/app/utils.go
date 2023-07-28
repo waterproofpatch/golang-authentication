@@ -19,7 +19,7 @@ func formattedTime() string {
 }
 
 func isValidInput(input string) bool {
-	var alphanumeric = regexp.MustCompile(`^[a-zA-Z0-9_]{3,16}$`)
+	alphanumeric := regexp.MustCompile(`^[a-zA-Z0-9_]{3,16}$`)
 	return alphanumeric.MatchString(input)
 }
 
@@ -48,8 +48,7 @@ func sendEmail(recipient string, plantName string, username string, needsFertili
 func StartTimer(stopCh chan bool, db *gorm.DB) {
 	// Create a ticker that ticks every 5 seconds
 	ticker := time.NewTicker(5 * time.Second)
-	dateLayoutStr := "Mon Jan 02 2006"
-	regex := regexp.MustCompile(`\s*\([^)]*\)`)
+	dateLayoutStr := "01/02/2006"
 
 	for {
 		select {
@@ -62,19 +61,47 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 				if !plant.DoNotify {
 					continue
 				}
-				lastWaterDateStr := regex.ReplaceAllString(plant.LastWaterDate, "")
+				lastWaterDateStr := plant.LastWaterDate
 				lastWaterDate, err := time.Parse(dateLayoutStr, lastWaterDateStr)
 				if err != nil {
 					fmt.Println("Error parsing lastWaterDate string:", err)
-					break
+					inputDateLayout := "Mon Jan 02 2006"
+					outputDateLayout := "01/02/2006"
+
+					date, err := time.Parse(inputDateLayout, lastWaterDateStr)
+					if err != nil {
+						// handle error
+						fmt.Println("Cannot migrate from", lastWaterDateStr)
+						break
+					} else {
+
+						fmt.Println("Migrating format from", lastWaterDateStr)
+						outputDateStr := date.Format(outputDateLayout)
+						fmt.Println("New date string after conversion: ", outputDateStr)
+						lastWaterDate = date
+					}
 				}
 				nextWaterDate := lastWaterDate.AddDate(0, 0, plant.WateringFrequency)
 
-				lastFertilizeDateStr := regex.ReplaceAllString(plant.LastFertilizeDate, "")
+				lastFertilizeDateStr := plant.LastFertilizeDate
 				lastFertilizeDate, err := time.Parse(dateLayoutStr, lastFertilizeDateStr)
 				if err != nil {
 					fmt.Println("Error parsing lastFertilizeDate string:", err)
-					break
+					inputDateLayout := "Mon Jan 02 2006"
+					outputDateLayout := "01/02/2006"
+
+					date, err := time.Parse(inputDateLayout, lastFertilizeDateStr)
+					if err != nil {
+						// handle error
+						fmt.Println("Cannot migrate from", lastFertilizeDateStr)
+						break
+					} else {
+
+						fmt.Println("Migrating format from", lastFertilizeDateStr)
+						outputDateStr := date.Format(outputDateLayout)
+						fmt.Println("New date string after conversion: ", outputDateStr)
+						lastFertilizeDate = date
+					}
 				}
 				nextFertilizeDate := lastFertilizeDate.AddDate(0, 0, plant.FertilizingFrequency)
 
@@ -92,7 +119,11 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 				if needsFertilize || needsWater {
 					if plant.LastNotifyDate == "" {
 						fmt.Printf("Sending notification to owner of plant %s: %v!\n", plant.Name, plant.Email)
-						sendEmail(plant.Email, plant.Name, plant.Username, needsFertilize, needsWater)
+						sendEmail(plant.Email,
+							plant.Name,
+							plant.Username,
+							needsFertilize,
+							needsWater)
 						plant.LastNotifyDate = today.String()
 						db.Save(&plant)
 					}
