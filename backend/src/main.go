@@ -28,7 +28,7 @@ var DEFAULT_PORT = 8080
 // startServing creates the server mux and registers endpoints with it.
 func startServing(port int, router *mux.Router) {
 	portStr := fmt.Sprintf("0.0.0.0:%d", port)
-	log.Printf("Starting server on http://%s...", portStr)
+	log.Printf("Starting server on https://%s...", portStr)
 
 	methods := []string{"GET", "POST", "PUT", "DELETE"}
 	headers := []string{"Content-Type", "Access-Control-Allow-Origin", "Authorization"}

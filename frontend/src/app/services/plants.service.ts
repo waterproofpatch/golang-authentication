@@ -243,8 +243,7 @@ export class PlantsService extends BaseService {
       )
       .subscribe((x) => {
         console.log('Got plants ' + x);
-        x = x.sort((a: any, b: any) => a.id - b.id)
-        this.plants$.next(x)
+        this.updatePlantsList(x)
         this.error$.next(''); // send a benign event so observers can close modals
         this.isLoading.next(false)
       });
@@ -391,6 +390,9 @@ export class PlantsService extends BaseService {
    * @param plants new plants.
    */
   private updatePlantsList(plants: Plant[]): void {
+    // handle case where plants were removed from server copy
+    this.plants = this.plants.filter(plant => plants.some(p => p.id === plant.id));
+
     for (let p of plants) {
       if (!this.plants.some(plant => plant.id === p.id)) {
         console.log("New plant")

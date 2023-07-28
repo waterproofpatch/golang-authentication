@@ -329,6 +329,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 	} else {
 		db.Where("is_public = ?", true).Preload("Logs").Preload("Comments").Find(&plants)
 	}
+	fmt.Printf("Encoding %d plants in response\n", len(plants))
 	json.NewEncoder(w).Encode(plants)
 }
 
