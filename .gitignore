@@ -12,3 +12,5 @@ backend/src/go_authentication
 workspace.code-workspace
 *.env
 notes.txt
+frontend/cert.pem
+frontend/key.pem
