@@ -179,17 +179,20 @@ func UpdatePlant(db *gorm.DB,
 	existingplant.Id = id
 	db.Preload("Logs").First(&existingplant)
 	fmt.Printf("Existing plant: %s\n", existingplant)
+	// imageId exists by now since we process the image before calling this function to update the plant
 	if existingplant.ImageId != 0 && isNewImage {
 		fmt.Printf("isNewImage=%t, Must first remove old plant image ID=%d\n", isNewImage, existingplant.ImageId)
 		db.Delete(&ImageModel{}, existingplant.ImageId)
 	}
 
-	// imageId exists by now since we process the image before calling this function to update the plant
-	if existingplant.LastWaterDate != lastWaterDate || existingplant.WateringFrequency != wateringFrequency || existingplant.LastFertilizeDate != lastFertilizeDate {
+	if existingplant.LastWaterDate != lastWaterDate ||
+		existingplant.WateringFrequency != wateringFrequency ||
+		existingplant.LastFertilizeDate != lastFertilizeDate ||
+		existingplant.LastMoistDate != lastMoistDate {
 		fmt.Println("Resetting last email notification date since something has changed!")
 		existingplant.LastNotifyDate = "" // reset
 		if existingplant.LastWaterDate != lastWaterDate || existingplant.WateringFrequency != wateringFrequency {
-			fmt.Println("Resetting last moist date since either last water date or watering frequency changed")
+			fmt.Println("Resetting last moist date since plant care happened.")
 			lastMoistDate = "" // reset, applied later
 		}
 	}
