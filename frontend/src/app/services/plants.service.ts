@@ -222,6 +222,8 @@ export class PlantsService extends BaseService {
     );
   }
 
+
+
   /**
    * Delete an existing plant by its ID
    * @param id ID of the plant to delete.
