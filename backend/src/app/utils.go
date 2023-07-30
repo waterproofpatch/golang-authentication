@@ -69,7 +69,6 @@ func needsCare(lastCareDate string, intervalDays int) bool {
 		// attempt format migration
 		fmt.Println("Error parsing lastCareDate string:", err)
 		inputDateLayout := "Mon Jan 02 2006"
-		outputDateLayout := "01/02/2006"
 
 		date, err := time.Parse(inputDateLayout, lastCareDate)
 		if err != nil {
@@ -79,7 +78,8 @@ func needsCare(lastCareDate string, intervalDays int) bool {
 		} else {
 
 			fmt.Println("Migrating format from", lastCareDate)
-			outputDateStr := date.Format(outputDateLayout)
+			// check/debug new date and see if it is in the format we want
+			outputDateStr := date.Format(dateLayoutStr)
 			fmt.Println("New date string after conversion: ", outputDateStr)
 			lastCareTime = date
 		}
