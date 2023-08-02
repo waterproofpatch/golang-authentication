@@ -255,10 +255,11 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 
 		// update the last moist date. the frontend can tell the user when to check next.
 		if moistValue == "true" {
-			fmt.Printf("Marking plant %d as moist.\n", plant.ID)
+			fmt.Printf("Marking plant %d as moist and updating last notify date.\n", plant.ID)
 			currentTime := time.Now()
 			formattedTime := currentTime.Format("01/02/2006")
 			existingPlant.LastMoistDate = formattedTime
+			existingPlant.LastNotifyDate = ""
 			addPlantLog(db, &existingPlant, "Plant soil marked as moist.")
 			db.Save(&existingPlant)
 			break
