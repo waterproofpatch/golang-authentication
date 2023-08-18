@@ -122,7 +122,12 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 				if plant.LastNotifyDate == "" {
 					fmt.Printf("Checking if plant %d (name=%s) needs care...\n", plant.Id, plant.Name)
 					needsWaterCare := needsCare(plant.LastWaterDate, plant.WateringFrequency)
-					needsFertilizeCare := needsCare(plant.LastFertilizeDate, plant.FertilizingFrequency)
+					needsFertilizeCare := false
+					if plant.FertilizingFrequency > 0 {
+						needsFertilizeCare = needsCare(plant.LastFertilizeDate, plant.FertilizingFrequency)
+					} else {
+						needsFertilizeCare = false
+					}
 
 					// is the plant overdue for watering
 					if needsFertilizeCare || needsWaterCare {
