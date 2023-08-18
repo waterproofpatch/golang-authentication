@@ -109,6 +109,7 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 	for {
 		select {
 		case <-ticker.C:
+			fmt.Printf("Tick...\n")
 			var plants []PlantModel
 			db.Find(&plants)
 
