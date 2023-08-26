@@ -88,9 +88,7 @@ func needsCare(lastCareDate string, intervalDays int) bool {
 		fmt.Printf("Failed converting last care time to est")
 		return false
 	}
-	fmt.Printf("lastCareTime=%v\n", lastCareTime)
 	timeNow := time.Now()
-	fmt.Printf("timeNow=%v\n", timeNow)
 	timeNowEst, err := getEstTime(timeNow)
 	fmt.Printf("timeNowEst=%v\n", timeNowEst)
 	nextCareTime := lastCareTime.AddDate(0, 0, intervalDays)
@@ -132,7 +130,7 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 
 					// is the plant overdue for watering
 					if needsFertilizeCare || needsWaterCare {
-						fmt.Printf("Sending notification to owner of plant %s: %v!\n", plant.Name, plant.Email)
+						fmt.Printf("Sending notification to owner of plant %s: %v (needsWaterCare=%v, needsFertilizeCare=%v)!\n", plant.Name, plant.Email, needsWaterCare, needsFertilizeCare)
 						sendEmail(plant.Email,
 							plant.Name,
 							plant.Username,
