@@ -14,3 +14,4 @@ workspace.code-workspace
 notes.txt
 frontend/cert.pem
 frontend/key.pem
+backup_db.sh
