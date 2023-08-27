@@ -3,7 +3,6 @@ package app
 import (
 	"errors"
 	"fmt"
-	"os/exec"
 	"regexp"
 	"time"
 
@@ -25,9 +24,13 @@ func isValidInput(input string) bool {
 }
 
 // execute the python script 'main.py' in /email_service to send an email
-func sendEmail(recipient string, plantName string, username string, needsFertilizer bool, needsWater bool) {
+func sendEmail(
+	plant *PlantModel,
+	needsFertilizer bool,
+	needsWater bool,
+) {
 	fmt.Println("Building email...")
-	args := []string{"/email_service/main.py", "--recipient", recipient, "--plant-name", plantName, "--username", username}
+	args := []string{"/email_service/main.py", "--recipient", plant.Email, "--plant-name", plant.Name, "--username", plant.Username}
 	if needsFertilizer {
 		args = append(args, "--needs-fertilizer")
 	}
@@ -35,15 +38,27 @@ func sendEmail(recipient string, plantName string, username string, needsFertili
 		args = append(args, "--needs-water")
 	}
 	fmt.Println("About to send email...")
-	cmd := exec.Command("/email_service/venv/bin/python", args...)
+	// cmd := exec.Command("/email_service/venv/bin/python", args...)
 	fmt.Println("Sent email.")
-	stdout, err := cmd.Output()
+	// stdout, err := cmd.Output()
+	// if err != nil {
+	// 	fmt.Println(string(stdout))
+	// 	fmt.Println(err.Error())
+	// 	return
+	// }
+	// fmt.Println(string(stdout))
+	tmpDate, err := getEstTimeNow()
 	if err != nil {
-		fmt.Println(string(stdout))
-		fmt.Println(err.Error())
-		return
+		fmt.Printf("failed getting estTime\n")
 	}
-	fmt.Println(string(stdout))
+	if needsFertilizer {
+		fmt.Printf("Updating last fertilize notify date")
+		plant.LastFertilizeNotifyDate = tmpDate.String()
+	}
+	if needsWater {
+		fmt.Printf("Updating last water notify date")
+		plant.LastWaterNotifyDate = tmpDate.String()
+	}
 }
 
 func getEstTimeNow() (time.Time, error) {
@@ -115,36 +130,27 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 				if !plant.DoNotify {
 					continue
 				}
+				needsWaterCare := false
+				needsFertilizeCare := false
 				// if a notification has not been set since the last
 				// time the plant care date(s) have changed, check if we need
 				// to send a notification
-				if plant.LastNotifyDate == "" {
-					fmt.Printf("Checking if plant %d (name=%s) needs care...\n", plant.Id, plant.Name)
-					needsWaterCare := needsCare(plant.LastWaterDate, plant.WateringFrequency)
-					needsFertilizeCare := false
+				if plant.LastWaterNotifyDate == "" {
+					fmt.Printf("Checking if plant %d (name=%s) needs water care...\n", plant.Id, plant.Name)
+					needsWaterCare = needsCare(plant.LastWaterDate, plant.WateringFrequency)
+				}
+				if plant.LastFertilizeNotifyDate == "" {
 					if plant.FertilizingFrequency > 0 {
 						needsFertilizeCare = needsCare(plant.LastFertilizeDate, plant.FertilizingFrequency)
-					} else {
-						needsFertilizeCare = false
 					}
-
-					// is the plant overdue for watering
-					if needsFertilizeCare || needsWaterCare {
-						fmt.Printf("Sending notification to owner of plant %s: %v (needsWaterCare=%v, needsFertilizeCare=%v)!\n", plant.Name, plant.Email, needsWaterCare, needsFertilizeCare)
-						sendEmail(plant.Email,
-							plant.Name,
-							plant.Username,
-							needsFertilizeCare,
-							needsWaterCare)
-						tmpDate, err := getEstTimeNow()
-						if err != nil {
-							fmt.Printf("failed getting estTime\n")
-						} else {
-							plant.LastNotifyDate = tmpDate.String()
-						}
-
-						db.Save(&plant)
-					}
+				}
+				// is the plant overdue for watering
+				if needsFertilizeCare || needsWaterCare {
+					fmt.Printf("Sending notification to owner of plant %s: %v (needsWaterCare=%v, needsFertilizeCare=%v)!\n", plant.Name, plant.Email, needsWaterCare, needsFertilizeCare)
+					sendEmail(&plant,
+						needsFertilizeCare,
+						needsWaterCare)
+					db.Save(&plant)
 				}
 			}
 		case <-stopCh:
