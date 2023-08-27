@@ -259,8 +259,6 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			currentTime := time.Now()
 			formattedTime := currentTime.Format("01/02/2006")
 			existingPlant.LastMoistDate = formattedTime
-			// mark as "we've never notified them"
-			existingPlant.LastWaterNotifyDate = ""
 			addPlantLog(db, &existingPlant, "Plant soil marked as moist.")
 			db.Save(&existingPlant)
 			break

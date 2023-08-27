@@ -3,6 +3,7 @@ package app
 import (
 	"errors"
 	"fmt"
+	"os/exec"
 	"regexp"
 	"time"
 
@@ -38,15 +39,15 @@ func sendEmail(
 		args = append(args, "--needs-water")
 	}
 	fmt.Println("About to send email...")
-	// cmd := exec.Command("/email_service/venv/bin/python", args...)
+	cmd := exec.Command("/email_service/venv/bin/python", args...)
 	fmt.Println("Sent email.")
-	// stdout, err := cmd.Output()
-	// if err != nil {
-	// 	fmt.Println(string(stdout))
-	// 	fmt.Println(err.Error())
-	// 	return
-	// }
-	// fmt.Println(string(stdout))
+	stdout, err := cmd.Output()
+	if err != nil {
+		fmt.Println(string(stdout))
+		fmt.Println(err.Error())
+		return
+	}
+	fmt.Println(string(stdout))
 	tmpDate, err := getEstTimeNow()
 	if err != nil {
 		fmt.Printf("failed getting estTime\n")
@@ -132,6 +133,21 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 				}
 				needsWaterCare := false
 				needsFertilizeCare := false
+				if plant.LastMoistDate != "" {
+					fmt.Printf("Plant was marked as moist on %s\n", plant.LastMoistDate)
+					// Parse the date string into a time.Time object
+					date, err := time.Parse("01/02/2006", plant.LastMoistDate)
+					if err != nil {
+						panic(err)
+					}
+					// Calculate the duration between the current time and the date
+					duration := time.Since(date)
+
+					// moist checks are daily, for now
+					if duration > 24*time.Hour {
+						needsWaterCare = true
+					}
+				}
 				// if a notification has not been set since the last
 				// time the plant care date(s) have changed, check if we need
 				// to send a notification
