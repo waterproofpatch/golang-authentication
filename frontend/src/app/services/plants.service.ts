@@ -56,7 +56,7 @@ export class PlantsService extends BaseService {
    * @param date to format
    * @returns formatted @c date
    */
-  private static FormatDate(date: Date): string {
+  public static FormatDate(date: Date): string {
 
     const day = date.getDate().toString().padStart(2, '0'); // Get the day of the month (1-31) and pad it with a leading zero if necessary
     const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Get the month (0-11), add 1 to get the month as a number (1-12), and pad it with a leading zero if necessary
@@ -143,8 +143,8 @@ export class PlantsService extends BaseService {
     public static makePlant(name: string,
       wateringFrequency: number,
       fertilizingFrequency: number,
-      lastWateredDate: string,
-      lastFertilizeDate: string,
+      lastWateredDate: Date,
+      lastFertilizeDate: Date,
       lastMoistDate: string,
       tag: string,
       isPublic: boolean,
@@ -155,8 +155,8 @@ export class PlantsService extends BaseService {
         name: name,
         wateringFrequency: wateringFrequency,
         fertilizingFrequency: fertilizingFrequency,
-        lastWaterDate: lastWateredDate,
-        lastFertilizeDate: lastFertilizeDate,
+        lastWaterDate: PlantsService.FormatDate(lastWateredDate),
+        lastFertilizeDate: PlantsService.FormatDate(lastFertilizeDate),
         lastMoistDate: lastMoistDate,
         tag: tag,
         id: 0, // authoritative
@@ -222,6 +222,8 @@ export class PlantsService extends BaseService {
     );
   }
 
+
+
   /**
    * Delete an existing plant by its ID
    * @param id ID of the plant to delete.
@@ -243,8 +245,7 @@ export class PlantsService extends BaseService {
       )
       .subscribe((x) => {
         console.log('Got plants ' + x);
-        x = x.sort((a: any, b: any) => a.id - b.id)
-        this.plants$.next(x)
+        this.updatePlantsList(x)
         this.error$.next(''); // send a benign event so observers can close modals
         this.isLoading.next(false)
       });
@@ -391,6 +392,9 @@ export class PlantsService extends BaseService {
    * @param plants new plants.
    */
   private updatePlantsList(plants: Plant[]): void {
+    // handle case where plants were removed from server copy
+    this.plants = this.plants.filter(plant => plants.some(p => p.id === plant.id));
+
     for (let p of plants) {
       if (!this.plants.some(plant => plant.id === p.id)) {
         console.log("New plant")

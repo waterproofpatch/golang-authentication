@@ -5,7 +5,6 @@ import { DialogService, PlantCareDialogData } from 'src/app/services/dialog.serv
 import { Plant, PlantCareType, PlantsService } from 'src/app/services/plants.service';
 import { EventEmitter } from '@angular/core';
 import { Output } from '@angular/core';
-import { CommentsService } from 'src/app/services/comments.service';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({
@@ -128,22 +127,14 @@ export class PlantComponent {
         if (!this.plant) {
           return;
         }
-        const currentDate = new Date();
-        const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const dayOfWeek = daysOfWeek[currentDate.getDay()];
-        const month = months[currentDate.getMonth()];
-        const day = currentDate.getDate();
-        const year = currentDate.getFullYear();
-        const formattedDate = `${dayOfWeek} ${month} ${day} ${year}`;
         if (result.water) {
-          console.log("Setting water date to " + formattedDate);
-          this.plant.lastWaterDate = formattedDate
+          this.plant.lastWaterDate = PlantsService.FormatDate(new Date())
+          console.log("Setting lastWaterDate to " + this.plant.lastWaterDate);
           this.plant.lastMoistDate = '' // unset
         }
         if (result.fertilize) {
-          console.log("Setting fertilize date to " + formattedDate);
-          this.plant.lastFertilizeDate = formattedDate
+          this.plant.lastFertilizeDate = PlantsService.FormatDate(new Date())
+          console.log("Setting lastFertilizeDate to " + this.plant.lastFertilizeDate);
         }
         if (result.moist) {
           console.log("Plant is moist - only updating that attribute")

@@ -130,6 +130,8 @@ github.com/waterproofpatch/go_authentication v0.0.0-alpha.6 h1:b+RV0l4QDZ+5nU4IF
 github.com/waterproofpatch/go_authentication v0.0.0-alpha.6/go.mod h1:PVrOhMFZPeMNgAjzt488PgDwbmx+FNPeoH3nwdb8k2k=
 github.com/waterproofpatch/go_authentication v0.0.0-alpha.7 h1:Fh817jKJnXtKlOXpIgb1IS1t7t6lnmF3HDBcWfQUsZ0=
 github.com/waterproofpatch/go_authentication v0.0.0-alpha.7/go.mod h1:PVrOhMFZPeMNgAjzt488PgDwbmx+FNPeoH3nwdb8k2k=
+github.com/waterproofpatch/go_authentication v0.0.0-alpha.8 h1:9tbVRMW9GJVOAuPlRbJlsnFkwKXPj8SMuKcD61q8H8A=
+github.com/waterproofpatch/go_authentication v0.0.0-alpha.8/go.mod h1:PVrOhMFZPeMNgAjzt488PgDwbmx+FNPeoH3nwdb8k2k=
 github.com/zenazn/goji v0.9.0/go.mod h1:7S9M489iMyHBNxwZnk9/EHS098H4/F6TATF2mIxtB1Q=
 go.uber.org/atomic v1.3.2/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
 go.uber.org/atomic v1.4.0/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=

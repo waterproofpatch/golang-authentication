@@ -1,6 +1,7 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"os/exec"
 	"regexp"
@@ -19,14 +20,18 @@ func formattedTime() string {
 }
 
 func isValidInput(input string) bool {
-	var alphanumeric = regexp.MustCompile(`^[a-zA-Z0-9_]{3,16}$`)
+	alphanumeric := regexp.MustCompile(`^[a-zA-Z0-9_]{3,16}$`)
 	return alphanumeric.MatchString(input)
 }
 
 // execute the python script 'main.py' in /email_service to send an email
-func sendEmail(recipient string, plantName string, username string, needsFertilizer bool, needsWater bool) {
+func sendEmail(
+	plant *PlantModel,
+	needsFertilizer bool,
+	needsWater bool,
+) {
 	fmt.Println("Building email...")
-	args := []string{"/email_service/main.py", "--recipient", recipient, "--plant-name", plantName, "--username", username}
+	args := []string{"/email_service/main.py", "--recipient", plant.Email, "--plant-name", plant.Name, "--username", plant.Username}
 	if needsFertilizer {
 		args = append(args, "--needs-fertilizer")
 	}
@@ -43,18 +48,82 @@ func sendEmail(recipient string, plantName string, username string, needsFertili
 		return
 	}
 	fmt.Println(string(stdout))
+	tmpDate, err := getEstTimeNow()
+	if err != nil {
+		fmt.Printf("failed getting estTime\n")
+	}
+	if needsFertilizer {
+		fmt.Printf("Updating last fertilize notify date")
+		plant.LastFertilizeNotifyDate = tmpDate.String()
+	}
+	if needsWater {
+		fmt.Printf("Updating last water notify date")
+		plant.LastWaterNotifyDate = tmpDate.String()
+	}
+}
+
+func getEstTimeNow() (time.Time, error) {
+	today := time.Now().UTC()
+	return getEstTime(today)
+}
+
+func getEstTime(theTime time.Time) (time.Time, error) {
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		fmt.Printf("Failed finding location: %v\n", loc)
+		return time.Now(), errors.New("Failed finding location %vn")
+	}
+	estTime := theTime.In(loc)
+	return estTime, nil
+}
+
+func needsCare(lastCareDate string, intervalDays int) bool {
+	dateLayoutStr := "01/02/2006"
+	fmt.Printf("lastCareDate=%v\n", lastCareDate)
+	lastCareTime, err := time.Parse(dateLayoutStr, lastCareDate)
+	if err != nil {
+		// attempt format migration
+		fmt.Println("Error parsing lastCareDate string:", err)
+		inputDateLayout := "Mon Jan 02 2006"
+
+		date, err := time.Parse(inputDateLayout, lastCareDate)
+		if err != nil {
+			// handle error
+			fmt.Println("Cannot migrate from", lastCareDate)
+			return false
+		} else {
+
+			fmt.Println("Migrating format from", lastCareDate)
+			// check/debug new date and see if it is in the format we want
+			outputDateStr := date.Format(dateLayoutStr)
+			fmt.Println("New date string after conversion: ", outputDateStr)
+			lastCareTime = date
+		}
+	}
+	if err != nil {
+		fmt.Printf("Failed converting last care time to est")
+		return false
+	}
+	timeNow := time.Now()
+	timeNowEst, err := getEstTime(timeNow)
+	fmt.Printf("timeNowEst=%v\n", timeNowEst)
+	nextCareTime := lastCareTime.AddDate(0, 0, intervalDays)
+	fmt.Printf("nextCareTime=%v\n", nextCareTime)
+	if nextCareTime.Before(timeNowEst) {
+		fmt.Printf("Needs care: last care time: %v, next care time: %v, today is %v\n", lastCareTime, nextCareTime, timeNowEst)
+		return true
+	}
+	return false
 }
 
 func StartTimer(stopCh chan bool, db *gorm.DB) {
 	// Create a ticker that ticks every 5 seconds
 	ticker := time.NewTicker(5 * time.Second)
-	dateLayoutStr := "Mon Jan 02 2006"
-	regex := regexp.MustCompile(`\s*\([^)]*\)`)
 
 	for {
 		select {
 		case <-ticker.C:
-			today := time.Now().UTC()
+			fmt.Printf("Tick...\n")
 			var plants []PlantModel
 			db.Find(&plants)
 
@@ -62,40 +131,42 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 				if !plant.DoNotify {
 					continue
 				}
-				lastWaterDateStr := regex.ReplaceAllString(plant.LastWaterDate, "")
-				lastWaterDate, err := time.Parse(dateLayoutStr, lastWaterDateStr)
-				if err != nil {
-					fmt.Println("Error parsing lastWaterDate string:", err)
-					break
-				}
-				nextWaterDate := lastWaterDate.AddDate(0, 0, plant.WateringFrequency)
-
-				lastFertilizeDateStr := regex.ReplaceAllString(plant.LastFertilizeDate, "")
-				lastFertilizeDate, err := time.Parse(dateLayoutStr, lastFertilizeDateStr)
-				if err != nil {
-					fmt.Println("Error parsing lastFertilizeDate string:", err)
-					break
-				}
-				nextFertilizeDate := lastFertilizeDate.AddDate(0, 0, plant.FertilizingFrequency)
-
-				var needsFertilize bool
-				var needsWater bool
-
-				if nextFertilizeDate.Before(today) {
-					needsFertilize = true
-				}
-				if nextWaterDate.Before(today) {
-					needsWater = true
-				}
-
-				// is the plant overdue for watering
-				if needsFertilize || needsWater {
-					if plant.LastNotifyDate == "" {
-						fmt.Printf("Sending notification to owner of plant %s: %v!\n", plant.Name, plant.Email)
-						sendEmail(plant.Email, plant.Name, plant.Username, needsFertilize, needsWater)
-						plant.LastNotifyDate = today.String()
-						db.Save(&plant)
+				needsWaterCare := false
+				needsFertilizeCare := false
+				if plant.LastMoistDate != "" {
+					fmt.Printf("Plant was marked as moist on %s\n", plant.LastMoistDate)
+					// Parse the date string into a time.Time object
+					date, err := time.Parse("01/02/2006", plant.LastMoistDate)
+					if err != nil {
+						panic(err)
 					}
+					// Calculate the duration between the current time and the date
+					duration := time.Since(date)
+
+					// moist checks are daily, for now
+					if duration > 24*time.Hour {
+						needsWaterCare = true
+					}
+				}
+				// if a notification has not been set since the last
+				// time the plant care date(s) have changed, check if we need
+				// to send a notification
+				if plant.LastWaterNotifyDate == "" {
+					fmt.Printf("Checking if plant %d (name=%s) needs water care...\n", plant.Id, plant.Name)
+					needsWaterCare = needsCare(plant.LastWaterDate, plant.WateringFrequency)
+				}
+				if plant.LastFertilizeNotifyDate == "" {
+					if plant.FertilizingFrequency > 0 {
+						needsFertilizeCare = needsCare(plant.LastFertilizeDate, plant.FertilizingFrequency)
+					}
+				}
+				// is the plant overdue for watering
+				if needsFertilizeCare || needsWaterCare {
+					fmt.Printf("Sending notification to owner of plant %s: %v (needsWaterCare=%v, needsFertilizeCare=%v)!\n", plant.Name, plant.Email, needsWaterCare, needsFertilizeCare)
+					sendEmail(&plant,
+						needsFertilizeCare,
+						needsWaterCare)
+					db.Save(&plant)
 				}
 			}
 		case <-stopCh:
