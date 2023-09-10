@@ -24,7 +24,7 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /usr/bin
 COPY --from=build /web-app .
 
-ENV SITE_TIMESTAMP="site-timestamp_9b48ec9_09/10/23 10:46:06"
+ENV SITE_TIMESTAMP="site-timestamp_27a94e2_09/10/23 10:50:35"
 
 EXPOSE 80
 CMD /usr/bin/web-app --port $PORT 
