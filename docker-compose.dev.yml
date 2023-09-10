@@ -14,7 +14,9 @@ services:
     volumes:
       - ./backend:/app
     env_file:
+      # contains azure email service ids
       - secret.env
+      # defines the default user for the development environment
       - default_user.env
     environment:
       - PORT=5000
