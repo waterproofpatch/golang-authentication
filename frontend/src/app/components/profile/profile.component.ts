@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { ProfileService } from 'src/app/services/profile.service';
 
 @Component({
   selector: 'app-profile',
@@ -7,10 +8,18 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent {
-  constructor(public authenticationService: AuthenticationService) {
-
+  version: string = "Loading..."
+  constructor(public authenticationService: AuthenticationService, private profileService: ProfileService) {
   }
 
+  ngOnInit(): void {
+    this.getVersion()
+  }
 
+  getVersion(): void {
 
+    this.profileService.getVersion().subscribe((x) => {
+      this.version = x.version
+    })
+  }
 }

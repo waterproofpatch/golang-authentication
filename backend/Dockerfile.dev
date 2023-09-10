@@ -9,4 +9,7 @@ COPY src/email_service/requirements.txt /email_service/
 WORKDIR /email_service
 RUN python3 -m venv venv
 RUN venv/bin/python -m pip install -r requirements.txt
+
+ENV SITE_TIMESTAMP=678
+
 WORKDIR /app/src

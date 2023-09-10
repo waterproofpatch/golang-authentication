@@ -24,6 +24,7 @@ services:
       - REFRESH_SECRET=somesecretrefreshtoken
       - SECRET=somesecretjwttoken
       - DROP_TABLES=false
+      - SITE_TIMESTAMPdeleteme=123
     command: sh -c "air && go build main.go && ./main"
     networks:
       - app-net

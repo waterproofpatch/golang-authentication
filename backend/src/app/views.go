@@ -128,6 +128,22 @@ func images(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// get the version information from the environment for displaying to the frontend
+func version(w http.ResponseWriter, r *http.Request) {
+	// see docker-compose.dev
+	version := os.Getenv("SITE_TIMESTAMP")
+
+	dict := map[string]string{
+		"version": version,
+	}
+
+	err := json.NewEncoder(w).Encode(dict)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
 	db := authentication.GetDb()
 	var plants []PlantModel
@@ -527,4 +543,5 @@ func InitViews(router *mux.Router) {
 	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)
 	})
+	router.HandleFunc("/api/version", version).Methods("GET", "OPTIONS")
 }
