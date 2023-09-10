@@ -12,6 +12,8 @@ NEW_TIMESTAMP="${GIT_BRANCH}_${GIT_HASH}_${CURRENT_TIME}"
 
 echo "Updating timestamp to ${NEW_TIMESTAMP}"
 sed -i.bak 's|SITE_TIMESTAMP="[^"]*"|SITE_TIMESTAMP="'"${NEW_TIMESTAMP}"'"|g' backend/Dockerfile.dev
+sed -i.bak 's|SITE_TIMESTAMP="[^"]*"|SITE_TIMESTAMP="'"${NEW_TIMESTAMP}"'"|g' backend/Dockerfile.prod
 
 # Remove the backup file created by sed
 rm -rf backend/Dockerfile.dev.bak
+rm -rf backend/Dockerfile.prod.bak

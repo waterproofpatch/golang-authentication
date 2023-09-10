@@ -14,7 +14,8 @@ down:
 
 prod_frontend:
 	$(MAKE) -C frontend prod
-prod_backend:
+
+prod_backend: update_timestamp
 	$(MAKE) -C backend prod
 
 # run prod target with -j2 for parallel builds
