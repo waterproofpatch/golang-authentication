@@ -54,12 +54,13 @@ func sendEmail(
 		fmt.Printf("failed getting estTime\n")
 	}
 	if needsFertilizer {
-		fmt.Printf("Updating last fertilize notify date")
+		fmt.Printf("Updating last fertilize notify date (%s)", plant.LastFertilizeNotifyDate)
 		plant.LastFertilizeNotifyDate = tmpDate.String()
 	}
 	if needsWater {
-		fmt.Printf("Updating last water notify date")
+		fmt.Printf("Updating last water and moist notify dates (%s, %s)", plant.LastWaterNotifyDate, plant.LastMoistNotifyDate)
 		plant.LastWaterNotifyDate = tmpDate.String()
+		plant.LastMoistNotifyDate = tmpDate.String()
 	}
 }
 
@@ -85,9 +86,16 @@ func needsCare(lastCareDate string, intervalDays int) bool {
 	if err != nil {
 		// attempt format migration
 		fmt.Println("Error parsing lastCareDate string:", err)
-		inputDateLayout := "Mon Jan 02 2006"
+		inputDateLayouts := []string{"Mon Jan 2 2006", "Mon Jan 02 2006"}
 
-		date, err := time.Parse(inputDateLayout, lastCareDate)
+		var date time.Time
+		for _, layout := range inputDateLayouts {
+			date, err = time.Parse(layout, lastCareDate)
+			if err == nil {
+				break
+			}
+		}
+
 		if err != nil {
 			// handle error
 			fmt.Println("Cannot migrate from", lastCareDate)
@@ -134,7 +142,7 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 				}
 				needsWaterCare := false
 				needsFertilizeCare := false
-				if plant.LastMoistDate != "" {
+				if plant.LastMoistDate != "" && plant.LastMoistNotifyDate == "" {
 					fmt.Printf("Plant was marked as moist on %s\n", plant.LastMoistDate)
 					// Parse the date string into a time.Time object
 					date, err := time.Parse("01/02/2006", plant.LastMoistDate)
@@ -158,12 +166,15 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 				}
 				if plant.LastFertilizeNotifyDate == "" {
 					if plant.FertilizingFrequency > 0 {
+						fmt.Printf("Checking if plant %d (name=%s) needs fertilizer care...\n", plant.Id, plant.Name)
 						needsFertilizeCare = needsCare(plant.LastFertilizeDate, plant.FertilizingFrequency)
 					}
 				}
 				// is the plant overdue for watering
 				if needsFertilizeCare || needsWaterCare {
-					fmt.Printf("Sending notification to owner of plant %s: %v (needsWaterCare=%v, needsFertilizeCare=%v)!\n", plant.Name, plant.Email, needsWaterCare, needsFertilizeCare)
+					fmt.Printf("LastFertilizeNotifyDate=%s\n", plant.LastFertilizeNotifyDate)
+					fmt.Printf("LastWaterNotifyDate=%s\n", plant.LastWaterNotifyDate)
+					fmt.Printf("Sending notification to owner of plant %d (name=%s): %v (needsWaterCare=%v, needsFertilizeCare=%v)!\n", plant.Id, plant.Name, plant.Email, needsWaterCare, needsFertilizeCare)
 					sendEmail(&plant,
 						needsFertilizeCare,
 						needsWaterCare)
