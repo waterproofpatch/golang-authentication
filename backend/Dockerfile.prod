@@ -1,6 +1,6 @@
 FROM golang:1.18-alpine AS build
 
-RUN apk add python3 git
+RUN apk add python3 git tzdata
 COPY src/email_service/main.py /email_service/
 COPY src/email_service/requirements.txt /email_service/
 WORKDIR /email_service
@@ -24,7 +24,7 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /usr/bin
 COPY --from=build /web-app .
 
-ENV SITE_TIMESTAMP="site-timestamp_27a94e2_09/10/23 10:50:35"
+ENV SITE_TIMESTAMP="site-timestamp_412f93b_09/11/23 00:40:30"
 
 EXPOSE 80
 CMD /usr/bin/web-app --port $PORT 
