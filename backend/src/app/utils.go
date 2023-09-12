@@ -116,7 +116,9 @@ func needsCare(lastCareDate string, intervalDays int) bool {
 	timeNow := time.Now()
 	timeNowEst, err := getEstTime(timeNow)
 	fmt.Printf("timeNowEst=%v\n", timeNowEst)
-	nextCareTime := lastCareTime.AddDate(0, 0, intervalDays)
+	// email reminders should be sent as reminders, not alerts - so
+	// add a day after the last care date to send reminders.
+	nextCareTime := lastCareTime.AddDate(0, 0, intervalDays+1)
 	fmt.Printf("nextCareTime=%v\n", nextCareTime)
 	if nextCareTime.Before(timeNowEst) {
 		fmt.Printf("Needs care: last care time: %v, next care time: %v, today is %v\n", lastCareTime, nextCareTime, timeNowEst)
