@@ -26,11 +26,7 @@ func isValidInput(input string) bool {
 }
 
 // execute the python script 'main.py' in /email_service to send an email
-func sendEmail(
-	plant *PlantModel,
-	needsFertilizer bool,
-	needsWater bool,
-) {
+func sendEmail(plant *PlantModel, needsFertilizer bool, needsWater bool) {
 	fmt.Println("Building email...")
 	args := []string{"/email_service/main.py", "--recipient", plant.Email, "--plant-name", plant.Name, "--username", plant.Username}
 	if needsFertilizer {
@@ -44,14 +40,14 @@ func sendEmail(
 	fmt.Println("Sent email.")
 	stdout, err := cmd.Output()
 	if err != nil {
-		fmt.Println(string(stdout))
-		fmt.Println(err.Error())
+		fmt.Println(string(stdout), err.Error())
 		return
 	}
 	fmt.Println(string(stdout))
 	tmpDate, err := getEstTimeNow()
 	if err != nil {
 		fmt.Printf("failed getting estTime\n")
+		return
 	}
 	if needsFertilizer {
 		fmt.Printf("Updating last fertilize notify date (%s)", plant.LastFertilizeNotifyDate)
