@@ -264,10 +264,10 @@ func AddPlant(db *gorm.DB,
 	// Delete old records if the limit has been reached
 	var count int64
 	db.Model(&PlantModel{}).Count(&count)
-	if count > 50 {
+	if count > 500 {
 		fmt.Printf("DB has %d plants.", count)
 		var plants []PlantModel
-		db.Order("id asc").Limit(int(count) - 50).Find(&plants)
+		db.Order("id asc").Limit(int(count) - 500).Find(&plants)
 		db.Delete(&plants)
 	}
 	plant := PlantModel{
