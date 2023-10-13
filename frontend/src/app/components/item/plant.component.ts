@@ -106,10 +106,12 @@ export class PlantComponent {
     }
     let water: boolean = false
     let fertilize: boolean = false
+    let skipFertilize: boolean = false
     let moist: boolean = false
     var dialogRef = this.dialogService.displayPlantCareDialog("What did you do for " + this.plant.name + "?",
       water,
       fertilize,
+      skipFertilize,
       moist)
     if (this.plant == null) {
       console.log("Unexpected plant is NULL");
@@ -118,6 +120,7 @@ export class PlantComponent {
     dialogRef.afterClosed().subscribe((result: PlantCareDialogData) => {
       console.log("water: " + result.water)
       console.log("fertilize: " + result.fertilize)
+      console.log("skipFertilize: " + result.skipFertilize)
       console.log("moist: " + result.moist)
       if (result.moist && (result.water || result.fertilize)) {
         this.dialogService.displayErrorDialog("Only choose 'moist' when not choosing other care actions.")
@@ -132,9 +135,15 @@ export class PlantComponent {
           console.log("Setting lastWaterDate to " + this.plant.lastWaterDate);
           this.plant.lastMoistDate = '' // unset
         }
-        if (result.fertilize) {
+        if (result.fertilize || result.skipFertilize) {
           this.plant.lastFertilizeDate = PlantsService.FormatDate(new Date())
           console.log("Setting lastFertilizeDate to " + this.plant.lastFertilizeDate);
+          if (result.skipFertilize) {
+            console.log("Fertilize was skipped")
+            this.plant.skippedLastFertilize = true
+          } else {
+            this.plant.skippedLastFertilize = false
+          }
         }
         if (result.moist) {
           console.log("Plant is moist - only updating that attribute")

@@ -14,6 +14,7 @@ export interface PlantCareDialogData {
   confirmationMsg: string,
   water: boolean,
   fertilize: boolean,
+  skipFertilize: boolean,
   moist: boolean
 }
 
@@ -26,10 +27,10 @@ export class DialogService extends BaseService {
     super();
   }
 
-  displayPlantCareDialog(confirmationMsg: string, water: boolean, fertilize: boolean, moist: boolean): any {
+  displayPlantCareDialog(confirmationMsg: string, water: boolean, fertilize: boolean, skipFertilize: boolean, moist: boolean): any {
     const dialogRef = this.dialog.open(PlantCareDialogComponent, {
       width: '300px',
-      data: { title: 'Confirm', confirmationMsg: confirmationMsg, water: water, fertilize: fertilize, moist: moist }
+      data: { title: 'Confirm', confirmationMsg: confirmationMsg, water: water, fertilize: fertilize, skipFertilize: skipFertilize, moist: moist }
     });
     return dialogRef
   }

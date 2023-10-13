@@ -13,13 +13,6 @@ export interface PlantLog {
   log: string;
   CreatedAt: string;
 }
-// export interface Comment {
-//   id: number;
-//   content: string;
-//   username: string;
-//   viewed: boolean;
-//   CreatedAt: string;
-// }
 
 export interface Plant {
   id: number;
@@ -31,6 +24,7 @@ export interface Plant {
   lastWaterDate: string;
   lastFertilizeDate: string;
   lastMoistDate: string;
+  skippedLastFertilize: boolean;
   tag: string;
   imageId: number;
   isPublic: boolean;
@@ -133,6 +127,7 @@ export class PlantsService extends BaseService {
       console.log(`lastWaterDate: ${plant.lastWaterDate}`);
       console.log(`lastFertilizeDate: ${plant.lastFertilizeDate}`);
       console.log(`lastMoistDate: ${plant.lastMoistDate}`);
+      console.log(`skippedLastFertilize: ${plant.skippedLastFertilize}`);
       console.log(`tag: ${plant.tag}`);
       console.log(`imageId: ${plant.imageId}`);
       console.log(`isPublic: ${plant.isPublic}`);
@@ -158,6 +153,7 @@ export class PlantsService extends BaseService {
         lastWaterDate: PlantsService.FormatDate(lastWateredDate),
         lastFertilizeDate: PlantsService.FormatDate(lastFertilizeDate),
         lastMoistDate: lastMoistDate,
+        skippedLastFertilize: false,
         tag: tag,
         id: 0, // authoritative
         username: "", // authoritative
@@ -293,6 +289,7 @@ export class PlantsService extends BaseService {
     formData.append('lastFertilizeDate', plant.lastFertilizeDate)
     formData.append('lastWateredDate', plant.lastWaterDate)
     formData.append('lastMoistDate', plant.lastMoistDate)
+    formData.append('skippedLastFertilize', plant.skippedLastFertilize ? "true" : "false")
     formData.append('tag', plant.tag)
     formData.append('isPublic', plant.isPublic.toString())
     formData.append('doNotify', plant.doNotify.toString())

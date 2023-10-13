@@ -45,6 +45,7 @@ type PlantModel struct {
 	LastWaterNotifyDate     string          `json:"lastWaterNotifyDate"`
 	LastFertilizeNotifyDate string          `json:"lastFertilizeNotifyDate"`
 	LastMoistNotifyDate     string          `json:"lastMoistNotifyDate"`
+	SkippedLastFertilize    bool            `json:"skippedLastFertilize"`
 	Tag                     string          `json:"tag"`
 	ImageId                 uint            `json:"imageId"`
 	IsPublic                bool            `json:"isPublic"`
@@ -71,16 +72,27 @@ type UserCommentView struct {
 
 // render a plant
 func (i PlantModel) String() string {
-	return fmt.Sprintf("ID: %d, %d/%d/%d - %d:%d:%d, name=%s, waterFrequency=%d, fertilizeFrequency=%d, lastWateringDate=%s, lastFertlizeDate=%s, lastFertilizeNotifyDate=%s, lastWaterNotifyDate=%s, username=%s, isPublic=%t, doNotify=%t\n", i.Id, i.CreatedAt.Year(), i.CreatedAt.Month(), i.CreatedAt.Day(), i.CreatedAt.Hour(), i.CreatedAt.Minute(), i.CreatedAt.Second(), i.Name,
+	return fmt.Sprintf(
+		"ID: %d, %d/%d/%d - %d:%d:%d, name=%s, waterFrequency=%d, fertilizeFrequency=%d, lastWateringDate=%s, lastFertlizeDate=%s, lastFertilizeNotifyDate=%s, lastWaterNotifyDate=%s, skippedLastFertilize=%v, username=%s, isPublic=%t, doNotify=%t\n",
+		i.Id,
+		i.CreatedAt.Year(),
+		i.CreatedAt.Month(),
+		i.CreatedAt.Day(),
+		i.CreatedAt.Hour(),
+		i.CreatedAt.Minute(),
+		i.CreatedAt.Second(),
+		i.Name,
 		i.WateringFrequency,
 		i.FertilizingFrequency,
 		i.LastWaterDate,
 		i.LastFertilizeDate,
 		i.LastFertilizeNotifyDate,
 		i.LastWaterNotifyDate,
+		i.SkippedLastFertilize,
 		i.Username,
 		i.IsPublic,
-		i.DoNotify)
+		i.DoNotify,
+	)
 }
 
 func deleteOldestPlantLog(db *gorm.DB, plant *PlantModel) error {
@@ -169,6 +181,7 @@ func UpdatePlant(db *gorm.DB,
 	lastWaterDate string,
 	lastFertilizeDate string,
 	lastMoistDate string,
+	skippedLastFertilize bool,
 	tag string,
 	isNewImage bool,
 	isPublic bool,
@@ -215,7 +228,12 @@ func UpdatePlant(db *gorm.DB,
 		addPlantLog(db, &existingplant, logMsg)
 	}
 	if existingplant.LastFertilizeDate != lastFertilizeDate {
-		logMsg := fmt.Sprintf("Last fertilize date changed from %s to %s", existingplant.LastFertilizeDate, lastFertilizeDate)
+		logMsg := ""
+		if skippedLastFertilize {
+			logMsg = fmt.Sprintf("Fertilizing skipped, last fertilize date changed from %s to %s", existingplant.LastFertilizeDate, lastFertilizeDate)
+		} else {
+			logMsg = fmt.Sprintf("Last fertilize date changed from %s to %s", existingplant.LastFertilizeDate, lastFertilizeDate)
+		}
 		addPlantLog(db, &existingplant, logMsg)
 	}
 	if existingplant.WateringFrequency != wateringFrequency {
@@ -240,6 +258,7 @@ func UpdatePlant(db *gorm.DB,
 	existingplant.FertilizingFrequency = fertilizingFrequency
 	existingplant.LastWaterDate = lastWaterDate
 	existingplant.LastFertilizeDate = lastFertilizeDate
+	existingplant.SkippedLastFertilize = skippedLastFertilize
 	db.Save(existingplant)
 	return nil
 }

@@ -287,6 +287,12 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
 		newPlant.LastFertilizeDate = r.FormValue("lastFertilizeDate")
 		newPlant.LastMoistDate = r.FormValue("lastMoistDate")
+		newPlant.SkippedLastFertilize, err = strconv.ParseBool(r.FormValue("skippedLastFertilize"))
+		if err != nil {
+			authentication.WriteError(w, "Invalid skipped last fertilize date setting", http.StatusBadRequest)
+			return
+		}
+
 		doNotify, err := strconv.ParseBool(r.FormValue("doNotify"))
 		if err != nil {
 			// handle error
@@ -317,6 +323,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			newPlant.LastWaterDate,
 			newPlant.LastFertilizeDate,
 			newPlant.LastMoistDate,
+			newPlant.SkippedLastFertilize,
 			newPlant.Tag,
 			isNewImage,
 			newPlant.IsPublic,

@@ -56,7 +56,13 @@
 			<span class="left">
 				<mat-card-subtitle>Last Watered:
 					{{transformLastPlantCareDate(plant.lastWaterDate)}}</mat-card-subtitle>
-				<mat-card-subtitle *ngIf="plant.fertilizingFrequency > 0">Last Fertilized:
+				<mat-card-subtitle
+					*ngIf="plant.skippedLastFertilize && plant.fertilizingFrequency > 0">Skipped
+					Fertilize on:
+					{{transformLastPlantCareDate(plant.lastFertilizeDate)}}</mat-card-subtitle>
+				<mat-card-subtitle
+					*ngIf="!plant.skippedLastFertilize && plant.fertilizingFrequency > 0">Last
+					Fertilized:
 					{{transformLastPlantCareDate(plant.lastFertilizeDate)}}</mat-card-subtitle>
 			</span>
 			<span class="right">
