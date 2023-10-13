@@ -1,6 +1,4 @@
 <div class="container">
-  <!-- <div *ngIf="(authenticationService.isLoading$ | async)">Just a moment...</div> -->
-  <img *ngIf="(authenticationService.isLoading$ | async)" mat-card-image [src]="'/assets/loading.gif'" alt="Photo">
   <div *ngIf="mode == 'register' ">
     <h1 mat-dialog-titl>Register</h1>
     <div *ngIf="error" class="error">Registration failed: {{ error }}</div>
