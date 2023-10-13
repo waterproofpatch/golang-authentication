@@ -1,5 +1,6 @@
 <div class="container">
-  <div *ngIf="(authenticationService.isLoading$ | async)">Just a moment...</div>
+  <!-- <div *ngIf="(authenticationService.isLoading$ | async)">Just a moment...</div> -->
+  <img *ngIf="(authenticationService.isLoading$ | async)" mat-card-image [src]="'/assets/loading.gif'" alt="Photo">
   <div *ngIf="mode == 'register' ">
     <h1 mat-dialog-titl>Register</h1>
     <div *ngIf="error" class="error">Registration failed: {{ error }}</div>
@@ -55,7 +56,8 @@
           <input type="password" matInput formControlName="password" required />
         </mat-form-field>
         <div mat-dialog-actions>
-          <button (click)="login()" mat-stroked-button color="primary">
+          <button (click)="login()" mat-stroked-button color="primary" [hideText]="true"
+            [mtBasicSpinner]="(authenticationService.isLoading$ | async) ?? false">
             Login
           </button>
         </div>

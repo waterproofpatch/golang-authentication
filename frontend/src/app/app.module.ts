@@ -3,6 +3,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // <-- NgModel lives here
 
+import { NgxLoadingButtonsModule } from 'ngx-loading-buttons';
+
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -62,6 +64,7 @@ import { PlantCareDialogComponent } from './components/plant-care-dialog/plant-c
     PlantCareDialogComponent
   ],
   imports: [
+    NgxLoadingButtonsModule,
     HttpClientModule,
     MatProgressSpinnerModule,
     BrowserModule,
