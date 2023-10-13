@@ -1,12 +1,6 @@
 <div class="container">
-  <div *ngIf="(getRegistrationState() | async) == RegistrationState.Pending">
-    Registration is pending. When the admin verifies your account, you'll be
-    able to log in. Check back in a bit!
-  </div>
-  <div *ngIf="
-      (getRegistrationState() | async) != RegistrationState.Pending &&
-      mode == 'register'
-    ">
+  <div *ngIf="(authenticationService.isLoading$ | async)">Just a moment...</div>
+  <div *ngIf="mode == 'register' ">
     <h1 mat-dialog-titl>Register</h1>
     <div *ngIf="error" class="error">Registration failed: {{ error }}</div>
     <div mat-dialog-content>

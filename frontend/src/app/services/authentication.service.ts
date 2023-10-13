@@ -5,17 +5,12 @@ import { catchError } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import jwt_decode from 'jwt-decode';
 import { JwtPayload } from 'jwt-decode';
+import { finalize } from 'rxjs/operators';
 
 import { AuthenticationApiService } from '../apis/authentication-api.service';
 import { BaseService } from './base.service';
 import { DialogService } from './dialog.service';
 import { JWTData } from '../types';
-
-export enum IRegistrationState {
-  None = 0,
-  Pending,
-  Completed,
-}
 
 @Injectable({
   providedIn: 'root',
@@ -26,14 +21,12 @@ export class AuthenticationService extends BaseService {
 
   // this error string is for modals to display login or registration errors.
   error$ = new Subject<string>();
-  // this status string is for modals to display login or registration status messages.
-  status$ = new Subject<string>();
+
+  // indicate to subscribers when we're done loading
+  isLoading$ = new Subject<boolean>();
 
   // UI can subscribe to this to reflect authentication state
   isAuthenticated$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-
-  // for models to show progress of registration
-  registrationState$ = new Subject<IRegistrationState>();
 
   constructor(
     private authenticationApiService: AuthenticationApiService,
@@ -72,12 +65,6 @@ export class AuthenticationService extends BaseService {
     }
   }
 
-  /**
-   * Reset registration state.
-   */
-  public resetRegistrationState(): void {
-    this.registrationState$.next(IRegistrationState.None);
-  }
 
   /**
    *
@@ -192,6 +179,7 @@ export class AuthenticationService extends BaseService {
     username: string,
     password: string,
   ) {
+    this.isLoading$.next(true)
     this.authenticationApiService
       .registerHttp(email, username, password)
       .pipe(
@@ -202,12 +190,12 @@ export class AuthenticationService extends BaseService {
             this.error$.next('Unexpected error');
           }
           return throwError(error);
-        })
+        }),
+        finalize(() => this.isLoading$.next(false))
       )
       .subscribe((x) => {
         console.log('registration completed OK');
         this.error$.next(''); // send a benign event so observers can close modals
-        this.registrationState$.next(IRegistrationState.Completed);
         this.router.navigateByUrl('/authentication?mode=login');
       });
   }
@@ -218,6 +206,7 @@ export class AuthenticationService extends BaseService {
    * @param password the password to use for logging in
    */
   public login(email: string, password: string) {
+    this.isLoading$.next(true)
     this.authenticationApiService
       .loginHttp(email, password)
       .pipe(
@@ -228,7 +217,8 @@ export class AuthenticationService extends BaseService {
             this.error$.next('Unexpected error');
           }
           return throwError(error);
-        })
+        }),
+        finalize(() => this.isLoading$.next(false))
       )
       .subscribe((x) => {
         console.log('Setting token to ' + x.token);

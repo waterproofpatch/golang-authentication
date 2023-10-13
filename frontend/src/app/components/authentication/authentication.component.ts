@@ -2,9 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { Observable } from 'rxjs';
-
-import { IRegistrationState } from 'src/app/services/authentication.service';
 
 @Component({
   selector: 'app-authentication',
@@ -28,22 +25,13 @@ export class AuthenticationComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private authenticationService: AuthenticationService
+    public authenticationService: AuthenticationService
   ) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
-      this.authenticationService.resetRegistrationState();
       this.mode = params['mode'];
     });
-  }
-
-  public get RegistrationState(): typeof IRegistrationState {
-    return IRegistrationState;
-  }
-
-  getRegistrationState(): Observable<IRegistrationState> {
-    return this.authenticationService.registrationState$;
   }
 
   register(): void {
@@ -68,6 +56,7 @@ export class AuthenticationComponent implements OnInit {
       this.registerForm.controls.password.value,
     );
   }
+
   login() {
     this.error = '';
     this.authenticationService.error$.subscribe((error: string) => {
