@@ -40,12 +40,12 @@ export class AuthenticationService extends BaseService {
   }
 
   private clearToken(): void {
-    sessionStorage.removeItem(this.TOKEN_KEY)
+    localStorage.removeItem(this.TOKEN_KEY)
     this.isAuthenticated$.next(false)
   }
 
   public setToken(token: string): void {
-    sessionStorage.setItem(this.TOKEN_KEY, token);
+    localStorage.setItem(this.TOKEN_KEY, token);
     this.isAuthenticated$.next(true)
   }
 
@@ -144,7 +144,7 @@ export class AuthenticationService extends BaseService {
    * obtain the token
    */
   get token() {
-    return sessionStorage.getItem(this.TOKEN_KEY);
+    return localStorage.getItem(this.TOKEN_KEY);
   }
 
   logout(modalText?: string, redirectToLogin?: boolean) {
