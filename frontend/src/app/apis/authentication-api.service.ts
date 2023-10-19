@@ -9,6 +9,7 @@ import { BaseService } from '../services/base.service';
 })
 export class AuthenticationApiService extends BaseService {
   loginApiUrl = '/api/login';
+  logoutApiUrl = '/api/logout';
   registerApiUrl = '/api/register';
   refreshApiUrl = '/api/refresh';
 
@@ -35,6 +36,10 @@ export class AuthenticationApiService extends BaseService {
       data,
       this.httpOptions
     );
+  }
+
+  logoutHttp(): Observable<any> {
+    return this.http.post(this.getUrlBase() + this.logoutApiUrl, null, this.httpOptions)
   }
 
   loginHttp(email: string, password: string): Observable<any> {

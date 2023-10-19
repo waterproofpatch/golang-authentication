@@ -77,7 +77,7 @@ func getEstTime(theTime time.Time) (time.Time, error) {
 
 func needsCare(lastCareDate string, intervalDays int) bool {
 	dateLayoutStr := "01/02/2006"
-	fmt.Printf("lastCareDate=%v\n", lastCareDate)
+	// fmt.Printf("lastCareDate=%v\n", lastCareDate)
 	lastCareTime, err := time.Parse(dateLayoutStr, lastCareDate)
 	if err != nil {
 		// attempt format migration
@@ -111,11 +111,11 @@ func needsCare(lastCareDate string, intervalDays int) bool {
 	}
 	timeNow := time.Now()
 	timeNowEst, err := getEstTime(timeNow)
-	fmt.Printf("timeNowEst=%v\n", timeNowEst)
+	// fmt.Printf("timeNowEst=%v\n", timeNowEst)
 	// email reminders should be sent as reminders, not alerts - so
 	// add a day after the last care date to send reminders.
 	nextCareTime := lastCareTime.AddDate(0, 0, intervalDays+1)
-	fmt.Printf("nextCareTime=%v\n", nextCareTime)
+	// fmt.Printf("nextCareTime=%v\n", nextCareTime)
 	if nextCareTime.Before(timeNowEst) {
 		fmt.Printf("Needs care: last care time: %v, next care time: %v, today is %v\n", lastCareTime, nextCareTime, timeNowEst)
 		return true
@@ -130,7 +130,7 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 	for {
 		select {
 		case <-ticker.C:
-			fmt.Printf("Tick...\n")
+			// fmt.Printf("Tick...\n")
 			var plants []PlantModel
 			db.Find(&plants)
 
@@ -141,7 +141,7 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 				needsWaterCare := false
 				needsFertilizeCare := false
 				if plant.LastMoistDate != "" && plant.LastMoistNotifyDate == "" {
-					fmt.Printf("Plant was marked as moist on %s\n", plant.LastMoistDate)
+					// fmt.Printf("Plant was marked as moist on %s\n", plant.LastMoistDate)
 					// Parse the date string into a time.Time object
 					date, err := time.Parse("01/02/2006", plant.LastMoistDate)
 					if err != nil {
@@ -159,12 +159,12 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 				// time the plant care date(s) have changed, check if we need
 				// to send a notification
 				if plant.LastWaterNotifyDate == "" {
-					fmt.Printf("Checking if plant %d (name=%s) needs water care...\n", plant.Id, plant.Name)
+					// fmt.Printf("Checking if plant %d (name=%s) needs water care...\n", plant.Id, plant.Name)
 					needsWaterCare = needsCare(plant.LastWaterDate, plant.WateringFrequency)
 				}
 				if plant.LastFertilizeNotifyDate == "" {
 					if plant.FertilizingFrequency > 0 {
-						fmt.Printf("Checking if plant %d (name=%s) needs fertilizer care...\n", plant.Id, plant.Name)
+						// fmt.Printf("Checking if plant %d (name=%s) needs fertilizer care...\n", plant.Id, plant.Name)
 						needsFertilizeCare = needsCare(plant.LastFertilizeDate, plant.FertilizingFrequency)
 					}
 				}

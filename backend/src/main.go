@@ -35,8 +35,11 @@ func startServing(port int, router *mux.Router) {
 	origins := []string{"http://localhost:4200", "https://localhost:4200", "https://antlion.azurewebsites.net", "http://antlion.azurewebsites.net"}
 	srv := &http.Server{
 		// Handler: router,
-		Handler: handlers.CORS(handlers.AllowCredentials(), handlers.AllowedMethods(methods), handlers.AllowedHeaders(headers), handlers.AllowedOrigins(origins))(router),
-		Addr:    portStr,
+		Handler: handlers.CORS(handlers.AllowCredentials(),
+			handlers.AllowedMethods(methods),
+			handlers.AllowedHeaders(headers),
+			handlers.AllowedOrigins(origins))(router),
+		Addr: portStr,
 		// Good practice: enforce timeouts for servers you create!
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,

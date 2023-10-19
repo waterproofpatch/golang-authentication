@@ -148,6 +148,9 @@ export class AuthenticationService extends BaseService {
   }
 
   logout(modalText?: string, redirectToLogin?: boolean) {
+    this.authenticationApiService.logoutHttp().subscribe((x) => {
+      console.log("Logged out.")
+    })
     this.clearToken()
     if (modalText) {
       this.dialogService.displayLogDialog(modalText);
