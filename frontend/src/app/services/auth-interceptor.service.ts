@@ -36,10 +36,11 @@ export class AuthInterceptorService implements HttpInterceptor {
             console.error('Error Event');
           } else {
             console.log(`error status : ${error.status} ${error.statusText}`);
+            console.log(error.error); // Log the error object
             switch (error.status) {
               case 400:
                 this.dialogService.displayErrorDialog(
-                  'Bad request: ' + error.error.error_message
+                  'Bad request: ' + error.error['error_message']
                 );
                 break;
               case 401: // login or token expired

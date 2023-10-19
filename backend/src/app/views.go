@@ -24,13 +24,13 @@ func getApiKey() string {
 	return apiKey
 }
 
-// returns 0 on failure, ImageModel.ID stored in database on success
-func uploadHandler(w http.ResponseWriter, r *http.Request) uint {
+// returns -1 on failure, 0 on no-op, ImageModel.ID stored in database on success
+func uploadHandler(w http.ResponseWriter, r *http.Request) int {
 	// Parse the multipart form in the request
 	err := r.ParseMultipartForm(10 << 20) // 10 MB maximum file size
 	if err != nil {
 		authentication.WriteError(w, "Invalid file size", http.StatusBadRequest)
-		return 0
+		return -1
 	}
 
 	// Get the image file from the form data
@@ -45,7 +45,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) uint {
 	fileData, err := ioutil.ReadAll(file)
 	if err != nil {
 		authentication.WriteError(w, "Failed reading image.", http.StatusBadRequest)
-		return 0
+		return -1
 	}
 
 	// Print the original file size
@@ -55,7 +55,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) uint {
 	img, _, err := image.Decode(bytes.NewReader(fileData))
 	if err != nil {
 		authentication.WriteError(w, "Failed decoding image.", http.StatusBadRequest)
-		return 0
+		return -1
 	}
 
 	// Create a new buffer to hold the compressed image data
@@ -65,7 +65,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) uint {
 	err = jpeg.Encode(&buf, img, &jpeg.Options{Quality: 75})
 	if err != nil {
 		authentication.WriteError(w, "Failed compressing image.", http.StatusBadRequest)
-		return 0
+		return -1
 	}
 
 	// Get the compressed image data as a byte slice
@@ -87,12 +87,12 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) uint {
 	result := db.Create(&image)
 	if result.Error != nil {
 		authentication.WriteError(w, "Failed writing image to db", http.StatusBadRequest)
-		return 0
+		return -1
 	}
 
 	// Return a success message
 	fmt.Println("Stored image successfully.")
-	return image.ID
+	return int(image.ID)
 }
 
 func images(w http.ResponseWriter, r *http.Request) {
@@ -188,6 +188,10 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		if imageId == 0 {
 			fmt.Println("Upload did not contain an image.")
 		}
+		if imageId < 0 {
+			fmt.Println("Bailing early, critical error handling image.")
+			return
+		}
 		var newPlant PlantModel
 		newPlant.ImageId = imageId
 		newPlant.Name = r.FormValue("nameOfPlant")
@@ -258,6 +262,9 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		if imageId == 0 {
 			fmt.Println("Upload did not contain an image.")
 			newPlant.ImageId = existingPlant.ImageId
+		} else if imageId < 0 {
+			fmt.Println("Critical error updating image. Bailing early")
+			return
 		} else {
 			// only update imageId if the user changed the image. Otherwise,
 			// they may have only updated non-image stuff. If they had the

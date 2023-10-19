@@ -47,7 +47,7 @@ type PlantModel struct {
 	LastMoistNotifyDate     string          `json:"lastMoistNotifyDate"`
 	SkippedLastFertilize    bool            `json:"skippedLastFertilize"`
 	Tag                     string          `json:"tag"`
-	ImageId                 uint            `json:"imageId"`
+	ImageId                 int             `json:"imageId"`
 	IsPublic                bool            `json:"isPublic"`
 	DoNotify                bool            `json:"doNotify"`
 	Logs                    []PlantLogModel `json:"logs" gorm:"foreignKey:PlantID"`
@@ -177,7 +177,7 @@ func UpdatePlant(db *gorm.DB,
 	name string,
 	wateringFrequency int,
 	fertilizingFrequency int,
-	imageId uint,
+	imageId int,
 	lastWaterDate string,
 	lastFertilizeDate string,
 	lastMoistDate string,
@@ -267,7 +267,7 @@ func AddPlant(db *gorm.DB,
 	name string,
 	wateringFrequency int,
 	fertilizingFrequency int,
-	imageId uint,
+	imageId int,
 	lastWaterDate string,
 	lastFertilizeDate string,
 	tag string,
