@@ -4,9 +4,9 @@
 			<a mat-button routerLink="/home" routerLinkActive="active"
 				[routerLinkActiveOptions]="{exact:true}">Home</a>
 		</span>
-		<span class="nav-item" *ngIf="authenticationService.isAuthenticated$ | async">
+		<!-- <span class="nav-item" *ngIf="authenticationService.isAuthenticated$ | async">
 			<a mat-button routerLink="/chat" routerLinkActive="active">Chat</a>
-		</span>
+		</span> -->
 		<span *ngIf="!(authenticationService.isAuthenticated$ | async)" class="nav-item">
 			<a mat-button [routerLink]="['/authentication']" [queryParams]="{mode: 'login'}"
 				routerLinkActive="active">Login</a>
