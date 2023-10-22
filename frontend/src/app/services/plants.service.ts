@@ -5,6 +5,7 @@ import { from, of, tap, Subject, throwError, Observable, BehaviorSubject } from 
 
 import { PlantsApiService } from '../apis/plants-api.service';
 import { Comment } from './comments.service';
+import { Note } from './notes.service';
 import { BaseService } from './base.service';
 import { AuthenticationService } from './authentication.service';
 
@@ -31,6 +32,7 @@ export interface Plant {
   doNotify: boolean;
   logs: PlantLog[];
   comments: Comment[];
+  notes: Note[];
 }
 
 export enum PlantCareType {
@@ -145,7 +147,8 @@ export class PlantsService extends BaseService {
       isPublic: boolean,
       doNotify: boolean,
       logs: PlantLog[],
-      comments: Comment[]): Plant {
+      comments: Comment[],
+      notes: Note[]): Plant {
       const plant: Plant = {
         name: name,
         wateringFrequency: wateringFrequency,
@@ -163,6 +166,7 @@ export class PlantsService extends BaseService {
         doNotify: doNotify,
         logs: logs,
         comments: comments,
+        notes: notes,
       }
       return plant;
     }

@@ -31,6 +31,12 @@ type CommentModel struct {
 	Content  string `json:"content"`
 	Viewed   bool   `json:"viewed" gorm:"-"`
 }
+
+type NotesModel struct {
+	gorm.Model
+	Note    string `json:"note"`
+	PlantID int    `json:"plantId"`
+}
 type PlantModel struct {
 	gorm.Model
 	Id                      int             `json:"id"`
@@ -52,6 +58,7 @@ type PlantModel struct {
 	DoNotify                bool            `json:"doNotify"`
 	Logs                    []PlantLogModel `json:"logs" gorm:"foreignKey:PlantID"`
 	Comments                []CommentModel  `json:"comments" gorm:"foreignKey:PlantID"`
+	Notes                   []NotesModel    `json:"notes" gorm:"foreignKey:PlantID"`
 }
 type MessageModel struct {
 	gorm.Model

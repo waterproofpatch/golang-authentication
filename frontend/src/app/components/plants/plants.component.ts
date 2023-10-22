@@ -236,6 +236,7 @@ export class PlantsComponent {
       false,
       true,
       [],
+      [],
       [])
     this.setPlantFormData(this.editingPlant, null)
     this.addOrEditMode = EditMode.ADD;
@@ -299,6 +300,7 @@ export class PlantsComponent {
       this.form.controls.tag.value || '',
       this.form.controls.publicOrPrivate.value == "public" || false,
       this.form.controls.doNotify.value == true || false,
+      [],
       [],
       [])
 
