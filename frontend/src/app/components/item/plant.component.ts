@@ -98,30 +98,16 @@ export class PlantComponent {
     this.editModeEmitter.emit({ plant: this.plant, imageUrl: this.imageUrl })
   }
   /**
-   * handle user watering the plant
+   * handle user hitting "Edit" from the dropdown menu to update plant care
+   * status
    */
-  public waterPlant(): void {
+  public openCareDialog(): void {
     if (!this.plant) {
       return
     }
-    let water: boolean = false
-    let fertilize: boolean = false
-    let skipFertilize: boolean = false
-    let moist: boolean = false
-    var dialogRef = this.dialogService.displayPlantCareDialog("What did you do for " + this.plant.name + "?",
-      water,
-      fertilize,
-      skipFertilize,
-      moist)
-    if (this.plant == null) {
-      console.log("Unexpected plant is NULL");
-      return;
-    }
+    var dialogRef = this.dialogService.displayPlantCareDialog(this.plant.name)
     dialogRef.afterClosed().subscribe((result: PlantCareDialogData) => {
-      console.log("water: " + result.water)
-      console.log("fertilize: " + result.fertilize)
-      console.log("skipFertilize: " + result.skipFertilize)
-      console.log("moist: " + result.moist)
+      console.log("plant care result: " + JSON.stringify(result))
       if (result.moist && (result.water || result.fertilize)) {
         this.dialogService.displayErrorDialog("Only choose 'moist' when not choosing other care actions.")
         return;
