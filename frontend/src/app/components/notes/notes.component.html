@@ -1,0 +1,8 @@
+<h1 mat-dialog-title>Notes</h1>
+<textarea>
+	{{data.notes}}
+</textarea>
+<div mat-dialog-actions>
+	<button mat-button (click)="dialogRef.close(data)">Save</button>
+	<button mat-button (click)="dialogRef.close(data)">Cancel</button>
+</div>

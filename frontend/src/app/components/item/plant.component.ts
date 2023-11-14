@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { DialogService, PlantCareDialogData } from 'src/app/services/dialog.service';
+import { DialogService, PlantCareDialogData, PlantNotesDialogData } from 'src/app/services/dialog.service';
 import { Plant, PlantCareType, PlantsService } from 'src/app/services/plants.service';
 import { EventEmitter } from '@angular/core';
 import { Output } from '@angular/core';
@@ -96,6 +96,17 @@ export class PlantComponent {
       return;
     }
     this.editModeEmitter.emit({ plant: this.plant, imageUrl: this.imageUrl })
+  }
+
+  editPlantNotes() {
+    if (!this.plant) {
+      return;
+    }
+    console.log("Plant notes are: " + this.plant.notes)
+    var dialogRef = this.dialogService.displayNotesDialog(this.plant.notes)
+    dialogRef.afterClosed().subscribe((x: PlantNotesDialogData) => {
+      console.log("Notes saved: " + x.notes)
+    })
   }
   /**
    * handle user hitting "Edit" from the dropdown menu to update plant care

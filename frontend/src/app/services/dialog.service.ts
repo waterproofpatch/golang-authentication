@@ -8,7 +8,12 @@ import { LogDialogComponent } from 'src/app/components/log-dialog/log-dialog.com
 import { ErrorDialogComponent } from 'src/app/components/error-dialog/error-dialog.component';
 import { ConfirmationDialogComponent } from '../components/confirmation-dialog/confirmation-dialog.component';
 import { PlantCareDialogComponent } from '../components/plant-care-dialog/plant-care-dialog.component';
+import { NotesComponent } from '../components/notes/notes.component';
+import { Note } from './notes.service';
 
+export interface PlantNotesDialogData {
+  notes: Note[],
+}
 export interface PlantCareDialogData {
   title: string,
   confirmationMsg: string,
@@ -25,6 +30,16 @@ export class DialogService extends BaseService {
   dialogRef: any = undefined;
   constructor(private dialog: MatDialog) {
     super();
+  }
+
+  displayNotesDialog(notes: Note[]): any {
+    const dialogRef = this.dialog.open(NotesComponent, {
+      width: '300px',
+      data: {
+        notes: notes,
+      }
+    });
+    return dialogRef
   }
 
   displayPlantCareDialog(plantName: string): any {

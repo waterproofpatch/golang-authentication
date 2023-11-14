@@ -32,6 +32,8 @@
 				<mat-icon>more_vert</mat-icon>
 			</button>
 			<mat-menu #menu="matMenu">
+				<button *ngIf="plant.username == username" mat-menu-item (click)="editPlantNotes()"
+					color="primary"><mat-icon>edit</mat-icon><span>Notes</span></button>
 				<button *ngIf="plant.username == username" mat-menu-item (click)="editPlant()"
 					color="primary"><mat-icon>edit</mat-icon><span>Edit</span></button>
 				<button *ngIf="plant.username == username" mat-menu-item (click)="openCareDialog()"

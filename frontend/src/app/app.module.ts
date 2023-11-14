@@ -44,6 +44,7 @@ import { MessageComponent } from './components/message/message.component';
 import { UserComponent } from './components/user/user.component';
 import { CommentsComponent } from './components/comments/comments.component';
 import { PlantCareDialogComponent } from './components/plant-care-dialog/plant-care-dialog.component';
+import { NotesComponent } from './components/notes/notes.component';
 
 
 @NgModule({
@@ -61,7 +62,8 @@ import { PlantCareDialogComponent } from './components/plant-care-dialog/plant-c
     MessageComponent,
     UserComponent,
     CommentsComponent,
-    PlantCareDialogComponent
+    PlantCareDialogComponent,
+    NotesComponent
   ],
   imports: [
     NgxLoadingButtonsModule,

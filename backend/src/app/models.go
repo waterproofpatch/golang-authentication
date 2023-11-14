@@ -314,6 +314,9 @@ func AddPlant(db *gorm.DB,
 		Logs: []PlantLogModel{
 			{Log: "Created plant!"},
 		},
+		Notes: []NotesModel{
+			{Note: "Default Note"},
+		},
 	}
 
 	log.Printf("Adding plant %s", plant)
