@@ -9,10 +9,9 @@ import { ErrorDialogComponent } from 'src/app/components/error-dialog/error-dial
 import { ConfirmationDialogComponent } from '../components/confirmation-dialog/confirmation-dialog.component';
 import { PlantCareDialogComponent } from '../components/plant-care-dialog/plant-care-dialog.component';
 import { NotesComponent } from '../components/notes/notes.component';
-import { Note } from './notes.service';
 
 export interface PlantNotesDialogData {
-  notes: Note[],
+  notes: string,
 }
 export interface PlantCareDialogData {
   title: string,
@@ -32,7 +31,7 @@ export class DialogService extends BaseService {
     super();
   }
 
-  displayNotesDialog(notes: Note[]): any {
+  displayNotesDialog(notes: string): any {
     const dialogRef = this.dialog.open(NotesComponent, {
       width: '300px',
       data: {

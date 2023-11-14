@@ -32,11 +32,6 @@ type CommentModel struct {
 	Viewed   bool   `json:"viewed" gorm:"-"`
 }
 
-type NotesModel struct {
-	gorm.Model
-	Note    string `json:"note"`
-	PlantID int    `json:"plantId"`
-}
 type PlantModel struct {
 	gorm.Model
 	Id                      int             `json:"id"`
@@ -58,7 +53,7 @@ type PlantModel struct {
 	DoNotify                bool            `json:"doNotify"`
 	Logs                    []PlantLogModel `json:"logs" gorm:"foreignKey:PlantID"`
 	Comments                []CommentModel  `json:"comments" gorm:"foreignKey:PlantID"`
-	Notes                   []NotesModel    `json:"notes" gorm:"foreignKey:PlantID"`
+	Notes                   string          `json:"notes"`
 }
 type MessageModel struct {
 	gorm.Model
@@ -179,7 +174,8 @@ func validatePlantInfo(plantName string, wateringFrequency int, lastWaterDate st
 	return nil
 }
 
-func UpdatePlant(db *gorm.DB,
+func UpdatePlant(
+	db *gorm.DB,
 	id int,
 	name string,
 	wateringFrequency int,
@@ -193,6 +189,7 @@ func UpdatePlant(db *gorm.DB,
 	isNewImage bool,
 	isPublic bool,
 	doNotify bool,
+	notes string,
 ) error {
 	err := validatePlantInfo(name, wateringFrequency, lastWaterDate, lastFertilizeDate)
 	if err != nil {
@@ -255,6 +252,10 @@ func UpdatePlant(db *gorm.DB,
 		logMsg := fmt.Sprintf("Fertilizing frequency changed from %d to %d days", existingplant.FertilizingFrequency, fertilizingFrequency)
 		addPlantLog(db, &existingplant, logMsg)
 	}
+	if existingplant.Notes != notes {
+		logMsg := fmt.Sprintf("Notes changed from %s to %s", existingplant.Notes, notes)
+		addPlantLog(db, &existingplant, logMsg)
+	}
 	existingplant.DoNotify = doNotify
 	existingplant.IsPublic = isPublic
 	existingplant.ImageId = imageId
@@ -266,6 +267,7 @@ func UpdatePlant(db *gorm.DB,
 	existingplant.LastWaterDate = lastWaterDate
 	existingplant.LastFertilizeDate = lastFertilizeDate
 	existingplant.SkippedLastFertilize = skippedLastFertilize
+	existingplant.Notes = notes
 	db.Save(existingplant)
 	return nil
 }
@@ -314,9 +316,7 @@ func AddPlant(db *gorm.DB,
 		Logs: []PlantLogModel{
 			{Log: "Created plant!"},
 		},
-		Notes: []NotesModel{
-			{Note: "Default Note"},
-		},
+		Notes: "",
 	}
 
 	log.Printf("Adding plant %s", plant)
@@ -362,5 +362,4 @@ func InitModels(db *gorm.DB) {
 	db.AutoMigrate(&ImageModel{})
 	db.AutoMigrate(&PlantLogModel{})
 	db.AutoMigrate(&UserCommentView{})
-	db.AutoMigrate(&NotesModel{})
 }

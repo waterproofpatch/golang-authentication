@@ -244,6 +244,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			authentication.WriteError(w, "Invalid plant ID", http.StatusBadRequest)
 			return
 		}
+
 		// get the existing plant so we can obtain its old imageId
 		var existingPlant PlantModel
 		db.First(&existingPlant, plantId)
@@ -294,6 +295,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
 		newPlant.LastFertilizeDate = r.FormValue("lastFertilizeDate")
 		newPlant.LastMoistDate = r.FormValue("lastMoistDate")
+		newPlant.Notes = r.FormValue("notes")
 		newPlant.SkippedLastFertilize, err = strconv.ParseBool(r.FormValue("skippedLastFertilize"))
 		if err != nil {
 			authentication.WriteError(w, "Invalid skipped last fertilize date setting", http.StatusBadRequest)
@@ -334,7 +336,8 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			newPlant.Tag,
 			isNewImage,
 			newPlant.IsPublic,
-			newPlant.DoNotify)
+			newPlant.DoNotify,
+			newPlant.Notes)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			return
@@ -342,7 +345,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		break
 	}
 	if claims != nil {
-		db.Where("email = ? OR is_public = ?", claims.Email, true).Preload("Logs").Preload("Comments").Preload("Notes").Find(&plants)
+		db.Where("email = ? OR is_public = ?", claims.Email, true).Preload("Logs").Preload("Comments").Find(&plants)
 
 		for i := range plants {
 			for j := range plants[i].Comments {
@@ -357,7 +360,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			}
 		}
 	} else {
-		db.Where("is_public = ?", true).Preload("Logs").Preload("Comments").Preload("Notes").Find(&plants)
+		db.Where("is_public = ?", true).Preload("Logs").Preload("Comments").Find(&plants)
 	}
 	fmt.Printf("Encoding %d plants in response\n", len(plants))
 	json.NewEncoder(w).Encode(plants)
