@@ -359,4 +359,5 @@ func InitModels(db *gorm.DB) {
 	db.AutoMigrate(&ImageModel{})
 	db.AutoMigrate(&PlantLogModel{})
 	db.AutoMigrate(&UserCommentView{})
+	db.AutoMigrate(&NotesModel{})
 }

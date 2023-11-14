@@ -3,7 +3,7 @@ version: '3.8'
 services:
 
   db:
-    image: postgres:latest
+    image: postgres:15
     environment:
       - POSTGRES_PASSWORD=app-db-password
       - POSTGRES_USER=app-db-user

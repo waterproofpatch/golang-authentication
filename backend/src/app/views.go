@@ -342,7 +342,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		break
 	}
 	if claims != nil {
-		db.Where("email = ? OR is_public = ?", claims.Email, true).Preload("Logs").Preload("Comments").Find(&plants)
+		db.Where("email = ? OR is_public = ?", claims.Email, true).Preload("Logs").Preload("Comments").Preload("Notes").Find(&plants)
 
 		for i := range plants {
 			for j := range plants[i].Comments {
@@ -357,7 +357,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			}
 		}
 	} else {
-		db.Where("is_public = ?", true).Preload("Logs").Preload("Comments").Find(&plants)
+		db.Where("is_public = ?", true).Preload("Logs").Preload("Comments").Preload("Notes").Find(&plants)
 	}
 	fmt.Printf("Encoding %d plants in response\n", len(plants))
 	json.NewEncoder(w).Encode(plants)
