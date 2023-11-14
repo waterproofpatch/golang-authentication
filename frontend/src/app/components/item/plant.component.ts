@@ -104,12 +104,15 @@ export class PlantComponent {
     }
     console.log("Plant notes are: " + this.plant.notes)
     var dialogRef = this.dialogService.displayNotesDialog(this.plant.notes)
-    dialogRef.afterClosed().subscribe((x: PlantNotesDialogData) => {
+    dialogRef.afterClosed().subscribe((result?: PlantNotesDialogData) => {
       if (!this.plant) {
         return;
       }
-      console.log("Notes saved: " + x.notes)
-      this.plant.notes = x.notes
+      if (!result || result.cancelled) {
+        return;
+      }
+      console.log("Notes saved: " + result.notes)
+      this.plant.notes = result.notes
       this.plantService.updatePlant(this.plant, null)
     })
   }

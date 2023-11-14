@@ -11,6 +11,7 @@ import { PlantCareDialogComponent } from '../components/plant-care-dialog/plant-
 import { NotesComponent } from '../components/notes/notes.component';
 
 export interface PlantNotesDialogData {
+  cancelled: boolean,
   notes: string,
 }
 export interface PlantCareDialogData {

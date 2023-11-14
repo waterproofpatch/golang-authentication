@@ -4,6 +4,6 @@
   </textarea>
 </div>
 <div mat-dialog-actions>
-	<button mat-button (click)="dialogRef.close(data)">Save</button>
-	<button mat-button (click)="dialogRef.close(data)">Cancel</button>
+	<button mat-button (click)="dialogRef.close({notes: data.notes, cancelled: false})">Save</button>
+	<button mat-button (click)="dialogRef.close({notes: data.notes, cancelled: true})">Cancel</button>
 </div>
