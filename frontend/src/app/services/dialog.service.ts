@@ -69,24 +69,4 @@ export class DialogService extends BaseService {
     this.dialogRef.afterClosed().pipe(takeUntil(this.destroy$)),
       finalize(() => (this.dialogRef = undefined));
   }
-  /**
-   * Handle Http operation that failed.
-   * Let the app continue.
-   * @param operation - name of the operation that failed
-   * @param result - optional value to return as the observable result
-   */
-  handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      if (error.error == null) {
-        this.displayErrorDialog('Unknown error - failed: ' + operation);
-      } else {
-        this.displayErrorDialog(
-          `${operation} failed: ${error.error.error_message}`
-        );
-      }
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
-  }
 }
