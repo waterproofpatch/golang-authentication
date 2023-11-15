@@ -126,6 +126,10 @@ export class PlantComponent {
     }
     var dialogRef = this.dialogService.displayPlantCareDialog(this.plant.name)
     dialogRef.afterClosed().subscribe((result: PlantCareDialogData) => {
+      if (result && result.cancelled) {
+        console.log("Edit cancelled.");
+        return
+      }
       console.log("plant care result: " + JSON.stringify(result))
       if (result.moist && (result.water || result.fertilize)) {
         this.dialogService.displayErrorDialog("Only choose 'moist' when not choosing other care actions.")

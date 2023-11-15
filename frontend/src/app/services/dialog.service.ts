@@ -15,6 +15,7 @@ export interface PlantNotesDialogData {
   notes: string,
 }
 export interface PlantCareDialogData {
+  cancelled: boolean,
   title: string,
   confirmationMsg: string,
   water: boolean,

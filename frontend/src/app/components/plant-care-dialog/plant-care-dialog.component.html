@@ -8,5 +8,5 @@
 </section>
 <div mat-dialog-actions>
 	<button mat-button (click)="dialogRef.close(data)">Confirm</button>
-	<button mat-button (click)="data.water=false;data.fertilize=false;dialogRef.close(data)">Cancel</button>
+	<button mat-button (click)="data.cancelled=true;dialogRef.close(data)">Cancel</button>
 </div>
