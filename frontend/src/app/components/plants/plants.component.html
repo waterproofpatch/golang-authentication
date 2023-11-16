@@ -4,7 +4,7 @@
 		<div class="button-controls">
 
 			<div *ngIf="!isInEditOrAddMode()">
-				<button mat-button [matMenuTriggerFor]="filterMenu">Filters</button>
+				<button mat-raised-button [matMenuTriggerFor]="filterMenu">Filters</button>
 				<mat-menu #filterMenu="matMenu">
 					<div class="menu-content">
 						<mat-radio-group #group="matRadioGroup">
