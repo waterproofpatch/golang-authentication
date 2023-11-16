@@ -111,6 +111,10 @@ export class PlantComponent {
       if (!result || result.cancelled) {
         return;
       }
+      if (result.notes.length > 1024) {
+        this.dialogService.displayErrorDialog("Max note size (" + 1024 + ") exceeded.")
+        return
+      }
       console.log("Notes saved: " + result.notes)
       this.plant.notes = result.notes
       this.plantService.updatePlant(this.plant, null)
