@@ -7,11 +7,11 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/solywsh/chatgpt v0.0.14
-	github.com/waterproofpatch/go_authentication v0.0.0-alpha.9
+	github.com/waterproofpatch/go_authentication v0.0.0-alpha.10
 	gorm.io/gorm v1.24.2
 )
 
-replace github.com/waterproofpatch/go_authentication v0.0.0-alpha.9 => ./go_authentication
+// replace github.com/waterproofpatch/go_authentication v0.0.0-alpha.9 => ./go_authentication
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
