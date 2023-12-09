@@ -1,10 +1,14 @@
-<h1 mat-dialog-title>Notes</h1>
-<div style="display: flex; justify-content: center;">
-	<mat-form-field>
-		<textarea [(ngModel)]="data.notes" rows="30"></textarea>
-		{{data.notes.length}} / 1024
+<title>
+	<h1 class="dialog-title">Notes</h1>
+</title>
+
+<div class="dialog-content">
+	<mat-form-field appearance="fill">
+		<textarea matInput [(ngModel)]="data.notes" rows="5"></textarea>
 	</mat-form-field>
+	<p class="note-count">{{data.notes.length}} / 1024</p>
 </div>
+
 <div mat-dialog-actions>
 	<button mat-button (click)="dialogRef.close({notes: data.notes, cancelled: false})">Save</button>
 	<button mat-button (click)="dialogRef.close({notes: data.notes, cancelled: true})">Cancel</button>
