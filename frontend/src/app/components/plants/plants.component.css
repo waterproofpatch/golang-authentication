@@ -47,3 +47,7 @@ img {
 	max-width: 250px;
 	height: auto;
 }
+
+.menu-item {
+	text-align: center;
+}
