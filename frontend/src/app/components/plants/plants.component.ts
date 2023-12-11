@@ -60,13 +60,13 @@ export class PlantsComponent {
   // list of usernames that we're filtering on, if any
   filterUsernames: string[] = []
 
-  // list of tags available for selection in either filtering or when editing a 
+  // set of tags available for selection in either filtering or when editing a 
   // plant
-  tags: string[] = []
+  tags = new Set<string>()
 
-  // list of usernames available for selection in either filtering or when editing a 
+  // set of usernames available for selection in either filtering or when editing a 
   // plant
-  usernames: string[] = []
+  usernames = new Set<string>();
 
 
   // the plant edit/add form
@@ -114,8 +114,8 @@ export class PlantsComponent {
     // listen for plants so we can add all tags for selection
     this.plantsService.plants$.subscribe((x) => {
       x.forEach((plant) => {
-        this.addTag(plant.tag)
-        this.addUsername(plant.username)
+        this.tags.add(plant.tag);
+        this.usernames.add(plant.username)
       });
     })
 
@@ -180,18 +180,6 @@ export class PlantsComponent {
 
   private tagMatchesFilter(tag: string) {
     return this.filterTags.length === 0 || this.filterTags.includes(tag);
-  }
-
-  private addUsername(username: string) {
-    if (!this.usernames.includes(username)) {
-      this.usernames.push(username);
-    }
-  }
-
-  private addTag(tag: string) {
-    if (!this.tags.includes(tag)) {
-      this.tags.push(tag);
-    }
   }
 
   /**
