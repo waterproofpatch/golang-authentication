@@ -1,0 +1,3 @@
+[submodule "backend/src/go_authentication"]
+	path = backend/src/go_authentication
+	url = https://github.com/waterproofpatch/go_authentication
