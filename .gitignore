@@ -1,18 +1,14 @@
 venv
 *.cpython*
 tags
-golang-authentication.code-workspace
 src/main
 backend/src/tmp/**
 **/node_modules/
 **/.angular
 build-errors.log
 # don't vc the local copy of externals
-backend/src/go_authentication
 workspace.code-workspace
 secret.env
-notes.txt
 frontend/cert.pem
 frontend/key.pem
 backup_db.sh
-postgres-2023-08-25.sql
