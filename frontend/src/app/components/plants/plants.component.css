@@ -48,6 +48,16 @@ img {
 	height: auto;
 }
 
+
+.menu-content {
+	display: flex;
+	flex-direction: column;
+}
+
 .menu-item {
 	text-align: center;
+}
+
+.icon {
+	font-size: 36px;
 }

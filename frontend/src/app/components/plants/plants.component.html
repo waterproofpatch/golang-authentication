@@ -16,15 +16,13 @@
 									[checked]="!condensedView"
 									(change)="viewModeChanged(false)"
 									(click)="$event.stopPropagation()">
-									Uncondensed
+									Large
 								</mat-radio-button>
-							</div>
-							<div class="menu-item">
 								<mat-radio-button value="condensed"
 									[checked]="condensedView"
 									(change)="viewModeChanged(true)"
 									(click)="$event.stopPropagation()">
-									Condensed
+									Small
 								</mat-radio-button>
 							</div>
 						</mat-radio-group>
@@ -52,7 +50,7 @@
 									(click)="$event.stopPropagation()">
 							</mat-form-field>
 						</div>
-						<div class="menu-item" style="text-align:center;">
+						<div class="menu-item">
 							<mat-form-field>
 								<mat-label>Tags</mat-label>
 								<mat-select
@@ -63,7 +61,7 @@
 								</mat-select>
 							</mat-form-field>
 						</div>
-						<div class="menu-item">
+						<div class="menu-item" *ngIf="filterTags.length > 0">
 							<mat-chip-listbox
 								style="display: inline-block; text-align: center;">
 								<mat-chip-option *ngFor="let tag of filterTags"
@@ -75,7 +73,7 @@
 								</mat-chip-option>
 							</mat-chip-listbox>
 						</div>
-						<div class="menu-item" style="text-align:center;">
+						<div class="menu-item">
 							<mat-form-field>
 								<mat-label>Usernames</mat-label>
 								<mat-select
@@ -86,7 +84,7 @@
 								</mat-select>
 							</mat-form-field>
 						</div>
-						<div class="menu-item">
+						<div class="menu-item" *ngIf="filterUsernames.length > 0">
 							<mat-chip-listbox
 								style="display: inline-block; text-align: center;">
 								<mat-chip-option
