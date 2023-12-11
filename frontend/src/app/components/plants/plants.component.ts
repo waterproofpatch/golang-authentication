@@ -206,6 +206,32 @@ export class PlantsComponent {
     localStorage.setItem(filterName, (this.filters.get(filterName) ? "true" : false) || "n/a")
   }
 
+  /**
+   * check if the given plant matches all applied filters
+   * @param plant the plant to check for filter
+   */
+  public matchesFilter(plant: Plant): boolean {
+    // user only wants to see their own plants, and this one is someone else's
+    if (this.filters.get("onlyMyPlants")) {
+      if (plant.username != this.authenticationService.username()) {
+        return false;
+      }
+    }
+    // if user only wants to see plants that need care, and this one does not
+    if (this.filters.get("needsCare")) {
+      if (!this.needsCaring(plant)) {
+        return false;
+      }
+    }
+
+    // if the plants tag and username match filters
+    if (this.tagMatchesFilter(plant.tag) && this.usernameMatchesFilter(plant.username)) {
+      return true;
+    }
+    return false;
+
+  }
+
   public isInEditOrAddMode(): boolean {
     return this.addOrEditMode !== EditMode.NEITHER
   }
