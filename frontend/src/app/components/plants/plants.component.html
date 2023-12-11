@@ -26,14 +26,14 @@
 								</mat-radio-button>
 							</div>
 						</mat-radio-group>
-						<div class="menu-item">
+						<div class="menu-item" style="text-align: left">
 							<mat-checkbox value="needsCare"
 								[checked]="filters.get('needsCare')"
 								(change)="filterChange('needsCare')"
 								(click)="$event.stopPropagation()">Needs
 								Care</mat-checkbox>
 						</div>
-						<div class="menu-item"
+						<div class="menu-item" style="text-align: left"
 							*ngIf="authenticationService.isAuthenticated$ | async">
 							<mat-checkbox value="mineOnly"
 								[checked]="filters.get('onlyMyPlants')"
