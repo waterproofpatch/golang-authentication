@@ -68,6 +68,8 @@ export class PlantsComponent {
   // plant
   usernames = new Set<string>();
 
+  // name filter, if applied from HTML
+  plantNameFilter: string = "";
 
   // the plant edit/add form
   form = new FormGroup({
@@ -207,6 +209,11 @@ export class PlantsComponent {
       if (!this.needsCaring(plant)) {
         return false;
       }
+    }
+
+    // if user is filtering on a name, and this plant has a matching name
+    if (!plant.name.toLowerCase().includes(this.plantNameFilter.toLowerCase())) {
+      return false;
     }
 
     // if the plants tag and username match filters

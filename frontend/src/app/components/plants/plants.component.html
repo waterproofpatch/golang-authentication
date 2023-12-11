@@ -43,6 +43,15 @@
 								(click)="$event.stopPropagation()">Only My
 								Plants</mat-checkbox>
 						</div>
+						<div class="menu-item" style="text-align: center;">
+							<mat-form-field appearance="fill">
+								<mat-label>Name</mat-label>
+								<input type="text" matInput
+									[(ngModel)]="plantNameFilter"
+									name="plantNameFilter"
+									(click)="$event.stopPropagation()">
+							</mat-form-field>
+						</div>
 						<div class="menu-item" style="text-align:center;">
 							<mat-form-field>
 								<mat-label>Tags</mat-label>
