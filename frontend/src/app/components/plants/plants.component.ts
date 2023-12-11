@@ -150,6 +150,7 @@ export class PlantsComponent {
     }
     localStorage.setItem('filterUsernames', JSON.stringify(this.filterUsernames))
   }
+
   public removeFilterUsername(username: string) {
     const index = this.filterUsernames.indexOf(username);
     if (index > -1) {
@@ -157,12 +158,14 @@ export class PlantsComponent {
     }
     localStorage.setItem('filterUsernames', JSON.stringify(this.filterUsernames))
   }
+
   public addFilterTag(tag: string) {
     if (!this.filterTags.includes(tag)) {
       this.filterTags.push(tag);
     }
     localStorage.setItem('filterTags', JSON.stringify(this.filterTags))
   }
+
   public removeFilterTag(tag: string) {
     const index = this.filterTags.indexOf(tag);
     if (index > -1) {
@@ -171,36 +174,30 @@ export class PlantsComponent {
     localStorage.setItem('filterTags', JSON.stringify(this.filterTags))
   }
 
-  public usernameMatchesFilter(username: string) {
+  private usernameMatchesFilter(username: string) {
     return this.filterUsernames.length === 0 || this.filterUsernames.includes(username);
   }
-  public tagMatchesFilter(tag: string) {
+
+  private tagMatchesFilter(tag: string) {
     return this.filterTags.length === 0 || this.filterTags.includes(tag);
   }
 
-  public addUsername(username: string) {
+  private addUsername(username: string) {
     if (!this.usernames.includes(username)) {
       this.usernames.push(username);
     }
   }
-  public addTag(tag: string) {
+
+  private addTag(tag: string) {
     if (!this.tags.includes(tag)) {
       this.tags.push(tag);
     }
   }
-  public removeUsername(username: string) {
-    const index = this.usernames.indexOf(username);
-    if (index > -1) {
-      this.usernames.splice(index, 1);
-    }
-  }
 
-  public removeTag(tag: string) {
-    const index = this.tags.indexOf(tag);
-    if (index > -1) {
-      this.tags.splice(index, 1);
-    }
-  }
+  /**
+   * Called from HTML whenu ser checks a filter box that can be either true or false
+   * @param filterName the name of the filter to toggle
+   */
   public filterChange(filterName: string): void {
     this.filters.set(filterName, !this.filters.get(filterName))
     localStorage.setItem(filterName, (this.filters.get(filterName) ? "true" : false) || "n/a")
@@ -298,7 +295,7 @@ export class PlantsComponent {
    * Handle the user picking an iage to upload for their plant from the add/edit form.
    * @param event the file event from the input.
    */
-  onImageSelected(event: any) {
+  public onImageSelected(event: any) {
     this.selectedImage = event.target.files[0];
     if (this.selectedImage) {
       this.selectedImagePreview = URL.createObjectURL(this.selectedImage)
@@ -310,7 +307,7 @@ export class PlantsComponent {
    * called from the html form when 'submit' button is clicked.
    * 
    */
-  addPlant() {
+  public addPlant() {
     if (this.form.invalid) {
       console.log("Invalid form!");
       return;
