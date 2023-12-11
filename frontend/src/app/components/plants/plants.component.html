@@ -1,8 +1,11 @@
 <div class="container">
 	<div *ngIf="isLoading">Loading plants - hang tight...</div>
 	<div *ngIf="!isLoading">
+
+		<!-- begin buttons -->
 		<div class="button-controls">
 
+			<!-- start filters dropdown -->
 			<div *ngIf="!isInEditOrAddMode()">
 				<button mat-raised-button [matMenuTriggerFor]="filterMenu">Filters</button>
 				<mat-menu #filterMenu="matMenu">
@@ -89,14 +92,19 @@
 						</div>
 					</div>
 				</mat-menu>
-
 			</div>
+			<!-- end filters dropdown -->
 
 			<button mat-button mat-raised-button color="primary"
 				*ngIf="!isInEditOrAddMode() && (authenticationService.isAuthenticated$ | async)"
 				(click)="switchToAddPlantMode()">Add
-				Plant</button>
+				Plant
+			</button>
+
 		</div>
+		<!-- end buttons -->
+
+		<!-- begin add/edit plant modal -->
 		<div class="button-controls" *ngIf="isInEditOrAddMode()">
 			<div class="button-group-top">
 				<button mat-button mat-raised-button color="warn" *ngIf="isInEditOrAddMode()"
@@ -179,6 +187,7 @@
 
 			</form>
 		</div>
+		<!-- end add/edit plant modal -->
 	</div>
 </div>
 
