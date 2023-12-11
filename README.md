@@ -5,9 +5,12 @@
 Set up initial SSL certificates (frontend):
 
 ```bash
-openssl req -x509 -newkey rsa:2048 -keyout keytmp.pem -out cert.pem -days 365
-openssl rsa -in keytmp.pem -out key.pem
+openssl genrsa -out key.pem 2048
+openssl req -new -x509 -key key.pem -out cert.pem -days 365
 ```
+
+Or use:
+```bash frontend/make_certs.sh```
 
 ### MacOS
 
