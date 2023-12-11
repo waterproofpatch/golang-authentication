@@ -3,7 +3,7 @@ AZ_ACR_NAME=pointinsertion
 all: prod
 
 up: update_timestamp
-	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build --abort-on-container-exit
+	docker-compose -f docker-compose.yml up --build --abort-on-container-exit
 
 # update the timestamp in the docker file, displayed to the frontend in "version" (profile page)
 update_timestamp:

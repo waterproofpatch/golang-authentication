@@ -17,6 +17,13 @@ sudo snap install docker
 
 ## Setup
 
+If you plan on working on the `go_authentication` project:
+
+```bash
+git submodule init
+git submodule update
+```
+
 Set up initial SSL certificates (frontend):
 
 ```bash
