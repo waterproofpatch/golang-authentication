@@ -1,11 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthenticationService } from 'src/app/services/authentication.service';
-import { DialogService, PlantCareDialogData, PlantNotesDialogData } from 'src/app/services/dialog.service';
-import { Plant, PlantCareType, PlantsService } from 'src/app/services/plants.service';
 import { EventEmitter } from '@angular/core';
 import { Output } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+
+import { AuthenticationService } from 'src/app/services/authentication.service';
+import { DialogService, PlantCareDialogData, PlantNotesDialogData } from 'src/app/services/dialog.service';
+import { PlantsService } from 'src/app/services/plants.service';
+import { Plant, PlantCareType } from 'src/app/types';
 
 @Component({
   selector: 'app-plant',

@@ -29,3 +29,43 @@ export abstract class UserFactory {
     return user;
   }
 }
+
+export interface Comment {
+  id: number;
+  CreatedAt?: string;
+  plantId: number;
+  content: string;
+  username: string;
+  email: string;
+  viewed: boolean;
+}
+export interface PlantLog {
+  id: number;
+  log: string;
+  CreatedAt: string;
+}
+
+export interface Plant {
+  id: number;
+  name: string;
+  username: string;
+  email: string;
+  wateringFrequency: number;
+  fertilizingFrequency: number;
+  lastWaterDate: string;
+  lastFertilizeDate: string;
+  lastMoistDate: string;
+  skippedLastFertilize: boolean;
+  tag: string;
+  imageId: number;
+  isPublic: boolean;
+  doNotify: boolean;
+  logs: PlantLog[];
+  comments: Comment[];
+  notes: string;
+}
+
+export enum PlantCareType {
+  FERTILIZE = 1,
+  WATER,
+}

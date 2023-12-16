@@ -4,40 +4,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { from, of, tap, Subject, throwError, Observable, BehaviorSubject } from 'rxjs';
 
-import { Comment } from './comments.service';
+import { Plant, PlantLog, Comment } from '../types';
 import { BaseService } from './base.service';
 import { AuthenticationService } from './authentication.service';
-
-export interface PlantLog {
-  id: number;
-  log: string;
-  CreatedAt: string;
-}
-
-export interface Plant {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-  wateringFrequency: number;
-  fertilizingFrequency: number;
-  lastWaterDate: string;
-  lastFertilizeDate: string;
-  lastMoistDate: string;
-  skippedLastFertilize: boolean;
-  tag: string;
-  imageId: number;
-  isPublic: boolean;
-  doNotify: boolean;
-  logs: PlantLog[];
-  comments: Comment[];
-  notes: string;
-}
-
-export enum PlantCareType {
-  FERTILIZE = 1,
-  WATER,
-}
 
 export function plantToString(plant: Plant): string {
   let plantDetails = `Plant Details:

@@ -4,15 +4,8 @@ import { CommentsApiService } from '../api/comments-api.service';
 import { catchError, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
-export interface Comment {
-  id: number;
-  CreatedAt?: string;
-  plantId: number;
-  content: string;
-  username: string;
-  email: string;
-  viewed: boolean;
-}
+import { Comment } from '../types';
+
 @Injectable({
   providedIn: 'root'
 })

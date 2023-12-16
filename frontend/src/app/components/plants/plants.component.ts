@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { PlantsService } from 'src/app/services/plants.service';
-import { Plant } from 'src/app/services/plants.service';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+
+import { Plant } from 'src/app/types';
 
 export enum EditMode {
   ADD = 1,

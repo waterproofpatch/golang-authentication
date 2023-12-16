@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { CommentsService, Comment } from 'src/app/services/comments.service';
-// import Comment from 'src/app/services/comments.service';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
+
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { PlantsService } from 'src/app/services/plants.service';
-import { Plant } from 'src/app/services/plants.service';
-
+import { CommentsService } from 'src/app/services/comments.service';
+import { Plant, Comment } from 'src/app/types';
 @Component({
   selector: 'app-comments',
   templateUrl: './comments.component.html',
