@@ -39,6 +39,28 @@ export enum PlantCareType {
   WATER,
 }
 
+export function plantToString(plant: Plant): string {
+  let plantDetails = `Plant Details:
+  ID: ${plant.id}
+  Name: ${plant.name}
+  Username: ${plant.username}
+  Email: ${plant.email}
+  Watering Frequency: ${plant.wateringFrequency}
+  Fertilizing Frequency: ${plant.fertilizingFrequency}
+  Last Water Date: ${plant.lastWaterDate}
+  Last Fertilize Date: ${plant.lastFertilizeDate}
+  Last Moist Date: ${plant.lastMoistDate}
+  Skipped Last Fertilize: ${plant.skippedLastFertilize ? 'Yes' : 'No'}
+  Tag: ${plant.tag}
+  Image ID: ${plant.imageId}
+  Is Public: ${plant.isPublic ? 'Yes' : 'No'}
+  Do Notify: ${plant.doNotify ? 'Yes' : 'No'}
+  Logs: ${JSON.stringify(plant.logs, null, 2)}
+  Comments: ${JSON.stringify(plant.comments, null, 2)}
+  Notes: ${plant.notes}`;
+  return plantDetails;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -403,7 +425,7 @@ export class PlantsService extends BaseService {
   private updatePlantsList(plants: Plant[]): void {
     // handle case where plants were removed from server copy
     this.plants = this.plants.filter(plant => plants.some(p => p.id === plant.id));
-    plants = plants.sort((a: Plant, b: Plant) => this.getDaysUntilWaterDue(a) - this.getDaysUntilWaterDue(b))
+    plants = plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
 
     for (let p of plants) {
       // update tag/username bookkeeping
@@ -442,24 +464,42 @@ export class PlantsService extends BaseService {
   }
 
   /**
-   * @param plant the plant to calculate how many days until or since 
-   * it needed to be watered, fertilized or checked for moist soil - whichever 
-   * happened longest ago.
-   * @returns the number of days until or since the next care activity is needed.
+   * @param plant the plant to calculate days until next care activity.
+   * @returns the number of days until the plant needs the next care activity (watering, moisture check, or fertilizing).
    */
-  private getDaysUntilWaterDue(plant: Plant): number {
-    console.log(plant.name + ' last water ' + plant.lastWaterDate)
-    // plant.lastMoistDate
-    // plant.lastFertilizeDate
-    let date = new Date(plant.lastWaterDate); // convert string to date
+  private getDaysUntilNextCareActivity(plant: Plant): number {
+    // Convert string dates to Date objects
+    let lastWaterDate = new Date(plant.lastWaterDate);
+    let lastMoistDate: Date | null = plant.lastMoistDate ? new Date(plant.lastMoistDate) : null;
+    let lastFertilizeDate: Date | null = (plant.lastFertilizeDate || plant.fertilizingFrequency > 0) ? new Date(plant.lastFertilizeDate) : null;
 
+    console.log(plantToString(plant));
+
+    // Find the most recent care activity date and its frequency
+    let mostRecentDate = lastWaterDate;
+    let mostRecentFrequency = plant.wateringFrequency;
+    if (lastMoistDate && lastMoistDate > mostRecentDate) {
+      console.log('care needed: moist check');
+      mostRecentDate = lastMoistDate;
+      mostRecentFrequency = 1; // hardcoded
+    }
+    if (lastFertilizeDate && lastFertilizeDate > mostRecentDate) {
+      console.log('care needed: fertilize');
+      mostRecentDate = lastFertilizeDate;
+      mostRecentFrequency = plant.fertilizingFrequency;
+    }
+
+    // Calculate the future date when the next care activity is due
     let futureDate = new Date();
-    futureDate.setDate(date.getDate() + plant.wateringFrequency); // date frequencyDays days in the future
+    futureDate.setTime(mostRecentDate.getTime() + mostRecentFrequency * 24 * 60 * 60 * 1000);
 
-    let diffInTime = futureDate.getTime() - new Date().getTime(); // difference in milliseconds
-    let diffInDays = diffInTime / (1000 * 3600 * 24); // convert milliseconds to days
+    // Calculate the difference in days between the future date and the current date
+    let diffInTime = futureDate.getTime() - new Date().getTime();
+    let diffInDays = diffInTime / (1000 * 3600 * 24);
 
-    console.log('due: ' + diffInDays); // prints the difference in days
+    console.log(plant.name + ' next care activity due in: ' + diffInDays + ' days');
     return diffInDays;
   }
+
+
 }
