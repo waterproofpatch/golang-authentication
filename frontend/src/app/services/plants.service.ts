@@ -55,8 +55,6 @@ export function plantToString(plant: Plant): string {
   Image ID: ${plant.imageId}
   Is Public: ${plant.isPublic ? 'Yes' : 'No'}
   Do Notify: ${plant.doNotify ? 'Yes' : 'No'}
-  Logs: ${JSON.stringify(plant.logs, null, 2)}
-  Comments: ${JSON.stringify(plant.comments, null, 2)}
   Notes: ${plant.notes}`;
   return plantDetails;
 }
@@ -463,43 +461,45 @@ export class PlantsService extends BaseService {
     return hash.toString();
   }
 
-  /**
-   * @param plant the plant to calculate days until next care activity.
-   * @returns the number of days until the plant needs the next care activity (watering, moisture check, or fertilizing).
-   */
   private getDaysUntilNextCareActivity(plant: Plant): number {
     // Convert string dates to Date objects
     let lastWaterDate = new Date(plant.lastWaterDate);
     let lastMoistDate: Date | null = plant.lastMoistDate ? new Date(plant.lastMoistDate) : null;
-    let lastFertilizeDate: Date | null = (plant.lastFertilizeDate || plant.fertilizingFrequency > 0) ? new Date(plant.lastFertilizeDate) : null;
+    let lastFertilizeDate: Date | null = (plant.lastFertilizeDate && plant.fertilizingFrequency > 0) ? new Date(plant.lastFertilizeDate) : null;
 
     console.log(plantToString(plant));
 
-    // Find the most recent care activity date and its frequency
-    let mostRecentDate = lastWaterDate;
-    let mostRecentFrequency = plant.wateringFrequency;
-    if (lastMoistDate && lastMoistDate > mostRecentDate) {
-      console.log('care needed: moist check');
-      mostRecentDate = lastMoistDate;
-      mostRecentFrequency = 1; // hardcoded
-    }
-    if (lastFertilizeDate && lastFertilizeDate > mostRecentDate) {
-      console.log('care needed: fertilize');
-      mostRecentDate = lastFertilizeDate;
-      mostRecentFrequency = plant.fertilizingFrequency;
+    let nextWaterCareDate = new Date();
+    nextWaterCareDate.setTime(lastWaterDate.getTime() + plant.wateringFrequency * 24 * 60 * 60 * 1000);
+
+    let nextFertilizeCareDate: Date | null = null;
+    if (lastFertilizeDate) {
+      nextFertilizeCareDate = new Date();
+      nextFertilizeCareDate.setTime(lastFertilizeDate.getTime() + plant.fertilizingFrequency * 24 * 60 * 60 * 1000);
     }
 
-    // Calculate the future date when the next care activity is due
-    let futureDate = new Date();
-    futureDate.setTime(mostRecentDate.getTime() + mostRecentFrequency * 24 * 60 * 60 * 1000);
+    let nextMoistCareDate: Date | null = null;
+    if (lastMoistDate) {
+      nextMoistCareDate = new Date();
+      nextMoistCareDate.setTime(lastMoistDate.getTime() + 1 * 24 * 60 * 60 * 1000);
+    }
+
+    let careDates = [nextWaterCareDate.getTime()];
+    if (nextFertilizeCareDate) {
+      careDates.push(nextFertilizeCareDate.getTime());
+    }
+    if (nextMoistCareDate) {
+      careDates.push(nextMoistCareDate.getTime());
+    }
+
+    let earliestCareDate = new Date(Math.min(...careDates));
+    console.log("earlierCareDate: " + earliestCareDate);
 
     // Calculate the difference in days between the future date and the current date
-    let diffInTime = futureDate.getTime() - new Date().getTime();
+    let diffInTime = earliestCareDate.getTime() - new Date().getTime();
     let diffInDays = diffInTime / (1000 * 3600 * 24);
 
     console.log(plant.name + ' next care activity due in: ' + diffInDays + ' days');
     return diffInDays;
   }
-
-
 }
