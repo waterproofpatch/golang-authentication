@@ -49,6 +49,7 @@ export class PlantsService extends BaseService {
     const formattedDate = `${month}/${day}/${year}`;
     return formattedDate
   }
+
   public static NeedsFertilizing(plant: Plant) {
     var nextFertilizeDate = new Date()
     var lastFertilizeDate = new Date(plant.lastFertilizeDate)
