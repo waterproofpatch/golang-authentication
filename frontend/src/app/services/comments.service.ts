@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, finalize } from 'rxjs';
-import { CommentsApiService } from '../api/comments-api.service';
 import { catchError, throwError } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpClient } from '@angular/common/http';
 
 import { Comment } from '../types';
+import { BaseService } from './base.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CommentsService {
+export class CommentsService extends BaseService {
 
+  commentsApiUrl = '/api/comments';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
   error$ = new Subject<string>();
   comments$ = new Subject<Comment[]>();
@@ -40,19 +41,19 @@ export class CommentsService {
     }
   }
 
-  constructor(private commentsApiService: CommentsApiService) { }
+  constructor(private http: HttpClient) { super() }
 
   public viewComment(comment: Comment): void {
     // this check prevents us from recuring
     if (!comment.viewed) {
       console.log("viewing comment: " + comment.id)
-      this.commentsApiService.put(comment).subscribe((x) => { })
+      this.put(comment).subscribe((x) => { })
     }
   }
 
   public deleteComment(id: number): Observable<any> {
     this.isLoading$.next(true);
-    return this.commentsApiService.delete(id).pipe(
+    return this.delete(id).pipe(
       catchError((error: any) => {
         if (error instanceof HttpErrorResponse) {
           this.error$.next(error.error.error_message);
@@ -70,7 +71,7 @@ export class CommentsService {
   public postComment(comment: Comment): Observable<any> {
     this.isLoading$.next(true);
     delete comment.CreatedAt;
-    return this.commentsApiService.post(comment).pipe(
+    return this.post(comment).pipe(
       catchError((error: any) => {
         if (error instanceof HttpErrorResponse) {
           this.error$.next(error.error.error_message);
@@ -85,5 +86,20 @@ export class CommentsService {
     );
   }
 
+  post(comment: Comment): Observable<any> {
+    return this.http.post(this.getUrlBase() + this.commentsApiUrl + "/" + comment.id, comment, this.httpOptions);
+  }
+  // updating the comment marks it as viewed on the remote side
+  put(comment: Comment): Observable<any> {
+    return this.http.put(this.getUrlBase() + this.commentsApiUrl + "/" + comment.id, comment, this.httpOptions);
+  }
+
+  delete(
+    id: number,
+  ): Observable<any> {
+    return this.http.delete(
+      this.getUrlBase() + this.commentsApiUrl + "/" + id,
+      this.httpOptions);
+  }
 }
 
