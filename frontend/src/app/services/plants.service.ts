@@ -442,13 +442,15 @@ export class PlantsService extends BaseService {
   }
 
   /**
-   * 
-   * @param plant the plant to calculate how many days until/since last water
-   * date was due
-   * @returns the number of days since or until the last water date was due
+   * @param plant the plant to calculate how many days until or since 
+   * it needed to be watered, fertilized or checked for moist soil - whichever 
+   * happened longest ago.
+   * @returns the number of days until or since the next care activity is needed.
    */
   private getDaysUntilWaterDue(plant: Plant): number {
     console.log(plant.name + ' last water ' + plant.lastWaterDate)
+    // plant.lastMoistDate
+    // plant.lastFertilizeDate
     let date = new Date(plant.lastWaterDate); // convert string to date
 
     let futureDate = new Date();

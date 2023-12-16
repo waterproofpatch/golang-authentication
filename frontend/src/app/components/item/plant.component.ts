@@ -89,16 +89,20 @@ export class PlantComponent {
   }
 
   /**
-   * handle user editing the plant
+   * Handle user editing the plant. Emits an event for the plants component HTML
+   * to listen for.
    */
-  editPlant() {
+  public editPlant(): void {
     if (!this.plant) {
       return;
     }
     this.editModeEmitter.emit({ plant: this.plant, imageUrl: this.imageUrl })
   }
 
-  editPlantNotes() {
+  /**
+   * opens the notes modal
+   */
+  public editPlantNotes(): void {
     if (!this.plant) {
       return;
     }
@@ -120,9 +124,10 @@ export class PlantComponent {
       this.plantsService.updatePlant(this.plant, null)
     })
   }
+
   /**
-   * handle user hitting "Edit" from the dropdown menu to update plant care
-   * status
+   * Handle user hitting "Edit" from the dropdown menu to update plant care
+   * status.
    */
   public openCareDialog(): void {
     if (!this.plant) {
@@ -177,10 +182,15 @@ export class PlantComponent {
    * format the last water date to a string.
    * @returns formatted last water date
    */
-  transformLastPlantCareDate(date: string): string {
+  public transformLastPlantCareDate(date: string): string {
     let myDate = new Date(date);
     return this.formatDate(myDate)
   }
+
+  /**
+   * 
+   * @returns logs sorted by their date
+   */
   public getSortedLogs(): any {
     var sortedLogs = this.plant?.logs.slice().sort((a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime());
     return sortedLogs;

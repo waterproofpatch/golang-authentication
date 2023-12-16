@@ -15,12 +15,33 @@ export interface PlantNotesDialogData {
   notes: string,
 }
 export interface PlantCareDialogData {
+  /**
+   * whether or not the dialog was cancelled
+   */
   cancelled: boolean,
+  /**
+   * dialog title
+   */
   title: string,
+  /**
+   * unknown
+   */
   confirmationMsg: string,
+  /**
+   * whether or not user watered plant
+   */
   water: boolean,
+  /**
+   * whether or not user fertilized the plant
+   */
   fertilize: boolean,
+  /**
+   * whether or not the user skipped fertilizing the plant
+   */
   skipFertilize: boolean,
+  /**
+   * whether or not the user marked the plant as having moist soil
+   */
   moist: boolean
 }
 
