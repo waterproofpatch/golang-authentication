@@ -10,6 +10,6 @@ WORKDIR /email_service
 RUN python3 -m venv venv
 RUN venv/bin/python -m pip install -r requirements.txt
 
-ENV SITE_TIMESTAMP="refactor_8453325_12/11/23 01:07:17"
+ENV SITE_TIMESTAMP="refactor_3694698_12/16/23 02:35:25"
 
 WORKDIR /app/src
