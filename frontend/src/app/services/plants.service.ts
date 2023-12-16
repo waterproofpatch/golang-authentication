@@ -403,9 +403,9 @@ export class PlantsService extends BaseService {
   private updatePlantsList(plants: Plant[]): void {
     // handle case where plants were removed from server copy
     this.plants = this.plants.filter(plant => plants.some(p => p.id === plant.id));
+    plants = plants.sort((a: Plant, b: Plant) => this.getDaysUntilWaterDue(a) - this.getDaysUntilWaterDue(b))
 
     for (let p of plants) {
-
       // update tag/username bookkeeping
       this.tags.add(p.tag)
       this.usernames.add(p.username)
@@ -424,8 +424,8 @@ export class PlantsService extends BaseService {
       }
     }
     // plants = plants.sort((a: any, b: any) => a.id - b.id)
-    console.log("sorting...")
-    plants = plants.sort((a: Plant, b: Plant) => this.getDaysUntilWaterDue(b) - this.getDaysUntilWaterDue(a))
+    // console.log("sorting...")
+    // plants = plants.sort((a: Plant, b: Plant) => this.getDaysUntilWaterDue(b) - this.getDaysUntilWaterDue(a))
     this.error$.next(''); // send a benign event so observers can close modals
     this.isLoading.next(false)
   }
