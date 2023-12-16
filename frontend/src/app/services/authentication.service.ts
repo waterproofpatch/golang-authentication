@@ -2,12 +2,11 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subject, BehaviorSubject, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import jwt_decode from 'jwt-decode';
 import { JwtPayload } from 'jwt-decode';
 import { finalize } from 'rxjs/operators';
 
-import { AuthenticationApiService } from '../apis/authentication-api.service';
 import { BaseService } from './base.service';
 import { DialogService } from './dialog.service';
 import { JWTData } from '../types';
@@ -16,6 +15,11 @@ import { JWTData } from '../types';
   providedIn: 'root',
 })
 export class AuthenticationService extends BaseService {
+  loginApiUrl = '/api/login';
+  logoutApiUrl = '/api/logout';
+  registerApiUrl = '/api/register';
+  refreshApiUrl = '/api/refresh';
+
   // the local storage key for tokens
   TOKEN_KEY = 'token';
 
@@ -29,9 +33,9 @@ export class AuthenticationService extends BaseService {
   isAuthenticated$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(
-    private authenticationApiService: AuthenticationApiService,
     private router: Router,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private http: HttpClient
   ) {
     super();
     if (this.token) {
@@ -148,7 +152,7 @@ export class AuthenticationService extends BaseService {
   }
 
   logout(modalText?: string, redirectToLogin?: boolean) {
-    this.authenticationApiService.logoutHttp().subscribe((x) => {
+    this.logoutHttp().subscribe((x) => {
       console.log("Logged out.")
     })
     this.clearToken()
@@ -168,7 +172,7 @@ export class AuthenticationService extends BaseService {
    * @returns an observable for refreshing the token.
    */
   public refresh(): Observable<any> {
-    return this.authenticationApiService.refreshHttp()
+    return this.refreshHttp()
   }
 
   /**
@@ -183,8 +187,7 @@ export class AuthenticationService extends BaseService {
     password: string,
   ) {
     this.isLoading$.next(true)
-    this.authenticationApiService
-      .registerHttp(email, username, password)
+    this.registerHttp(email, username, password)
       .pipe(
         catchError((error: any) => {
           if (error instanceof HttpErrorResponse) {
@@ -210,8 +213,7 @@ export class AuthenticationService extends BaseService {
    */
   public login(email: string, password: string) {
     this.isLoading$.next(true)
-    this.authenticationApiService
-      .loginHttp(email, password)
+    this.loginHttp(email, password)
       .pipe(
         catchError((error: any) => {
           if (error instanceof HttpErrorResponse) {
@@ -229,5 +231,42 @@ export class AuthenticationService extends BaseService {
         this.error$.next(''); // send a benign event so observers can close modals
         this.router.navigateByUrl('/');
       });
+  }
+  refreshHttp(): Observable<any> {
+    return this.http.get(this.getUrlBase() + this.refreshApiUrl, this.httpOptions)
+  }
+
+  registerHttp(
+    email: string,
+    username: string,
+    password: string,
+  ): Observable<any> {
+    const data = {
+      email: email,
+      username: username,
+      password: password,
+    };
+    return this.http.post(
+      this.getUrlBase() + this.registerApiUrl,
+      data,
+      this.httpOptions
+    );
+  }
+
+  logoutHttp(): Observable<any> {
+    return this.http.post(this.getUrlBase() + this.logoutApiUrl, null, this.httpOptions)
+  }
+
+  loginHttp(email: string, password: string): Observable<any> {
+    const data = {
+      email: email,
+      password: password,
+    };
+
+    return this.http.post(
+      this.getUrlBase() + this.loginApiUrl,
+      data,
+      this.httpOptions
+    );
   }
 }
