@@ -50,7 +50,7 @@ export class PlantComponent {
   numComments: BehaviorSubject<number> = new BehaviorSubject<number>(0)
 
   constructor(private router: Router,
-    private plantService: PlantsService,
+    private plantsService: PlantsService,
     private dialogService: DialogService,
     private authenticationService: AuthenticationService) {
     this.isCondensed = false // deafult value
@@ -117,7 +117,7 @@ export class PlantComponent {
       }
       console.log("Notes saved: " + result.notes)
       this.plant.notes = result.notes
-      this.plantService.updatePlant(this.plant, null)
+      this.plantsService.updatePlant(this.plant, null)
     })
   }
   /**
@@ -160,12 +160,12 @@ export class PlantComponent {
         }
         if (result.moist) {
           console.log("Plant is moist - only updating that attribute")
-          this.plantService.markMoist(this.plant)
+          this.plantsService.markMoist(this.plant)
           return;
         }
 
         // not updating the image for this plant
-        this.plantService.updatePlant(this.plant, null)
+        this.plantsService.updatePlant(this.plant, null)
       } else {
         console.log("Dialog declined.")
       }
@@ -281,7 +281,7 @@ export class PlantComponent {
     }
     console.log("Getting image for imageId=" + this.plant.imageId)
     this.isImageLoading = true;
-    this.plantService.getPlantImage(this.plant.imageId)
+    this.plantsService.getPlantImage(this.plant.imageId)
       .subscribe(blob => {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -309,7 +309,7 @@ export class PlantComponent {
         if (!this.plant) {
           return;
         }
-        this.plantService.deletePlant(this.plant.id);
+        this.plantsService.deletePlant(this.plant.id);
       } else {
         console.log("Dialog declined.")
       }
