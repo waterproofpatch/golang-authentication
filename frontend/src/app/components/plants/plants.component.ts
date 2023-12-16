@@ -60,14 +60,6 @@ export class PlantsComponent {
   // list of usernames that we're filtering on, if any
   filterUsernames: string[] = []
 
-  // set of tags available for selection in either filtering or when editing a 
-  // plant
-  tags = new Set<string>()
-
-  // set of usernames available for selection in either filtering or when editing a 
-  // plant
-  usernames = new Set<string>();
-
   // name filter, if applied from HTML
   plantNameFilter: string = "";
 
@@ -112,14 +104,6 @@ export class PlantsComponent {
 
     // sanitize the selected preview image URL for display at the frontend
     this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
-
-    // listen for plants so we can add all tags for selection
-    this.plantsService.plants$.subscribe((x) => {
-      x.forEach((plant) => {
-        this.tags.add(plant.tag);
-        this.usernames.add(plant.username)
-      });
-    })
 
     // on init, ask for the list of plants
     this.plantsService.getPlants()

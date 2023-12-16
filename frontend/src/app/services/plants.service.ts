@@ -172,9 +172,18 @@ export class PlantsService extends BaseService {
   }
   // this error string is for modals to display login or registration errors.
   error$ = new Subject<string>();
-  plants$ = new Subject<Plant[]>();
 
+  // list of plants, updated by getPlants
   plants: Plant[] = []
+
+  // set of tags available for selection in either filtering or when editing a 
+  // plant
+  tags = new Set<string>()
+
+  // set of usernames available for selection in either filtering or when editing a 
+  // plant
+  usernames = new Set<string>();
+
 
   constructor(
     private plantsApiService: PlantsApiService,
@@ -243,7 +252,6 @@ export class PlantsService extends BaseService {
         })
       )
       .subscribe((x) => {
-        console.log('Got plants ' + x);
         this.updatePlantsList(x)
         this.error$.next(''); // send a benign event so observers can close modals
         this.isLoading.next(false)
@@ -397,8 +405,13 @@ export class PlantsService extends BaseService {
     this.plants = this.plants.filter(plant => plants.some(p => p.id === plant.id));
 
     for (let p of plants) {
+
+      // update tag/username bookkeeping
+      this.tags.add(p.tag)
+      this.usernames.add(p.username)
+
       if (!this.plants.some(plant => plant.id === p.id)) {
-        console.log("New plant")
+        console.log("New plant " + p.id + '(' + p.name + ')')
         this.plants.push(p)
       } else {
         let plantToUpdate = this.plants.findIndex(plant => plant.id === p.id);
@@ -410,8 +423,9 @@ export class PlantsService extends BaseService {
         }
       }
     }
-    plants = plants.sort((a: any, b: any) => a.id - b.id)
-    this.plants$.next(plants)
+    // plants = plants.sort((a: any, b: any) => a.id - b.id)
+    console.log("sorting...")
+    plants = plants.sort((a: Plant, b: Plant) => this.getDaysUntilWaterDue(b) - this.getDaysUntilWaterDue(a))
     this.error$.next(''); // send a benign event so observers can close modals
     this.isLoading.next(false)
   }
@@ -425,5 +439,25 @@ export class PlantsService extends BaseService {
       hash = hash & hash; // Convert to 32bit integer
     }
     return hash.toString();
+  }
+
+  /**
+   * 
+   * @param plant the plant to calculate how many days until/since last water
+   * date was due
+   * @returns the number of days since or until the last water date was due
+   */
+  private getDaysUntilWaterDue(plant: Plant): number {
+    console.log(plant.name + ' last water ' + plant.lastWaterDate)
+    let date = new Date(plant.lastWaterDate); // convert string to date
+
+    let futureDate = new Date();
+    futureDate.setDate(date.getDate() + plant.wateringFrequency); // date frequencyDays days in the future
+
+    let diffInTime = futureDate.getTime() - new Date().getTime(); // difference in milliseconds
+    let diffInDays = diffInTime / (1000 * 3600 * 24); // convert milliseconds to days
+
+    console.log('due: ' + diffInDays); // prints the difference in days
+    return diffInDays;
   }
 }

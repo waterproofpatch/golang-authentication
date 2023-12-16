@@ -56,7 +56,8 @@
 								<mat-select
 									(selectionChange)="addFilterTag($event.value)"
 									(click)="$event.stopPropagation()">
-									<mat-option *ngFor="let tag of tags"
+									<mat-option
+										*ngFor="let tag of plantsService.tags"
 										[value]="tag">{{tag}}</mat-option>
 								</mat-select>
 							</mat-form-field>
@@ -79,7 +80,8 @@
 								<mat-select
 									(selectionChange)="addFilterUsername($event.value)"
 									(click)="$event.stopPropagation()">
-									<mat-option *ngFor="let username of usernames"
+									<mat-option
+										*ngFor="let username of plantsService.usernames"
 										[value]="username">{{username}}</mat-option>
 								</mat-select>
 							</mat-form-field>
@@ -128,7 +130,8 @@
 					<mat-label>Tag</mat-label>
 					<input matInput formControlName="tag" name="tag" [matAutocomplete]="auto">
 					<mat-autocomplete #auto="matAutocomplete">
-						<mat-option *ngFor="let tag of tags" [value]="tag">{{tag}}</mat-option>
+						<mat-option *ngFor="let tag of plantsService.tags"
+							[value]="tag">{{tag}}</mat-option>
 					</mat-autocomplete>
 				</mat-form-field>
 
