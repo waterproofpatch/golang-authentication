@@ -152,12 +152,12 @@ export class PlantComponent {
           return;
         }
         if (result.water) {
-          this.plant.lastWaterDate = PlantsService.FormatDate(new Date())
+          this.plant.lastWaterDate = Plant.formatDate(new Date())
           console.log("Setting lastWaterDate to " + this.plant.lastWaterDate);
           this.plant.lastMoistDate = '' // unset
         }
         if (result.fertilize || result.skipFertilize) {
-          this.plant.lastFertilizeDate = PlantsService.FormatDate(new Date())
+          this.plant.lastFertilizeDate = Plant.formatDate(new Date())
           console.log("Setting lastFertilizeDate to " + this.plant.lastFertilizeDate);
           if (result.skipFertilize) {
             console.log("Fertilize was skipped")

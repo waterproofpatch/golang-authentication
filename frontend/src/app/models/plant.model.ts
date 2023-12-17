@@ -40,6 +40,53 @@ export class Plant {
 		Notes: ${this.notes}`;
 		return plantDetails;
 	}
+	/**
+	 * @param date to format
+	 * @returns formatted @c date
+	 */
+	public static formatDate(date: Date): string {
+
+		const day = date.getDate().toString().padStart(2, '0'); // Get the day of the month (1-31) and pad it with a leading zero if necessary
+		const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Get the month (0-11), add 1 to get the month as a number (1-12), and pad it with a leading zero if necessary
+		const year = date.getFullYear().toString(); // Get the year (4 digits)
+
+		const formattedDate = `${month}/${day}/${year}`;
+		return formattedDate
+	}
+	public static makePlant(name: string,
+		wateringFrequency: number,
+		fertilizingFrequency: number,
+		lastWateredDate: Date,
+		lastFertilizeDate: Date,
+		lastMoistDate: string,
+		tag: string,
+		isPublic: boolean,
+		doNotify: boolean,
+		logs: PlantLog[],
+		comments: Comment[],
+	): Plant {
+		let plant: Plant = new Plant(
+			0, // id
+			name,
+			"", // username
+			"", // email
+			wateringFrequency,
+			fertilizingFrequency,
+			Plant.formatDate(lastWateredDate),
+			Plant.formatDate(lastFertilizeDate),
+			lastMoistDate,
+			false, // skippedLastFertilize
+			tag,
+			0, //imageId,
+			isPublic,
+			doNotify,
+			logs,
+			comments,
+			"", // notes
+
+		)
+		return plant;
+	}
 }
 
 

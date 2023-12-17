@@ -227,7 +227,7 @@ export class PlantsComponent {
   public switchToAddPlantMode(): void {
     console.log("Switching to add plant mode...")
     // these are the default settings for the plant to add.
-    this.editingPlant = PlantsService.PlantsFactory.makePlant("",
+    this.editingPlant = Plant.makePlant("",
       1,
       0,
       new Date(),
@@ -291,7 +291,7 @@ export class PlantsComponent {
       return;
     }
     this.isProcessingAddOrUpdate = true
-    var plant = PlantsService.PlantsFactory.makePlant(this.form.controls.name.value || '',
+    var plant = Plant.makePlant(this.form.controls.name.value || '',
       this.form.controls.wateringFrequency.value || 0,
       this.form.controls.fertilizingFrequency.value || 0,
       this.editingPlantLastWaterDate.value || new Date(),

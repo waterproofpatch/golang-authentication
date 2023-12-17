@@ -17,20 +17,6 @@ export class PlantsService extends BaseService {
   formProcessingSucceeded: Subject<boolean> = new Subject<boolean>()
   imageCache: Map<number, Blob> = new Map<number, Blob>();
 
-  /**
-   * @param date to format
-   * @returns formatted @c date
-   */
-  public static FormatDate(date: Date): string {
-
-    const day = date.getDate().toString().padStart(2, '0'); // Get the day of the month (1-31) and pad it with a leading zero if necessary
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Get the month (0-11), add 1 to get the month as a number (1-12), and pad it with a leading zero if necessary
-    const year = date.getFullYear().toString(); // Get the year (4 digits)
-
-    const formattedDate = `${month}/${day}/${year}`;
-    return formattedDate
-  }
-
   // this is quite possibly the most rediculous way to do this
   public static NeedsCare(plant: Plant) {
     var nextWaterDate = new Date()
@@ -58,57 +44,21 @@ export class PlantsService extends BaseService {
     nextFertilizeDate.setTime(lastFertilizeDate.getTime() + frequencyInMsFertilize);
     nextMoistDate.setTime(lastMoistDate.getTime() + frequencyInMsMoist);
 
-    let wateringDate = PlantsService.FormatDate(nextWaterDate)
+    let wateringDate = Plant.formatDate(nextWaterDate)
     if (new Date(wateringDate) < new Date() && plant.lastMoistDate == '') {
       return true;
     }
-    let fertilizingDate = PlantsService.FormatDate(nextFertilizeDate)
+    let fertilizingDate = Plant.formatDate(nextFertilizeDate)
     if (new Date(fertilizingDate) < new Date() && plant.fertilizingFrequency > 0) {
       return true;
     }
-    let moistDate = PlantsService.FormatDate(nextMoistDate)
+    let moistDate = Plant.formatDate(nextMoistDate)
     if (new Date(moistDate) < new Date() && plant.lastMoistDate != '') {
       return true;
     }
     return false;
   }
 
-  public static PlantsFactory = class {
-    public static makePlant(name: string,
-      wateringFrequency: number,
-      fertilizingFrequency: number,
-      lastWateredDate: Date,
-      lastFertilizeDate: Date,
-      lastMoistDate: string,
-      tag: string,
-      isPublic: boolean,
-      doNotify: boolean,
-      logs: PlantLog[],
-      comments: Comment[],
-    ): Plant {
-      let plant: Plant = new Plant(
-        0, // id
-        name,
-        "", // username
-        "", // email
-        wateringFrequency,
-        fertilizingFrequency,
-        PlantsService.FormatDate(lastWateredDate),
-        PlantsService.FormatDate(lastFertilizeDate),
-        lastMoistDate,
-        false, // skippedLastFertilize
-        tag,
-        0, //imageId,
-        isPublic,
-        doNotify,
-        logs,
-        comments,
-        "", // notes
-
-      )
-      return plant;
-    }
-  }
   // this error string is for modals to display login or registration errors.
   error$ = new Subject<string>();
 
