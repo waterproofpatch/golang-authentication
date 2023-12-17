@@ -34,7 +34,9 @@ func startServing(port int, router *mux.Router) {
 	headers := []string{"Content-Type", "Access-Control-Allow-Origin", "Authorization"}
 	origins := []string{
 		"https://www.plantmindr.com",
+		"https://plantmindr.com",
 		"www.plantmindr.com",
+		"plantmindr.com",
 		"http://localhost:4200",
 		"https://localhost:4200",
 		"https://antlion.azurewebsites.net",

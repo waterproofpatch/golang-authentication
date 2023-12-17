@@ -55,17 +55,6 @@ type PlantModel struct {
 	Comments                []CommentModel  `json:"comments" gorm:"foreignKey:PlantID"`
 	Notes                   string          `json:"notes"`
 }
-type MessageModel struct {
-	gorm.Model
-	Id            int    `json:"id"`
-	From          string `json:"from"`
-	Timestamp     string `json:"timestamp"`
-	Content       string `json:"content"`
-	Channel       string `json:"channel"`
-	PmUsername    string `json:"pmUsername"`
-	Authenticated bool   `json:"authenticated"`
-}
-
 type UserCommentView struct {
 	CommentID int
 	Email     string
@@ -130,32 +119,6 @@ func addPlantLog(db *gorm.DB, plant *PlantModel, logMsg string) {
 		Log: logMsg,
 	}
 	db.Model(plant).Association("Logs").Append(&plantLog)
-}
-
-func AddMessage(db *gorm.DB, message *Message) error {
-	// Delete old records if the limit has been reached
-	var count int64
-	db.Model(&MessageModel{}).Count(&count)
-	if count > 50 {
-		fmt.Printf("DB has %d messages.", count)
-		var messages []MessageModel
-		db.Order("id asc").Limit(int(count) - 50).Find(&messages)
-		db.Delete(&messages)
-	}
-	newDbMessage := MessageModel{
-		From:          message.From,
-		Timestamp:     message.Timestamp,
-		Content:       message.Content,
-		Channel:       message.Channel,
-		PmUsername:    message.PmUsername,
-		Authenticated: message.Authenticated,
-	}
-	err := db.Create(&newDbMessage).Error
-	if err != nil {
-		return err
-	}
-	db.Save(newDbMessage)
-	return nil
 }
 
 func validatePlantInfo(plantName string, wateringFrequency int, lastWaterDate string, lastFertilizeDate string) error {
@@ -357,7 +320,6 @@ func AddComment(db *gorm.DB, content string, email string, username string, plan
 func InitModels(db *gorm.DB) {
 	log.Printf("Initializing models...\n")
 	db.AutoMigrate(&PlantModel{})
-	db.AutoMigrate(&MessageModel{})
 	db.AutoMigrate(&CommentModel{})
 	db.AutoMigrate(&ImageModel{})
 	db.AutoMigrate(&PlantLogModel{})

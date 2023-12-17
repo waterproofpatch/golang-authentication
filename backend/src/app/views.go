@@ -7,7 +7,6 @@ import (
 	"image"
 	"image/jpeg"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -16,7 +15,6 @@ import (
 	"github.com/waterproofpatch/go_authentication/authentication"
 
 	"github.com/gorilla/mux"
-	"github.com/gorilla/websocket"
 )
 
 func getApiKey() string {
@@ -467,98 +465,12 @@ func dashboard(w http.ResponseWriter, r *http.Request, claims *authentication.JW
 	return
 }
 
-// serveWs handles websocket requests from the peer.
-func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
-	q := r.URL.Query()
-	channel := q.Get("channel")
-	token := q.Get("token")
-
-	log.Printf("Processing new client for channel=%s", channel)
-	success, jwtData, errorMsg, reason := authentication.ParseToken(token, false)
-
-	// upgrade the connection
-	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	if !success {
-		fmt.Printf("Client is not authenticated: %s, reason=%s.\n", errorMsg, reason)
-		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "Please login or create an account."))
-		conn.Close()
-		return
-	}
-
-	if !isValidInput(channel) {
-		fmt.Println("Invalid channel " + channel)
-		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "Invalid channel."))
-		conn.Close()
-		return
-	}
-
-	// client looks legit, let them in
-	client := &Client{hub: hub, conn: conn, send: make(chan *Message), channel: channel, username: jwtData.Username}
-	fmt.Println("(2) Client looks alright, creating a client and registering it with the hub")
-	client.hub.register <- client
-
-	fmt.Println("Starting pumps...")
-	// Allow collection of memory referenced by the caller by doing all work in
-	// new goroutines.
-	go client.writePump()
-	go client.readPump()
-
-	// send the client any/all messages saved in the db
-	db := authentication.GetDb()
-	var messages []MessageModel
-	db.Find(&messages)
-	fmt.Println("Flushing existing messages to client...")
-	for _, message := range messages {
-		if message.Channel == client.channel {
-			// don't send pms that aren't for this client
-			if message.PmUsername != "" && message.PmUsername != client.username {
-				continue
-			}
-			m := Message{
-				From:          message.From,
-				Channel:       message.Channel,
-				Content:       message.Content,
-				Timestamp:     message.Timestamp,
-				PmUsername:    message.PmUsername,
-				Authenticated: message.Authenticated,
-			}
-			client.send <- &m
-		}
-	}
-	// tell all clients, including the one who just joined,
-	// that a new client has joined.
-	hub.broadcastClientJoin(client)
-	for connectedClient := range hub.clients {
-		var message Message
-		message.Type = USER_JOIN
-		message.Content = connectedClient.username
-		message.Timestamp = formattedTime()
-		message.From = "Server"
-		message.Channel = "Broadcast"
-		fmt.Printf("Sending USER_JOIN (%s) message to %s\n", connectedClient.username, client.username)
-		client.send <- &message
-	}
-}
-
 func InitViews(router *mux.Router) {
-	fmt.Println("Starting websocket hub...")
-	hub := newHub()
-	go hub.run()
-
 	router.HandleFunc("/api/dashboard/{id:[0-9]+}", authentication.VerifiedOnly(dashboard, false)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	router.HandleFunc("/api/dashboard", authentication.VerifiedOnly(dashboard, false)).Methods("GET", "POST", "PUT", "OPTIONS")
 	router.HandleFunc("/api/comments/{id:[0-9]+}", authentication.VerifiedOnly(comments, true)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	router.HandleFunc("/api/plants", authentication.VerifiedOnly(plants, true)).Methods("GET", "POST", "PUT", "OPTIONS")
 	router.HandleFunc("/api/plants/{id:[0-9]+}", authentication.VerifiedOnly(plants, true)).Methods("GET", "POST", "DELETE", "PUT", "OPTIONS")
 	router.HandleFunc("/api/images/{id:[0-9]+}", images).Methods("GET", "OPTIONS")
-	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(hub, w, r)
-	})
 	router.HandleFunc("/api/version", version).Methods("GET", "OPTIONS")
 }

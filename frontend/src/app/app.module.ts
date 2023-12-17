@@ -38,7 +38,6 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { PlantsComponent } from './components/plants/plants.component';
 import { PlantComponent } from './components/item/plant.component';
-import { ChatComponent } from './components/chat/chat.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { MessageComponent } from './components/message/message.component';
 import { UserComponent } from './components/user/user.component';
@@ -57,7 +56,6 @@ import { NotesComponent } from './components/notes/notes.component';
     BaseComponent,
     PlantsComponent,
     PlantComponent,
-    ChatComponent,
     ProfileComponent,
     MessageComponent,
     UserComponent,
