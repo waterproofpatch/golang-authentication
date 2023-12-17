@@ -50,20 +50,6 @@ export class PlantsService extends BaseService {
     return formattedDate
   }
 
-  public static NeedsFertilizing(plant: Plant) {
-    var nextFertilizeDate = new Date()
-    var lastFertilizeDate = new Date(plant.lastFertilizeDate)
-    nextFertilizeDate.setFullYear(lastFertilizeDate.getFullYear());
-    nextFertilizeDate.setMonth(lastFertilizeDate.getMonth());
-    var frequencyInMs = plant.fertilizingFrequency * 24 * 60 * 60 * 1000;
-    nextFertilizeDate.setTime(lastFertilizeDate.getTime() + frequencyInMs);
-    let fertilizingDate = PlantsService.FormatDate(nextFertilizeDate)
-    if (new Date(fertilizingDate) < new Date() && plant.fertilizingFrequency > 0) {
-      return true;
-    }
-    return false;
-  }
-
   // this is quite possibly the most rediculous way to do this
   public static NeedsCare(plant: Plant) {
     var nextWaterDate = new Date()
