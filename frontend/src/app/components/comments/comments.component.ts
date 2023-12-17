@@ -5,7 +5,8 @@ import { Location } from '@angular/common';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { PlantsService } from 'src/app/services/plants.service';
 import { CommentsService } from 'src/app/services/comments.service';
-import { Plant, Comment } from 'src/app/types';
+import { Comment } from 'src/app/types';
+import { Plant } from 'src/app/models/plant.model';
 @Component({
   selector: 'app-comments',
   templateUrl: './comments.component.html',

@@ -7,7 +7,8 @@ import { BehaviorSubject } from 'rxjs';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { DialogService, PlantCareDialogData, PlantNotesDialogData } from 'src/app/services/dialog.service';
 import { PlantsService } from 'src/app/services/plants.service';
-import { Plant, PlantCareType } from 'src/app/types';
+import { PlantCareType } from 'src/app/types';
+import { Plant } from 'src/app/models/plant.model';
 
 @Component({
   selector: 'app-plant',

@@ -45,26 +45,6 @@ export interface PlantLog {
   CreatedAt: string;
 }
 
-export interface Plant {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-  wateringFrequency: number;
-  fertilizingFrequency: number;
-  lastWaterDate: string;
-  lastFertilizeDate: string;
-  lastMoistDate: string;
-  skippedLastFertilize: boolean;
-  tag: string;
-  imageId: number;
-  isPublic: boolean;
-  doNotify: boolean;
-  logs: PlantLog[];
-  comments: Comment[];
-  notes: string;
-}
-
 export enum PlantCareType {
   FERTILIZE = 1,
   WATER,

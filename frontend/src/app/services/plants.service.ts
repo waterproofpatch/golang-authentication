@@ -2,31 +2,12 @@ import { catchError } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { from, of, tap, Subject, throwError, Observable, BehaviorSubject } from 'rxjs';
+import { map, from, of, tap, Subject, throwError, Observable, BehaviorSubject } from 'rxjs';
 
-import { Plant, PlantLog, Comment } from '../types';
+import { PlantLog, Comment } from '../types';
+import { Plant } from '../models/plant.model';
 import { BaseService } from './base.service';
 import { AuthenticationService } from './authentication.service';
-
-export function plantToString(plant: Plant): string {
-  let plantDetails = `Plant Details:
-  ID: ${plant.id}
-  Name: ${plant.name}
-  Username: ${plant.username}
-  Email: ${plant.email}
-  Watering Frequency: ${plant.wateringFrequency}
-  Fertilizing Frequency: ${plant.fertilizingFrequency}
-  Last Water Date: ${plant.lastWaterDate}
-  Last Fertilize Date: ${plant.lastFertilizeDate}
-  Last Moist Date: ${plant.lastMoistDate}
-  Skipped Last Fertilize: ${plant.skippedLastFertilize ? 'Yes' : 'No'}
-  Tag: ${plant.tag}
-  Image ID: ${plant.imageId}
-  Is Public: ${plant.isPublic ? 'Yes' : 'No'}
-  Do Notify: ${plant.doNotify ? 'Yes' : 'No'}
-  Notes: ${plant.notes}`;
-  return plantDetails;
-}
 
 @Injectable({
   providedIn: 'root'
@@ -124,25 +105,26 @@ export class PlantsService extends BaseService {
       logs: PlantLog[],
       comments: Comment[],
     ): Plant {
-      const plant: Plant = {
-        name: name,
-        wateringFrequency: wateringFrequency,
-        fertilizingFrequency: fertilizingFrequency,
-        lastWaterDate: PlantsService.FormatDate(lastWateredDate),
-        lastFertilizeDate: PlantsService.FormatDate(lastFertilizeDate),
-        lastMoistDate: lastMoistDate,
-        skippedLastFertilize: false,
-        tag: tag,
-        id: 0, // authoritative
-        username: "", // authoritative
-        email: "", // authoritative
-        imageId: 0, // TODO improve how this is set.
-        isPublic: isPublic,
-        doNotify: doNotify,
-        logs: logs,
-        comments: comments,
-        notes: "",
-      }
+      let plant: Plant = new Plant(
+        0, // id
+        name,
+        "", // username
+        "", // email
+        wateringFrequency,
+        fertilizingFrequency,
+        PlantsService.FormatDate(lastWateredDate),
+        PlantsService.FormatDate(lastFertilizeDate),
+        lastMoistDate,
+        false, // skippedLastFertilize
+        tag,
+        0, //imageId,
+        isPublic,
+        doNotify,
+        logs,
+        comments,
+        "", // notes
+
+      )
       return plant;
     }
   }
@@ -219,6 +201,7 @@ export class PlantsService extends BaseService {
     this.isLoading.next(true)
     this.delete(id)
       .pipe(
+        map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
         catchError((error: any) => {
           this.isLoading.next(false)
           if (error instanceof HttpErrorResponse) {
@@ -242,6 +225,7 @@ export class PlantsService extends BaseService {
     formData.append("id", plant.id.toString())
     this.putMoist(formData)
       .pipe(
+        map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
         catchError((error: any) => {
           this.formProcessingSucceeded.next(false)
           if (error instanceof HttpErrorResponse) {
@@ -284,6 +268,7 @@ export class PlantsService extends BaseService {
     formData.append('notes', plant.notes)
     this.putFormData(formData)
       .pipe(
+        map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
         catchError((error: any) => {
           this.formProcessingSucceeded.next(false)
           if (error instanceof HttpErrorResponse) {
@@ -323,6 +308,7 @@ export class PlantsService extends BaseService {
     formData.append('doNotify', plant.doNotify.toString())
     this.postFormData(formData)
       .pipe(
+        map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
         catchError((error: any) => {
           this.formProcessingSucceeded.next(false)
           if (error instanceof HttpErrorResponse) {
@@ -344,6 +330,28 @@ export class PlantsService extends BaseService {
       });
   }
 
+  private mapPlant(plant: any): Plant {
+    return new Plant(
+      plant.id,
+      plant.name,
+      plant.username,
+      plant.email,
+      plant.wateringFrequency,
+      plant.fertilizingFrequency,
+      plant.lastWaterDate,
+      plant.lastFertilizeDate,
+      plant.lastMoistDate,
+      plant.skippedLastFertilize,
+      plant.tag,
+      plant.imageId,
+      plant.isPublic,
+      plant.doNotify,
+      plant.logs,
+      plant.comments,
+      plant.notes
+    )
+  }
+
   /**
    * Get a list of plants.
    */
@@ -351,6 +359,7 @@ export class PlantsService extends BaseService {
     this.isLoading.next(true)
     this.get()
       .pipe(
+        map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
         catchError((error: any) => {
           this.isLoading.next(false)
           if (error instanceof HttpErrorResponse) {
@@ -361,13 +370,14 @@ export class PlantsService extends BaseService {
           return throwError(error);
         })
       )
-      .subscribe((x) => {
-        this.updatePlantsList(x)
+      .subscribe((plants: Plant[]) => {
+        this.updatePlantsList(plants);
       });
   }
 
+
   public getPlant(id: number): Observable<Plant> {
-    return this.get(id = id)
+    return this.getById(id = id) as Observable<Plant>
   }
 
   /**
@@ -376,6 +386,7 @@ export class PlantsService extends BaseService {
    */
   private updatePlantsList(plants: Plant[]): void {
     // handle case where plants were removed from server copy
+    console.log('type of plants: ' + typeof (plants))
     this.plants = this.plants.filter(plant => plants.some(p => p.id === plant.id));
     plants = plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
 
@@ -397,9 +408,6 @@ export class PlantsService extends BaseService {
         }
       }
     }
-    // plants = plants.sort((a: any, b: any) => a.id - b.id)
-    // console.log("sorting...")
-    // plants = plants.sort((a: Plant, b: Plant) => this.getDaysUntilWaterDue(b) - this.getDaysUntilWaterDue(a))
     this.error$.next(''); // send a benign event so observers can close modals
     this.isLoading.next(false)
   }
@@ -421,7 +429,7 @@ export class PlantsService extends BaseService {
     let lastMoistDate: Date | null = plant.lastMoistDate ? new Date(plant.lastMoistDate) : null;
     let lastFertilizeDate: Date | null = (plant.lastFertilizeDate && plant.fertilizingFrequency > 0) ? new Date(plant.lastFertilizeDate) : null;
 
-    console.log(plantToString(plant));
+    console.log(plant.plantToString());
 
     let nextWaterCareDate = new Date();
     nextWaterCareDate.setTime(lastWaterDate.getTime() + plant.wateringFrequency * 24 * 60 * 60 * 1000);
@@ -456,44 +464,44 @@ export class PlantsService extends BaseService {
     console.log(plant.name + ' next care activity due in: ' + diffInDays + ' days');
     return diffInDays;
   }
-  postFormData(formData: any): Observable<any> {
-    return this.http.post(this.getUrlBase() + this.plantsApiUrl, formData, this.httpOptionsNonJson);
+  postFormData(formData: any): Observable<Plant[]> {
+    return this.http.post<Plant[]>(this.getUrlBase() + this.plantsApiUrl, formData, this.httpOptionsNonJson);
   }
-  putFormData(formData: any): Observable<any> {
-    return this.http.put(this.getUrlBase() + this.plantsApiUrl, formData, this.httpOptionsNonJson);
+  putFormData(formData: any): Observable<Plant[]> {
+    return this.http.put<Plant[]>(this.getUrlBase() + this.plantsApiUrl, formData, this.httpOptionsNonJson);
   }
-  putMoist(formData: any): Observable<any> {
-    return this.http.put(this.getUrlBase() + this.plantsApiUrl + "?moist=true", formData, this.httpOptionsNonJson)
+  putMoist(formData: any): Observable<Plant[]> {
+    return this.http.put<Plant[]>(this.getUrlBase() + this.plantsApiUrl + "?moist=true", formData, this.httpOptionsNonJson)
   }
-  post(plant: Plant): Observable<any> {
-    return this.http.post(this.getUrlBase() + this.plantsApiUrl, plant, this.httpOptions);
+  post(plant: Plant): Observable<Plant[]> {
+    return this.http.post<Plant[]>(this.getUrlBase() + this.plantsApiUrl, plant, this.httpOptions);
   }
-  put(plant: Plant): Observable<any> {
+  put(plant: Plant): Observable<Plant[]> {
     console.log("Updating plant " + plant.id)
-    return this.http.put(this.getUrlBase() + this.plantsApiUrl, plant, this.httpOptions);
+    return this.http.put<Plant[]>(this.getUrlBase() + this.plantsApiUrl, plant, this.httpOptions);
   }
   getImage(id: number): Observable<any> {
     return this.http.get(this.getUrlBase() + this.imagesApiUrl + '/' + id, { responseType: 'blob', headers: { 'Access-Control-Allow-Origin': '*' } })
   }
-  get(
-    id?: number,
-  ): Observable<any> {
-    if (id) {
-      return this.http.get(
-        this.getUrlBase() + this.plantsApiUrl + "/" + id,
-        this.httpOptions
-      );
-    } else {
-      return this.http.get(
-        this.getUrlBase() + this.plantsApiUrl,
-        this.httpOptions
-      );
-    }
+
+  getById(
+    id: number,
+  ): Observable<Plant> {
+    return this.http.get<Plant>(
+      this.getUrlBase() + this.plantsApiUrl + "/" + id,
+      this.httpOptions
+    );
+  }
+  get(): Observable<Plant[]> {
+    return this.http.get<Plant[]>(
+      this.getUrlBase() + this.plantsApiUrl,
+      this.httpOptions
+    );
   }
   delete(
     id: number,
-  ): Observable<any> {
-    return this.http.delete(
+  ): Observable<Plant[]> {
+    return this.http.delete<Plant[]>(
       this.getUrlBase() + this.plantsApiUrl + "/" + id,
       this.httpOptions);
   }
