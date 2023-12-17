@@ -44,6 +44,7 @@ import { UserComponent } from './components/user/user.component';
 import { CommentsComponent } from './components/comments/comments.component';
 import { PlantCareDialogComponent } from './components/plant-care-dialog/plant-care-dialog.component';
 import { NotesComponent } from './components/notes/notes.component';
+import { PlantFilterPipe } from './pipes/plant-filter-pipe';
 
 
 @NgModule({
@@ -57,6 +58,7 @@ import { NotesComponent } from './components/notes/notes.component';
     PlantsComponent,
     PlantComponent,
     ProfileComponent,
+    PlantFilterPipe,
     MessageComponent,
     UserComponent,
     CommentsComponent,

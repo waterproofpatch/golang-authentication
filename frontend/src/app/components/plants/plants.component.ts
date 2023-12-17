@@ -64,6 +64,9 @@ export class PlantsComponent {
   // name filter, if applied from HTML
   plantNameFilter: string = "";
 
+  // number of plants matching a filter
+  numPlantsMatchingFilter: number = 0
+
   // the plant edit/add form
   form = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.min(3), Validators.max(30)]),
@@ -131,83 +134,52 @@ export class PlantsComponent {
 
   public addFilterUsername(username: string) {
     if (!this.filterUsernames.includes(username)) {
-      this.filterUsernames.push(username);
+      this.filterUsernames = [...this.filterUsernames, username]
+      localStorage.setItem('filterUsernames', JSON.stringify(this.filterUsernames))
     }
-    localStorage.setItem('filterUsernames', JSON.stringify(this.filterUsernames))
   }
 
   public removeFilterUsername(username: string) {
     const index = this.filterUsernames.indexOf(username);
     if (index > -1) {
-      this.filterUsernames.splice(index, 1);
+      this.filterUsernames = [...this.filterUsernames.slice(0, index), ...this.filterUsernames.slice(index + 1)];
+      localStorage.setItem('filterUsernames', JSON.stringify(this.filterUsernames))
     }
-    localStorage.setItem('filterUsernames', JSON.stringify(this.filterUsernames))
   }
 
   public addFilterTag(tag: string) {
     if (!this.filterTags.includes(tag)) {
-      this.filterTags.push(tag);
+      this.filterTags = [...this.filterTags, tag];
+      localStorage.setItem('filterTags', JSON.stringify(this.filterTags));
     }
-    localStorage.setItem('filterTags', JSON.stringify(this.filterTags))
   }
 
   public removeFilterTag(tag: string) {
     const index = this.filterTags.indexOf(tag);
     if (index > -1) {
-      this.filterTags.splice(index, 1);
+      this.filterTags = [...this.filterTags.slice(0, index), ...this.filterTags.slice(index + 1)];
+      localStorage.setItem('filterTags', JSON.stringify(this.filterTags));
     }
-    localStorage.setItem('filterTags', JSON.stringify(this.filterTags))
   }
 
-  private usernameMatchesFilter(username: string) {
-    return this.filterUsernames.length === 0 || this.filterUsernames.includes(username);
-  }
-
-  private tagMatchesFilter(tag: string) {
-    return this.filterTags.length === 0 || this.filterTags.includes(tag);
-  }
 
   /**
    * Called from HTML whenu ser checks a filter box that can be either true or false
    * @param filterName the name of the filter to toggle
    */
   public filterChange(filterName: string): void {
-    this.filters.set(filterName, !this.filters.get(filterName))
-    localStorage.setItem(filterName, (this.filters.get(filterName) ? "true" : false) || "n/a")
+    this.numPlantsMatchingFilter = 0;
+    const newFilters = new Map(this.filters.entries());
+    newFilters.set(filterName, !this.filters.get(filterName));
+    this.filters = newFilters;
+    localStorage.setItem(filterName, (this.filters.get(filterName) ? "true" : false) || "n/a");
   }
+
 
   /**
-   * check if the given plant matches all applied filters
-   * @param plant the plant to check for filter
+   * 
+   * @returns True if the UI should be in add or edit mode
    */
-  public matchesFilter(plant: Plant): boolean {
-    // user only wants to see their own plants, and this one is someone else's
-    if (this.filters.get("onlyMyPlants")) {
-      if (plant.username != this.authenticationService.username()) {
-        return false;
-      }
-    }
-
-    // if user only wants to see plants that need care, and this one does not
-    if (this.filters.get("needsCare")) {
-      if (!plant.needsCare()) {
-        return false;
-      }
-    }
-
-    // if user is filtering on a name, and this plant has a matching name
-    if (!plant.name.toLowerCase().includes(this.plantNameFilter.toLowerCase())) {
-      return false;
-    }
-
-    // if the plants tag and username match filters
-    if (this.tagMatchesFilter(plant.tag) && this.usernameMatchesFilter(plant.username)) {
-      return true;
-    }
-    return false;
-
-  }
-
   public isInEditOrAddMode(): boolean {
     return this.addOrEditMode !== EditMode.NEITHER
   }

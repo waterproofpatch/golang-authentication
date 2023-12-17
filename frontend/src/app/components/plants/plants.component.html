@@ -202,10 +202,10 @@
 </div>
 
 <div class="plants" *ngIf="!isInEditOrAddMode()">
-	<div *ngFor="let plant of plantsService.plants">
-		<div *ngIf="matchesFilter(plant)">
-			<app-plant [isCondensed]="condensedView" (editModeEmitter)="switchToditPlantMode($event)"
-				[plant]="plant"></app-plant>
-		</div>
+	<p>Showing {{numPlantsMatchingFilter}} of {{plantsService.plants.length}} plants.</p>
+	<div
+		*ngFor="let plant of (plantsService.plants | plantFilter:filters:authenticationService.username():plantNameFilter:filterTags:filterUsernames)">
+		<app-plant [isCondensed]="condensedView" (editModeEmitter)="switchToditPlantMode($event)"
+			[plant]="plant"></app-plant>
 	</div>
 </div>
