@@ -74,25 +74,6 @@ export class PlantsService extends BaseService {
   }
 
   public static PlantsFactory = class {
-    public static printPlant(plant: Plant): void {
-      console.log("plantsFactort.printPlant:")
-      console.log(`id: ${plant.id}`);
-      console.log(`name: ${plant.name}`);
-      console.log(`username: ${plant.username}`);
-      console.log(`email: ${plant.email}`);
-      console.log(`wateringFrequency: ${plant.wateringFrequency}`);
-      console.log(`fertilizingFrequency: ${plant.fertilizingFrequency}`);
-      console.log(`lastWaterDate: ${plant.lastWaterDate}`);
-      console.log(`lastFertilizeDate: ${plant.lastFertilizeDate}`);
-      console.log(`lastMoistDate: ${plant.lastMoistDate}`);
-      console.log(`skippedLastFertilize: ${plant.skippedLastFertilize}`);
-      console.log(`tag: ${plant.tag}`);
-      console.log(`imageId: ${plant.imageId}`);
-      console.log(`isPublic: ${plant.isPublic}`);
-      console.log(`doNotify: ${plant.doNotify}`);
-      console.log(`logs: ${plant.logs}`);
-    }
-
     public static makePlant(name: string,
       wateringFrequency: number,
       fertilizingFrequency: number,
