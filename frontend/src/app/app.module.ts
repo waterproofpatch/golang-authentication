@@ -39,8 +39,6 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { PlantsComponent } from './components/plants/plants.component';
 import { PlantComponent } from './components/item/plant.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import { MessageComponent } from './components/message/message.component';
-import { UserComponent } from './components/user/user.component';
 import { CommentsComponent } from './components/comments/comments.component';
 import { PlantCareDialogComponent } from './components/plant-care-dialog/plant-care-dialog.component';
 import { NotesComponent } from './components/notes/notes.component';
@@ -59,8 +57,6 @@ import { PlantFilterPipe } from './pipes/plant-filter-pipe';
     PlantComponent,
     ProfileComponent,
     PlantFilterPipe,
-    MessageComponent,
-    UserComponent,
     CommentsComponent,
     PlantCareDialogComponent,
     NotesComponent
