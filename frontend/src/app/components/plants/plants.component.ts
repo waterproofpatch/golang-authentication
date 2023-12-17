@@ -187,9 +187,10 @@ export class PlantsComponent {
         return false;
       }
     }
+
     // if user only wants to see plants that need care, and this one does not
     if (this.filters.get("needsCare")) {
-      if (!PlantsService.NeedsCare(plant)) {
+      if (!plant.needsCare()) {
         return false;
       }
     }

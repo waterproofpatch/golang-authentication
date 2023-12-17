@@ -17,47 +17,6 @@ export class PlantsService extends BaseService {
   formProcessingSucceeded: Subject<boolean> = new Subject<boolean>()
   imageCache: Map<number, Blob> = new Map<number, Blob>();
 
-  // this is quite possibly the most rediculous way to do this
-  public static NeedsCare(plant: Plant) {
-    var nextWaterDate = new Date()
-    var nextFertilizeDate = new Date()
-    var nextMoistDate = new Date()
-
-    var lastWaterDate = new Date(plant.lastWaterDate)
-    var lastFertilizeDate = new Date(plant.lastFertilizeDate)
-    var lastMoistDate = new Date(plant.lastMoistDate)
-
-    nextWaterDate.setFullYear(lastWaterDate.getFullYear());
-    nextWaterDate.setMonth(lastWaterDate.getMonth());
-
-    nextMoistDate.setFullYear(lastMoistDate.getFullYear());
-    nextMoistDate.setMonth(lastMoistDate.getMonth());
-
-    nextFertilizeDate.setFullYear(lastFertilizeDate.getFullYear());
-    nextFertilizeDate.setMonth(lastFertilizeDate.getMonth());
-
-    var frequencyInMsWater = plant.wateringFrequency * 24 * 60 * 60 * 1000;
-    var frequencyInMsFertilize = plant.fertilizingFrequency * 24 * 60 * 60 * 1000;
-    var frequencyInMsMoist = 1 * 24 * 60 * 60 * 1000;
-
-    nextWaterDate.setTime(lastWaterDate.getTime() + frequencyInMsWater);
-    nextFertilizeDate.setTime(lastFertilizeDate.getTime() + frequencyInMsFertilize);
-    nextMoistDate.setTime(lastMoistDate.getTime() + frequencyInMsMoist);
-
-    let wateringDate = Plant.formatDate(nextWaterDate)
-    if (new Date(wateringDate) < new Date() && plant.lastMoistDate == '') {
-      return true;
-    }
-    let fertilizingDate = Plant.formatDate(nextFertilizeDate)
-    if (new Date(fertilizingDate) < new Date() && plant.fertilizingFrequency > 0) {
-      return true;
-    }
-    let moistDate = Plant.formatDate(nextMoistDate)
-    if (new Date(moistDate) < new Date() && plant.lastMoistDate != '') {
-      return true;
-    }
-    return false;
-  }
 
   // this error string is for modals to display login or registration errors.
   error$ = new Subject<string>();

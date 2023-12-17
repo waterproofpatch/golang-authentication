@@ -108,6 +108,47 @@ export class Plant {
 		)
 		return plant;
 	}
+	// this is quite possibly the most rediculous way to do this
+	public needsCare() {
+		var nextWaterDate = new Date()
+		var nextFertilizeDate = new Date()
+		var nextMoistDate = new Date()
+
+		var lastWaterDate = new Date(this.lastWaterDate)
+		var lastFertilizeDate = new Date(this.lastFertilizeDate)
+		var lastMoistDate = new Date(this.lastMoistDate)
+
+		nextWaterDate.setFullYear(lastWaterDate.getFullYear());
+		nextWaterDate.setMonth(lastWaterDate.getMonth());
+
+		nextMoistDate.setFullYear(lastMoistDate.getFullYear());
+		nextMoistDate.setMonth(lastMoistDate.getMonth());
+
+		nextFertilizeDate.setFullYear(lastFertilizeDate.getFullYear());
+		nextFertilizeDate.setMonth(lastFertilizeDate.getMonth());
+
+		var frequencyInMsWater = this.wateringFrequency * 24 * 60 * 60 * 1000;
+		var frequencyInMsFertilize = this.fertilizingFrequency * 24 * 60 * 60 * 1000;
+		var frequencyInMsMoist = 1 * 24 * 60 * 60 * 1000;
+
+		nextWaterDate.setTime(lastWaterDate.getTime() + frequencyInMsWater);
+		nextFertilizeDate.setTime(lastFertilizeDate.getTime() + frequencyInMsFertilize);
+		nextMoistDate.setTime(lastMoistDate.getTime() + frequencyInMsMoist);
+
+		let wateringDate = Plant.formatDate(nextWaterDate)
+		if (new Date(wateringDate) < new Date() && this.lastMoistDate == '') {
+			return true;
+		}
+		let fertilizingDate = Plant.formatDate(nextFertilizeDate)
+		if (new Date(fertilizingDate) < new Date() && this.fertilizingFrequency > 0) {
+			return true;
+		}
+		let moistDate = Plant.formatDate(nextMoistDate)
+		if (new Date(moistDate) < new Date() && this.lastMoistDate != '') {
+			return true;
+		}
+		return false;
+	}
 }
 
 
