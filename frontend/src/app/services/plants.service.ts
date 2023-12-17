@@ -164,6 +164,33 @@ export class PlantsService extends BaseService {
   }
 
   /**
+   * create a Plant object from a backend plant response. 
+   * @param plant response from backend
+   * @returns a Plant object
+   */
+  private mapPlant(plant: any): Plant {
+    return new Plant(
+      plant.id,
+      plant.name,
+      plant.username,
+      plant.email,
+      plant.wateringFrequency,
+      plant.fertilizingFrequency,
+      plant.lastWaterDate,
+      plant.lastFertilizeDate,
+      plant.lastMoistDate,
+      plant.skippedLastFertilize,
+      plant.tag,
+      plant.imageId,
+      plant.isPublic,
+      plant.doNotify,
+      plant.logs,
+      plant.comments,
+      plant.notes
+    )
+  }
+
+  /**
    * Make a request to the backend to get the image by imageId.
    * @param imageId the imageId to obtain.
    * @returns observable
@@ -330,27 +357,6 @@ export class PlantsService extends BaseService {
       });
   }
 
-  private mapPlant(plant: any): Plant {
-    return new Plant(
-      plant.id,
-      plant.name,
-      plant.username,
-      plant.email,
-      plant.wateringFrequency,
-      plant.fertilizingFrequency,
-      plant.lastWaterDate,
-      plant.lastFertilizeDate,
-      plant.lastMoistDate,
-      plant.skippedLastFertilize,
-      plant.tag,
-      plant.imageId,
-      plant.isPublic,
-      plant.doNotify,
-      plant.logs,
-      plant.comments,
-      plant.notes
-    )
-  }
 
   /**
    * Get a list of plants.
