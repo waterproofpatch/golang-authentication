@@ -1,9 +1,0 @@
-mat-card {
-	width: calc(100%-30px);
-}
-
-.messageWrapper {
-	border-radius: 10px;
-	box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
-	margin: 10px;
-}
