@@ -323,7 +323,6 @@ export class PlantsService extends BaseService {
    */
   private updatePlantsList(plants: Plant[]): void {
     // handle case where plants were removed from server copy
-    console.log('type of plants: ' + typeof (plants))
     this.plants = this.plants.filter(plant => plants.some(p => p.id === plant.id));
     plants = plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
 
@@ -333,14 +332,13 @@ export class PlantsService extends BaseService {
       this.usernames.add(p.username)
 
       if (!this.plants.some(plant => plant.id === p.id)) {
-        console.log("New plant " + p.id + '(' + p.name + ')')
         this.plants.push(p)
       } else {
         let plantToUpdate = this.plants.findIndex(plant => plant.id === p.id);
         let hash1 = this.computeHash(this.plants[plantToUpdate])
         let hash2 = this.computeHash(p)
         if (hash2 != hash1) {
-          console.log("Need to update plant id=" + p.id)
+          console.log("Need to update " + p.toString())
           this.plants[plantToUpdate] = p;
         }
       }
@@ -366,8 +364,6 @@ export class PlantsService extends BaseService {
     let lastMoistDate: Date | null = plant.lastMoistDate ? new Date(plant.lastMoistDate) : null;
     let lastFertilizeDate: Date | null = (plant.lastFertilizeDate && plant.fertilizingFrequency > 0) ? new Date(plant.lastFertilizeDate) : null;
 
-    console.log(plant.plantToString());
-
     let nextWaterCareDate = new Date();
     nextWaterCareDate.setTime(lastWaterDate.getTime() + plant.wateringFrequency * 24 * 60 * 60 * 1000);
 
@@ -392,13 +388,11 @@ export class PlantsService extends BaseService {
     }
 
     let earliestCareDate = new Date(Math.min(...careDates));
-    console.log("earlierCareDate: " + earliestCareDate);
 
     // Calculate the difference in days between the future date and the current date
     let diffInTime = earliestCareDate.getTime() - new Date().getTime();
     let diffInDays = diffInTime / (1000 * 3600 * 24);
 
-    console.log(plant.name + ' next care activity due in: ' + diffInDays + ' days');
     return diffInDays;
   }
   postFormData(formData: any): Observable<Plant[]> {

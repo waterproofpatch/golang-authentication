@@ -19,10 +19,14 @@ export class Plant {
 		public logs: PlantLog[],
 		public comments: Comment[],
 		public notes: string) {
-		console.log("Plant constructor!")
 	}
-	public plantToString(): string {
-		let plantDetails = `Plant Details:
+
+	/**
+	 * get a string representation for the plant.
+	 * @returns a string representation of the plant.
+	 */
+	public toString(): string {
+		let plantDetails = `
 		ID: ${this.id}
 		Name: ${this.name}
 		Username: ${this.username}
@@ -40,6 +44,7 @@ export class Plant {
 		Notes: ${this.notes}`;
 		return plantDetails;
 	}
+
 	/**
 	 * @param date to format
 	 * @returns formatted @c date
@@ -53,6 +58,22 @@ export class Plant {
 		const formattedDate = `${month}/${day}/${year}`;
 		return formattedDate
 	}
+
+	/**
+	 * 
+	 * @param name name of the plant
+	 * @param wateringFrequency how often to water the plant
+	 * @param fertilizingFrequency how often to fertilize the plant
+	 * @param lastWateredDate when the plant was last watered
+	 * @param lastFertilizeDate when the plant was last fertilized
+	 * @param lastMoistDate when the plant was last checked for moist
+	 * @param tag tag for the plant
+	 * @param isPublic whether or not the plant is public
+	 * @param doNotify whether or not the plant is sending notifications
+	 * @param logs logs for the plant
+	 * @param comments comments for the plant
+	 * @returns a Plant object
+	 */
 	public static makePlant(name: string,
 		wateringFrequency: number,
 		fertilizingFrequency: number,
