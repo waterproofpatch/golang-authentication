@@ -76,8 +76,6 @@ export class PlantsComponent {
     lastFertilizedDate: new FormControl('', [Validators.required])
   });
 
-  needsCaring = PlantsService.NeedsCare;
-
   constructor(
     private sanitizer: DomSanitizer,
     public plantsService: PlantsService,
@@ -191,7 +189,7 @@ export class PlantsComponent {
     }
     // if user only wants to see plants that need care, and this one does not
     if (this.filters.get("needsCare")) {
-      if (!this.needsCaring(plant)) {
+      if (!PlantsService.NeedsCare(plant)) {
         return false;
       }
     }
