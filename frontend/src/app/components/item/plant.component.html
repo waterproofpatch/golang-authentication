@@ -1,6 +1,6 @@
 <mat-card *ngIf="plant != null" class="plant-mine">
 	<mat-card-header>
-		<div mat-card-avatar class="plant-header-image" *ngIf="isCondensed">
+		<div mat-card-avatar class="condensedImage" *ngIf="isCondensed">
 			<img *ngIf="isImageLoading" mat-card-image [src]="'/assets/loading.gif'" alt="Photo">
 			<img *ngIf="!isImageLoading && imageUrl != null" mat-card-image [src]="imageUrl" alt="Photo">
 			<img *ngIf="!isImageLoading && imageUrl == null" [src]="'/assets/placeholder.jpg'" alt="Image">
@@ -47,7 +47,7 @@
 			</mat-menu>
 		</div>
 	</mat-card-header>
-	<div *ngIf="!isCondensed">
+	<div *ngIf="!isCondensed" class="nonCondensedImage">
 
 		<img *ngIf="isImageLoading" mat-card-image [src]="'/assets/loading.gif'" alt="Photo">
 		<img *ngIf="!isImageLoading && imageUrl != null" mat-card-image [src]="imageUrl" alt="Photo">
