@@ -33,14 +33,6 @@
 								(click)="$event.stopPropagation()">Needs
 								Care</mat-checkbox>
 						</div>
-						<div class="menu-item" style="text-align: left"
-							*ngIf="authenticationService.isAuthenticated$ | async">
-							<mat-checkbox value="mineOnly"
-								[checked]="filters.get('onlyMyPlants')"
-								(change)="filterChange('onlyMyPlants')"
-								(click)="$event.stopPropagation()">Only My
-								Plants</mat-checkbox>
-						</div>
 						<div class="menu-item">
 							<mat-form-field appearance="fill">
 								<mat-label>Name</mat-label>
@@ -203,8 +195,9 @@
 
 <div *ngIf="!isInEditOrAddMode()">
 	<div
-		*ngIf="(plantsService.plants$ | async) | plantFilter:filters:authenticationService.username():plantNameFilter:filterTags:filterUsernames as filteredPlants">
-		<p>Showing {{filteredPlants.length}} of {{(plantsService.plants$ | async)?.length}} plants.</p>
+		*ngIf="(plantsService.getMyPlants() | async) | plantFilter:filters:authenticationService.username():plantNameFilter:filterTags:filterUsernames as filteredPlants">
+		<p>Showing {{filteredPlants.length}} of {{(plantsService.getMyPlants() | async)?.length}} plants.
+		</p>
 		<div class="plants">
 			<div *ngFor="let plant of filteredPlants">
 				<app-plant [isCondensed]="condensedView"

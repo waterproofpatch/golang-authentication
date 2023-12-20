@@ -30,9 +30,6 @@ export class PlantFilterPipe implements PipeTransform {
 		plantNameFilter: string,
 		filterTags: string[],
 		filterUsernames: string[]): boolean {
-		if (filters.get("onlyMyPlants") && plant.username != username) {
-			return false;
-		}
 
 		if (filters.get("needsCare") && !plant.needsCare()) {
 			return false;

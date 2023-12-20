@@ -364,4 +364,14 @@ export class PlantsService extends BaseService {
       this.getUrlBase() + this.plantsApiUrl + "/" + id,
       this.httpOptions);
   }
+
+  /**
+   * get a list of plants that are mine.
+   * @returns a list of plants where the username matches the username of the authenticated user
+   */
+  public getMyPlants(): Observable<Plant[]> {
+    return this.plants$.pipe(
+      map(plants => plants.filter(plant => plant.username === this.authenticationService.username()))
+    );
+  }
 }
