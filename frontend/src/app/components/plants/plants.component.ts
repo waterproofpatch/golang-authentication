@@ -102,7 +102,7 @@ export class PlantsComponent {
     this.loadFiltersFromLocalStorage()
 
     // the plant service lets us know if it's waiting on plants from the backend here
-    this.plantsService.isLoading.subscribe((x) => { if (x) { this.isLoading = true } else { this.isLoading = false } })
+    this.plantsService.isLoading$.subscribe((x) => { if (x) { this.isLoading = true } else { this.isLoading = false } })
 
     // sanitize the selected preview image URL for display at the frontend
     this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
@@ -276,7 +276,7 @@ export class PlantsComponent {
       [],
       [])
 
-    this.plantsService.formProcessingSucceeded.subscribe((x) => {
+    this.plantsService.formProcessingSucceeded$.subscribe((x) => {
       this.isProcessingAddOrUpdate = false;
       // a backend error results in x coming in as false - don't hide the form
       if (x) {

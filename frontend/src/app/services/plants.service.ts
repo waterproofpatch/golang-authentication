@@ -13,13 +13,9 @@ import { AuthenticationService } from './authentication.service';
   providedIn: 'root'
 })
 export class PlantsService extends BaseService {
-  isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
-  formProcessingSucceeded: Subject<boolean> = new Subject<boolean>()
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  formProcessingSucceeded$: Subject<boolean> = new Subject<boolean>()
   imageCache: Map<number, Blob> = new Map<number, Blob>();
-
-
-  // this error string is for modals to display login or registration errors.
-  error$ = new Subject<string>();
 
   // list of plants, updated by getPlants
   plants$: BehaviorSubject<Plant[]> = new BehaviorSubject<Plant[]>([])
@@ -32,7 +28,7 @@ export class PlantsService extends BaseService {
   // plant
   usernames = new Set<string>();
 
-  plantsInfoApiUrl = '/api/plantsInfo';
+  // urls for backend requests
   plantsApiUrl = '/api/plants';
   imagesApiUrl = '/api/images';
 
@@ -115,7 +111,7 @@ export class PlantsService extends BaseService {
    * @param id ID of the plant to delete.
    */
   public deletePlant(id: number) {
-    this.isLoading.next(true)
+    this.isLoading$.next(true)
     this.delete(id)
       .pipe(
         map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
@@ -123,19 +119,16 @@ export class PlantsService extends BaseService {
           return plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
         }),
         catchError((error: any) => {
-          this.isLoading.next(false)
+          this.isLoading$.next(false)
           if (error instanceof HttpErrorResponse) {
-            this.error$.next(error.error.error_message);
           } else {
-            this.error$.next('Unexpected error');
           }
           return throwError(error);
         })
       )
       .subscribe((x) => {
         this.updatePlantsList(x)
-        this.error$.next(''); // send a benign event so observers can close modals
-        this.isLoading.next(false)
+        this.isLoading$.next(false)
       });
   }
 
@@ -150,11 +143,9 @@ export class PlantsService extends BaseService {
           return plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
         }),
         catchError((error: any) => {
-          this.formProcessingSucceeded.next(false)
+          this.formProcessingSucceeded$.next(false)
           if (error instanceof HttpErrorResponse) {
-            this.error$.next(error.error.error_message);
           } else {
-            this.error$.next('Unexpected error');
           }
           return of(null)
         })
@@ -163,7 +154,7 @@ export class PlantsService extends BaseService {
         if (x == null) {
           return
         }
-        this.formProcessingSucceeded.next(true)
+        this.formProcessingSucceeded$.next(true)
         this.updatePlantsList(x)
       });
   }
@@ -196,11 +187,9 @@ export class PlantsService extends BaseService {
           return plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
         }),
         catchError((error: any) => {
-          this.formProcessingSucceeded.next(false)
+          this.formProcessingSucceeded$.next(false)
           if (error instanceof HttpErrorResponse) {
-            this.error$.next(error.error.error_message);
           } else {
-            this.error$.next('Unexpected error');
           }
           return of(null)
         })
@@ -209,7 +198,7 @@ export class PlantsService extends BaseService {
         if (x == null) {
           return
         }
-        this.formProcessingSucceeded.next(true)
+        this.formProcessingSucceeded$.next(true)
         this.updatePlantsList(x)
       });
   }
@@ -239,11 +228,9 @@ export class PlantsService extends BaseService {
           return plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
         }),
         catchError((error: any) => {
-          this.formProcessingSucceeded.next(false)
+          this.formProcessingSucceeded$.next(false)
           if (error instanceof HttpErrorResponse) {
-            this.error$.next(error.error.error_message);
           } else {
-            this.error$.next('Unexpected error');
           }
           // return throwError(error);
           return of(null)
@@ -254,7 +241,7 @@ export class PlantsService extends BaseService {
           console.log("NULL!")
           return;
         }
-        this.formProcessingSucceeded.next(true)
+        this.formProcessingSucceeded$.next(true)
         this.updatePlantsList(x)
       });
   }
@@ -264,7 +251,7 @@ export class PlantsService extends BaseService {
    * Get a list of plants.
    */
   public getPlants(): void {
-    this.isLoading.next(true)
+    this.isLoading$.next(true)
     this.get()
       .pipe(
         map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
@@ -272,11 +259,9 @@ export class PlantsService extends BaseService {
           return plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
         }),
         catchError((error: any) => {
-          this.isLoading.next(false)
+          this.isLoading$.next(false)
           if (error instanceof HttpErrorResponse) {
-            this.error$.next(error.error.error_message);
           } else {
-            this.error$.next('Unexpected error');
           }
           return throwError(error);
         })
@@ -299,8 +284,7 @@ export class PlantsService extends BaseService {
     // handle case where plants were removed from server copy
     console.log(`updating plant list with ${plants.length}`)
     this.plants$.next(plants)
-    this.error$.next(''); // send a benign event so observers can close modals
-    this.isLoading.next(false)
+    this.isLoading$.next(false)
   }
 
   private getDaysUntilNextCareActivity(plant: Plant): number {
