@@ -283,6 +283,10 @@ export class PlantsService extends BaseService {
     // handle case where plants were removed from server copy
     console.log(`updating plant list with ${plants.length}`)
     this.plants$.next(plants)
+    plants.forEach((x) => {
+      this.tags.add(x.tag)
+      this.usernames.add(x.username)
+    })
     this.isLoading$.next(false)
   }
 
