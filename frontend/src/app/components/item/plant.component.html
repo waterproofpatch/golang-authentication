@@ -21,6 +21,7 @@
 			days</mat-card-subtitle>
 		<mat-card-subtitle *ngIf="plant.fertilizingFrequency > 0">Fertilize every {{plant.fertilizingFrequency}}
 			days</mat-card-subtitle>
+		<mat-card-subtitle *ngIf="plant.fertilizingFrequency == 0">Not fertilizing</mat-card-subtitle>
 		<mat-card-subtitle *ngIf="isCondensed && plant.lastMoistDate != ''">Check soil again on:
 			{{getNextMoistCheckDate()}}
 		</mat-card-subtitle>
