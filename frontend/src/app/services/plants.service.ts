@@ -22,7 +22,7 @@ export class PlantsService extends BaseService {
   error$ = new Subject<string>();
 
   // list of plants, updated by getPlants
-  plants: Plant[] = []
+  plants$: BehaviorSubject<Plant[]> = new BehaviorSubject<Plant[]>([])
 
   // set of tags available for selection in either filtering or when editing a 
   // plant
@@ -47,7 +47,7 @@ export class PlantsService extends BaseService {
       if (!isAuth) {
 
         console.log("logout event detected, getting updated plants list...")
-        this.plants = []
+        // this.plants = []
         this.getPlants();
       }
     })
@@ -119,6 +119,9 @@ export class PlantsService extends BaseService {
     this.delete(id)
       .pipe(
         map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
+        map((plants: any[]) => {
+          return plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
+        }),
         catchError((error: any) => {
           this.isLoading.next(false)
           if (error instanceof HttpErrorResponse) {
@@ -143,6 +146,9 @@ export class PlantsService extends BaseService {
     this.putMoist(formData)
       .pipe(
         map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
+        map((plants: any[]) => {
+          return plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
+        }),
         catchError((error: any) => {
           this.formProcessingSucceeded.next(false)
           if (error instanceof HttpErrorResponse) {
@@ -186,6 +192,9 @@ export class PlantsService extends BaseService {
     this.putFormData(formData)
       .pipe(
         map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
+        map((plants: any[]) => {
+          return plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
+        }),
         catchError((error: any) => {
           this.formProcessingSucceeded.next(false)
           if (error instanceof HttpErrorResponse) {
@@ -226,6 +235,9 @@ export class PlantsService extends BaseService {
     this.postFormData(formData)
       .pipe(
         map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
+        map((plants: any[]) => {
+          return plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
+        }),
         catchError((error: any) => {
           this.formProcessingSucceeded.next(false)
           if (error instanceof HttpErrorResponse) {
@@ -256,6 +268,9 @@ export class PlantsService extends BaseService {
     this.get()
       .pipe(
         map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
+        map((plants: any[]) => {
+          return plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
+        }),
         catchError((error: any) => {
           this.isLoading.next(false)
           if (error instanceof HttpErrorResponse) {
@@ -282,39 +297,10 @@ export class PlantsService extends BaseService {
    */
   private updatePlantsList(plants: Plant[]): void {
     // handle case where plants were removed from server copy
-    this.plants = this.plants.filter(plant => plants.some(p => p.id === plant.id));
-    plants = plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
-
-    for (let p of plants) {
-      // update tag/username bookkeeping
-      this.tags.add(p.tag)
-      this.usernames.add(p.username)
-
-      if (!this.plants.some(plant => plant.id === p.id)) {
-        this.plants.push(p)
-      } else {
-        let plantToUpdate = this.plants.findIndex(plant => plant.id === p.id);
-        let hash1 = this.computeHash(this.plants[plantToUpdate])
-        let hash2 = this.computeHash(p)
-        if (hash2 != hash1) {
-          console.log("Need to update " + p.toString())
-          this.plants[plantToUpdate] = p;
-        }
-      }
-    }
+    console.log(`updating plant list with ${plants.length}`)
+    this.plants$.next(plants)
     this.error$.next(''); // send a benign event so observers can close modals
     this.isLoading.next(false)
-  }
-
-  private computeHash(plant: Plant): string {
-    let hash = 0;
-    let plantString = JSON.stringify(plant);
-    for (let i = 0; i < plantString.length; i++) {
-      let char = plantString.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32bit integer
-    }
-    return hash.toString();
   }
 
   private getDaysUntilNextCareActivity(plant: Plant): number {

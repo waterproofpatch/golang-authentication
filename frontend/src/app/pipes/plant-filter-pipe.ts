@@ -7,12 +7,15 @@ import { Plant } from '../models/plant.model';
 })
 export class PlantFilterPipe implements PipeTransform {
 
-	transform(plants: Plant[],
+	transform(plants: Plant[] | null,
 		filters: Map<string, any>,
 		username: string,
 		plantNameFilter: string,
 		filterTags: string[],
 		filterUsernames: string[]): Plant[] {
+		if (plants == null) {
+			return []
+		}
 		return plants.filter(plant => this.matchesFilter(plant,
 			filters,
 			username,
