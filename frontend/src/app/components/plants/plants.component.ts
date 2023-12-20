@@ -40,9 +40,6 @@ export class PlantsComponent {
   selectedImagePreview_safe: SafeUrl | null = null;
   selectedImagePreview: string = "/assets/placeholder.jpg"
 
-  // whether or not the plants page is waiting for the backend
-  isLoading: boolean = false;
-
   // whether or not the backend is processing a form
   isProcessingAddOrUpdate: boolean = false;
 
@@ -100,9 +97,6 @@ export class PlantsComponent {
   ngOnInit(): void {
     // set the filters
     this.loadFiltersFromLocalStorage()
-
-    // the plant service lets us know if it's waiting on plants from the backend here
-    this.plantsService.isLoading$.subscribe((x) => { if (x) { this.isLoading = true } else { this.isLoading = false } })
 
     // sanitize the selected preview image URL for display at the frontend
     this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);

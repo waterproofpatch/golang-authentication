@@ -1,6 +1,6 @@
 <div class="container">
-	<div *ngIf="isLoading">Loading plants - hang tight...</div>
-	<div *ngIf="!isLoading">
+	<div *ngIf="plantsService.isLoading$ | async">Loading plants - hang tight...</div>
+	<div *ngIf="!(plantsService.isLoading$ | async)">
 
 		<!-- begin buttons -->
 		<div class="button-controls">
