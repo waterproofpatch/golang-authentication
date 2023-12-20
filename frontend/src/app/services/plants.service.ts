@@ -4,7 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, from, of, tap, Subject, throwError, Observable, BehaviorSubject } from 'rxjs';
 
-import { PlantLog, Comment } from '../types';
 import { Plant } from '../models/plant.model';
 import { BaseService } from './base.service';
 import { AuthenticationService } from './authentication.service';

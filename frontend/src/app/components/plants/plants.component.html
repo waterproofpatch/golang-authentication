@@ -201,13 +201,15 @@
 	</div>
 </div>
 
-<div class="plants" *ngIf="!isInEditOrAddMode()">
+<div *ngIf="!isInEditOrAddMode()">
 	<div
 		*ngIf="(plantsService.plants$ | async) | plantFilter:filters:authenticationService.username():plantNameFilter:filterTags:filterUsernames as filteredPlants">
 		<p>Showing {{filteredPlants.length}} of {{(plantsService.plants$ | async)?.length}} plants.</p>
-		<div *ngFor="let plant of filteredPlants">
-			<app-plant [isCondensed]="condensedView" (editModeEmitter)="switchToditPlantMode($event)"
-				[plant]="plant"></app-plant>
+		<div class="plants">
+			<div *ngFor="let plant of filteredPlants">
+				<app-plant [isCondensed]="condensedView"
+					(editModeEmitter)="switchToditPlantMode($event)" [plant]="plant"></app-plant>
+			</div>
 		</div>
 	</div>
 </div>
