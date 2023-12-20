@@ -5,6 +5,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 import { Plant } from 'src/app/models/plant.model';
+import { Router } from '@angular/router';
 
 export enum EditMode {
   ADD = 1,
@@ -81,6 +82,7 @@ export class PlantsComponent {
     public plantsService: PlantsService,
     private formBuilder: FormBuilder,
     public authenticationService: AuthenticationService,
+    private router: Router,
   ) {
     this.form = this.formBuilder.group({
       publicOrPrivate: ['private'],
@@ -95,6 +97,10 @@ export class PlantsComponent {
   }
 
   ngOnInit(): void {
+    if (!this.authenticationService.isAuthenticated$.value) {
+      console.log("Not auth!")
+      this.router.navigateByUrl('/authentication?mode=login');
+    }
     // set the filters
     this.loadFiltersFromLocalStorage()
 
