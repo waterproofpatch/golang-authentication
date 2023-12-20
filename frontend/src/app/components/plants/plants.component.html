@@ -3,7 +3,7 @@
 	<div *ngIf="!(plantsService.isLoading$ | async)">
 
 		<!-- begin buttons -->
-		<div class="button-controls">
+		<div class="button-controls" *ngIf="mode !== 'public'">
 
 			<!-- start filters dropdown -->
 			<div *ngIf="!isInEditOrAddMode()">
@@ -62,31 +62,6 @@
 									(removed)="removeFilterTag(tag)"
 									(click)="$event.stopPropagation()">
 									{{tag}}
-									<mat-icon matChipRemove>cancel</mat-icon>
-								</mat-chip-option>
-							</mat-chip-listbox>
-						</div>
-						<div class="menu-item">
-							<mat-form-field>
-								<mat-label>Usernames</mat-label>
-								<mat-select
-									(selectionChange)="addFilterUsername($event.value)"
-									(click)="$event.stopPropagation()">
-									<mat-option
-										*ngFor="let username of plantsService.usernames"
-										[value]="username">{{username}}</mat-option>
-								</mat-select>
-							</mat-form-field>
-						</div>
-						<div class="menu-item" *ngIf="filterUsernames.length > 0">
-							<mat-chip-listbox
-								style="display: inline-block; text-align: center;">
-								<mat-chip-option
-									*ngFor="let username of filterUsernames"
-									[removable]="true"
-									(removed)="removeFilterUsername(username)"
-									(click)="$event.stopPropagation()">
-									{{username}}
 									<mat-icon matChipRemove>cancel</mat-icon>
 								</mat-chip-option>
 							</mat-chip-listbox>
@@ -192,8 +167,9 @@
 
 <div *ngIf="!isInEditOrAddMode()">
 	<div
-		*ngIf="(plantsService.getMyPlants() | async) | plantFilter:filters:authenticationService.username():plantNameFilter:filterTags:filterUsernames as filteredPlants">
-		<p>Showing {{filteredPlants.length}} of {{(plantsService.getMyPlants() | async)?.length}} plants.
+		*ngIf="(plantsService.getPlantsForMode(mode) | async) | plantFilter:filters:plantNameFilter:filterTags as filteredPlants">
+		<p>Showing {{filteredPlants.length}} of {{(plantsService.getPlantsForMode(mode) | async)?.length}}
+			plants.
 		</p>
 		<div class="plants">
 			<div *ngFor="let plant of filteredPlants">

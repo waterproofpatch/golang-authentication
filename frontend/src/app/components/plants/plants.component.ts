@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { PlantsService } from 'src/app/services/plants.service';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
@@ -21,6 +22,7 @@ export enum EditMode {
 export class PlantsComponent {
   public wateringFrequencyOptions = Array.from({ length: 60 }, (_, i) => i + 1);
   public fertilizingFrequencyOptions = Array.from({ length: 60 }, (_, i) => i + 0);
+  mode: string = '';
 
   // whether or not we're in edit mode
   public editMode = EditMode
@@ -78,6 +80,7 @@ export class PlantsComponent {
   });
 
   constructor(
+    private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     public plantsService: PlantsService,
     private formBuilder: FormBuilder,
@@ -97,18 +100,27 @@ export class PlantsComponent {
   }
 
   ngOnInit(): void {
-    if (!this.authenticationService.isAuthenticated$.value) {
-      console.log("Not auth!")
-      this.router.navigateByUrl('/authentication?mode=login');
-    }
+    this.route.queryParams.subscribe((params) => {
+      this.mode = params['mode'];
+    });
+
+    // on init, ask for the list of plants
+    this.plantsService.getPlants()
+
     // set the filters
     this.loadFiltersFromLocalStorage()
 
     // sanitize the selected preview image URL for display at the frontend
     this.selectedImagePreview_safe = this.sanitizer.bypassSecurityTrustUrl(this.selectedImagePreview);
 
-    // on init, ask for the list of plants
-    this.plantsService.getPlants()
+    // if user is viewing public plants, doesn't matter if they're logged in
+    if (this.mode === 'public') {
+      return
+    }
+    if (!this.authenticationService.isAuthenticated$.value) {
+      console.log("Not auth!")
+      this.router.navigateByUrl('/authentication?mode=login');
+    }
   }
 
   private loadFiltersFromLocalStorage(): void {

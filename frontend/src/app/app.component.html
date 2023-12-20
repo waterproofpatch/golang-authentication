@@ -1,8 +1,12 @@
 <mat-toolbar color="primary">
 	<mat-toolbar-row>
-		<span class="nav-item">
+		<span *ngIf="authenticationService.isAuthenticated$ | async" class="nav-item">
 			<a mat-button routerLink="/home" routerLinkActive="active"
-				[routerLinkActiveOptions]="{exact:true}">Home</a>
+				[routerLinkActiveOptions]="{exact:true}">My Plants</a>
+		</span>
+		<span class="nav-item">
+			<a mat-button [routerLink]="['/home']" [queryParams]="{mode: 'public'}"
+				routerLinkActive="active">Public Plants</a>
 		</span>
 		<span *ngIf="!(authenticationService.isAuthenticated$ | async)" class="nav-item">
 			<a mat-button [routerLink]="['/authentication']" [queryParams]="{mode: 'login'}"
