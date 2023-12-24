@@ -376,7 +376,6 @@ export class PlantsService extends BaseService {
   public getPlantsForMode(mode: string): Observable<Plant[]> {
     console.log(`mode=${mode}`)
     if (mode !== "public") {
-
       return this.plants$.pipe(
         map(plants => plants.filter(plant => plant.username === this.authenticationService.username()))
       );
@@ -384,7 +383,7 @@ export class PlantsService extends BaseService {
     else {
 
       return this.plants$.pipe(
-        map(plants => plants.filter(plant => plant.username !== this.authenticationService.username()))
+        map(plants => plants.filter(plant => plant.isPublic))
       );
     }
   }
