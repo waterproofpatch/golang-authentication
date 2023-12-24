@@ -46,6 +46,17 @@ export class Plant {
 	}
 
 	/**
+	 * 
+	 * @returns a non empty string for display purposes
+	 */
+	public getTag(): string {
+		if (this.tag.length == 0) {
+			return "(no tag)"
+		}
+		return this.tag
+	}
+
+	/**
 	 * @param date to format
 	 * @returns formatted @c date
 	 */
