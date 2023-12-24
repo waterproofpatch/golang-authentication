@@ -1,7 +1,6 @@
-<mat-card *ngIf="plant != null" [class.plant-mine]="plant.username==username"
-	[class.plant-theirs]="plant.username != username">
+<mat-card *ngIf="plant != null" class="plant-mine">
 	<mat-card-header>
-		<div mat-card-avatar class="plant-header-image" *ngIf="isCondensed">
+		<div mat-card-avatar class="condensedImage" *ngIf="isCondensed">
 			<img *ngIf="isImageLoading" mat-card-image [src]="'/assets/loading.gif'" alt="Photo">
 			<img *ngIf="!isImageLoading && imageUrl != null" mat-card-image [src]="imageUrl" alt="Photo">
 			<img *ngIf="!isImageLoading && imageUrl == null" [src]="'/assets/placeholder.jpg'" alt="Image">
@@ -16,7 +15,7 @@
 				[style.color]="backgroundColorFertilize">
 				Needs Fertilizing</p>
 		</mat-card-subtitle>
-		<mat-card-subtitle>{{plant.tag}} by <i>{{plant.username}}</i></mat-card-subtitle>
+		<mat-card-subtitle><i>{{plant.getTag()}}</i></mat-card-subtitle>
 		<mat-card-subtitle>Water every {{plant.wateringFrequency}}
 			days</mat-card-subtitle>
 		<mat-card-subtitle *ngIf="plant.fertilizingFrequency > 0">Fertilize every {{plant.fertilizingFrequency}}
@@ -48,7 +47,7 @@
 			</mat-menu>
 		</div>
 	</mat-card-header>
-	<div *ngIf="!isCondensed">
+	<div *ngIf="!isCondensed" class="nonCondensedImage">
 
 		<img *ngIf="isImageLoading" mat-card-image [src]="'/assets/loading.gif'" alt="Photo">
 		<img *ngIf="!isImageLoading && imageUrl != null" mat-card-image [src]="imageUrl" alt="Photo">

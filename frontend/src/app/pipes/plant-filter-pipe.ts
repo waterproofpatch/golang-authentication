@@ -9,31 +9,21 @@ export class PlantFilterPipe implements PipeTransform {
 
 	transform(plants: Plant[] | null,
 		filters: Map<string, any>,
-		username: string,
 		plantNameFilter: string,
-		filterTags: string[],
-		filterUsernames: string[]): Plant[] {
+		filterTags: string[]): Plant[] {
 		if (plants == null) {
 			return []
 		}
 		return plants.filter(plant => this.matchesFilter(plant,
 			filters,
-			username,
 			plantNameFilter,
-			filterTags,
-			filterUsernames));
+			filterTags));
 	}
 
 	private matchesFilter(plant: Plant,
 		filters: Map<string, any>,
-		username: string,
 		plantNameFilter: string,
-		filterTags: string[],
-		filterUsernames: string[]): boolean {
-		if (filters.get("onlyMyPlants") && plant.username != username) {
-			return false;
-		}
-
+		filterTags: string[]): boolean {
 		if (filters.get("needsCare") && !plant.needsCare()) {
 			return false;
 		}
@@ -41,13 +31,10 @@ export class PlantFilterPipe implements PipeTransform {
 		if (!plant.name.toLowerCase().includes(plantNameFilter.toLowerCase())) {
 			return false;
 		}
-		if (this.usernameMatchesFilter(username, filterUsernames) && this.tagMatchesFilter(plant.tag, filterTags)) {
+		if (this.tagMatchesFilter(plant.tag, filterTags)) {
 			return true;
 		}
 		return false;
-	}
-	private usernameMatchesFilter(username: string, filterUsernames: string[]) {
-		return filterUsernames.length === 0 || filterUsernames.includes(username);
 	}
 
 	private tagMatchesFilter(tag: string, filterTags: string[]) {

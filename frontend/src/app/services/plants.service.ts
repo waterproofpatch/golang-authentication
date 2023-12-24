@@ -283,6 +283,10 @@ export class PlantsService extends BaseService {
     // handle case where plants were removed from server copy
     console.log(`updating plant list with ${plants.length}`)
     this.plants$.next(plants)
+    plants.forEach((x) => {
+      this.tags.add(x.tag)
+      this.usernames.add(x.username)
+    })
     this.isLoading$.next(false)
   }
 
@@ -363,5 +367,24 @@ export class PlantsService extends BaseService {
     return this.http.delete<Plant[]>(
       this.getUrlBase() + this.plantsApiUrl + "/" + id,
       this.httpOptions);
+  }
+
+  /**
+   * get a list of plants that are mine.
+   * @returns a list of plants where the username matches the username of the authenticated user
+   */
+  public getPlantsForMode(mode: string): Observable<Plant[]> {
+    console.log(`mode=${mode}`)
+    if (mode !== "public") {
+      return this.plants$.pipe(
+        map(plants => plants.filter(plant => plant.username === this.authenticationService.username()))
+      );
+    }
+    else {
+
+      return this.plants$.pipe(
+        map(plants => plants.filter(plant => plant.isPublic))
+      );
+    }
   }
 }

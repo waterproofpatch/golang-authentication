@@ -1,12 +1,13 @@
 <mat-toolbar color="primary">
 	<mat-toolbar-row>
-		<span class="nav-item">
+		<span *ngIf="authenticationService.isAuthenticated$ | async" class="nav-item">
 			<a mat-button routerLink="/home" routerLinkActive="active"
-				[routerLinkActiveOptions]="{exact:true}">Home</a>
+				[routerLinkActiveOptions]="{exact:true}">My Plants</a>
 		</span>
-		<!-- <span class="nav-item" *ngIf="authenticationService.isAuthenticated$ | async">
-			<a mat-button routerLink="/chat" routerLinkActive="active">Chat</a>
-		</span> -->
+		<span class="nav-item">
+			<a mat-button [routerLink]="['/home']" [queryParams]="{mode: 'public'}"
+				routerLinkActive="active">Public Plants</a>
+		</span>
 		<span *ngIf="!(authenticationService.isAuthenticated$ | async)" class="nav-item">
 			<a mat-button [routerLink]="['/authentication']" [queryParams]="{mode: 'login'}"
 				routerLinkActive="active">Login</a>
@@ -16,14 +17,17 @@
 				routerLinkActive="active">Register</a>
 		</span>
 		<span *ngIf="authenticationService.isAuthenticated$ | async" class="nav-item">
-			<button mat-button [matMenuTriggerFor]="profileMenu">{{authenticationService.username()}} -
-				Profile</button>
+			<button mat-icon-button [matMenuTriggerFor]="profileMenu">
+				<mat-icon>person</mat-icon>
+			</button>
 			<mat-menu #profileMenu="matMenu">
-				<button mat-menu-item (click)="authenticationService.logout()">Logout</button>
+				<button mat-menu-item
+					(click)="authenticationService.logout(undefined, true)">Logout</button>
 				<button mat-menu-item routerLink="/profile"
 					routerLinkActive="active-menu">Profile</button>
 			</mat-menu>
 		</span>
+
 	</mat-toolbar-row>
 </mat-toolbar>
 

@@ -17,13 +17,29 @@
 	margin: 10px;
 }
 
-mat-card img {
+.nonCondensedImage img {
 	width: 250px;
 	/* Adjust as needed */
 	height: 250px;
 	/* Adjust as needed */
 	object-fit: contain;
 	/* This will ensure that your images cover the entire space without distortion */
+}
+
+.condensedImage img {
+	width: 50px;
+	/* Adjust as needed */
+	height: 50px;
+	/* Adjust as needed */
+	object-fit: contain;
+	/* This will ensure that your images cover the entire space without distortion */
+}
+
+mat-card-title {
+	height: 75px;
+	/* Adjust as needed */
+	overflow: hidden;
+	/* This will hide any text that overflows the fixed height */
 }
 
 mat-card-actions {
