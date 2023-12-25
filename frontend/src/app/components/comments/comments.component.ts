@@ -61,7 +61,7 @@ export class CommentsComponent {
     })
   }
   public addComment() {
-    const comment = CommentsService.CommentsFactory.makeComment(this.commentContent, this.plantId)
+    const comment = Comment.makeComment(this.commentContent, this.plantId)
     this.commentsService.postComment(comment).subscribe((x) => {
       this.commentContent = ""
       this.updateCommentsForPlant()

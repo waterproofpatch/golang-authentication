@@ -16,22 +16,6 @@ export class CommentsService extends BaseService {
   error$ = new Subject<string>();
   comments$ = new Subject<Comment[]>();
 
-  public static CommentsFactory = class {
-
-    public static makeComment(content: string, plantId: number): Comment {
-      const comment: Comment = {
-        content: content,
-        plantId: plantId,
-        username: "", // authoritative
-        email: "", // authoritative
-        id: 0, // authoritative
-        createdAt: new Date(), // authoritative
-        viewed: false, // authoritative
-      }
-      return comment;
-    }
-  }
-
   constructor(private http: HttpClient) { super() }
 
   public viewComment(comment: Comment): void {
