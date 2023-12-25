@@ -2,13 +2,17 @@ import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BaseComponent } from '../components/base/base.component';
 import { environment } from 'src/environments/environment';
-import { BehaviorSubject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BaseService extends BaseComponent {
+  // whether or not the service is still loading backend results
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  // this error string is for modals to display login or registration errors.
+  error$ = new Subject<string>();
+
   public httpOptionsNonJson = {
     headers: new HttpHeaders({
       'Access-Control-Allow-Origin': '*',

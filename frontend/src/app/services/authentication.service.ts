@@ -23,9 +23,6 @@ export class AuthenticationService extends BaseService {
   // the local storage key for tokens
   TOKEN_KEY = 'token';
 
-  // this error string is for modals to display login or registration errors.
-  error$ = new Subject<string>();
-
   // UI can subscribe to this to reflect authentication state
   isAuthenticated$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
