@@ -73,6 +73,23 @@ describe('CommentsService', () => {
 		expect(putSpy).toHaveBeenCalledWith(dummyComment);
 		req.flush(dummyComment)
 	});
+	it('should not call put method if comment is viewed', () => {
+		const dummyComment: Comment = {
+			content: 'test content',
+			plantId: 1,
+			username: 'test user',
+			email: 'test email',
+			id: 1,
+			CreatedAt: 'test date',
+			viewed: true,
+		};
+
+		const putSpy = spyOn(service, 'put').and.callThrough();
+
+		service.viewComment(dummyComment);
+
+		expect(putSpy).toHaveBeenCalledTimes(0);
+	});
 
 
 	afterEach(() => {
