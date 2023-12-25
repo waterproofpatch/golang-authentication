@@ -13,7 +13,6 @@ export class CommentsService extends BaseService {
 
   commentsApiUrl = '/api/comments';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
-  comments$ = new Subject<Comment[]>();
 
   constructor(private http: HttpClient) { super() }
 
