@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, finalize } from 'rxjs';
-import { catchError, throwError } from 'rxjs';
-import { HttpErrorResponse, HttpClient } from '@angular/common/http';
+import { Observable, finalize } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 import { Comment } from '../models/comment.model';
 import { BaseService } from './base.service';
