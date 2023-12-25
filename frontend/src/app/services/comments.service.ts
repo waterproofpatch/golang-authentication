@@ -17,15 +17,6 @@ export class CommentsService extends BaseService {
   comments$ = new Subject<Comment[]>();
 
   public static CommentsFactory = class {
-    public static printComment(comment: Comment): void {
-      console.log("COMMENT:")
-      console.log(`id: ${comment.id}`);
-      console.log(`username: ${comment.username}`);
-      console.log(`email: ${comment.email}`);
-      console.log(`content: ${comment.content}`);
-      console.log(`plantId: ${comment.plantId}`);
-      console.log(`viewed: ${comment.viewed}`);
-    }
 
     public static makeComment(content: string, plantId: number): Comment {
       const comment: Comment = {
