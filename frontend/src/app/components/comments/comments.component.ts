@@ -47,7 +47,7 @@ export class CommentsComponent {
 
   public addComment() {
     const comment = Comment.makeComment(this.commentContent, this.plantId)
-    this.commentsService.postComment(comment).subscribe((x) => {
+    this.commentsService.addComment(comment).subscribe((x) => {
       this.commentContent = ""
       this.comments = x.sort((a: Comment, b: Comment) => b.id - a.id)
     })

@@ -43,7 +43,7 @@ export class CommentsService extends BaseService {
    * @param comment the comment to post
    * @returns an observable
    */
-  public postComment(comment: Comment): Observable<any> {
+  public addComment(comment: Comment): Observable<any> {
     this.isLoading$.next(true);
     return this.post(comment).pipe(
       finalize(() => {

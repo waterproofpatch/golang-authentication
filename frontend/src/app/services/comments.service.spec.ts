@@ -32,7 +32,7 @@ describe('CommentsService', () => {
 			viewed: false,
 		};
 
-		service.postComment(dummyComment).subscribe(comment => {
+		service.addComment(dummyComment).subscribe(comment => {
 			expect(comment).toEqual(dummyComment);
 		});
 
