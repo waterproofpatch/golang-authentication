@@ -276,7 +276,7 @@ export class PlantsService extends BaseService {
    * @param id the id of the plant to get
    * @returns a plant
    */
-  public getPlant(id: number): Observable<Plant> {
+  public getPlantById(id: number): Observable<Plant> {
     return this.getById(id = id) as Observable<Plant>
   }
 

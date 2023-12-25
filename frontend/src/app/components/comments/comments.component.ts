@@ -35,7 +35,7 @@ export class CommentsComponent {
   }
 
   private updateCommentsForPlant(): void {
-    this.plantsService.getPlant(this.plantId).subscribe((plant: Plant) => {
+    this.plantsService.getPlantById(this.plantId).subscribe((plant: Plant) => {
       console.log("Got " + plant.comments.length + " comments for plantId=" + plant.id)
       this.comments = plant.comments.sort((a: Comment, b: Comment) => {
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
