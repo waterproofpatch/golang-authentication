@@ -13,7 +13,6 @@ export class CommentsService extends BaseService {
 
   commentsApiUrl = '/api/comments';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
-  error$ = new Subject<string>();
   comments$ = new Subject<Comment[]>();
 
   constructor(private http: HttpClient) { super() }
@@ -26,17 +25,14 @@ export class CommentsService extends BaseService {
     }
   }
 
-  public deleteComment(id: number): Observable<any> {
+  /**
+   * delete a comment by id
+   * @param id the id of the comment to delete
+   * @returns an observable
+   */
+  public deleteCommentById(id: number): Observable<any> {
     this.isLoading$.next(true);
     return this.delete(id).pipe(
-      catchError((error: any) => {
-        if (error instanceof HttpErrorResponse) {
-          this.error$.next(error.error.error_message);
-        } else {
-          this.error$.next('Unexpected error');
-        }
-        return throwError(error);
-      }),
       finalize(() => {
         this.isLoading$.next(false);
       })
@@ -49,9 +45,7 @@ export class CommentsService extends BaseService {
     return this.post(comment).pipe(
       catchError((error: any) => {
         if (error instanceof HttpErrorResponse) {
-          this.error$.next(error.error.error_message);
         } else {
-          this.error$.next('Unexpected error');
         }
         return throwError(error);
       }),

@@ -45,7 +45,7 @@ describe('CommentsService', () => {
 	it('should delete a comment', () => {
 		const dummyId = 1;
 
-		service.deleteComment(dummyId).subscribe(res => {
+		service.deleteCommentById(dummyId).subscribe(res => {
 			expect(res).toEqual({});
 		});
 

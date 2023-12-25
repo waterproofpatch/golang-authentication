@@ -52,7 +52,7 @@ export class CommentsComponent {
     this.location.back();
   }
   public deleteComment(comment: Comment) {
-    this.commentsService.deleteComment(comment.id).subscribe((x) => {
+    this.commentsService.deleteCommentById(comment.id).subscribe((x) => {
       this.updateCommentsForPlant()
     })
   }
