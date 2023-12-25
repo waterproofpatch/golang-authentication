@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { CommentsService } from './comments.service';
-import { Comment } from '../types';
+import { Comment } from '../models/comment.model';
 
 describe('CommentsService', () => {
 	let service: CommentsService;
@@ -28,7 +28,7 @@ describe('CommentsService', () => {
 			username: 'test user',
 			email: 'test email',
 			id: 1,
-			CreatedAt: 'test date',
+			createdAt: new Date(),
 			viewed: false,
 		};
 
@@ -61,7 +61,7 @@ describe('CommentsService', () => {
 			username: 'test user',
 			email: 'test email',
 			id: 1,
-			CreatedAt: 'test date',
+			createdAt: new Date(),
 			viewed: false,
 		};
 
@@ -80,7 +80,7 @@ describe('CommentsService', () => {
 			username: 'test user',
 			email: 'test email',
 			id: 1,
-			CreatedAt: 'test date',
+			createdAt: new Date(),
 			viewed: true,
 		};
 
