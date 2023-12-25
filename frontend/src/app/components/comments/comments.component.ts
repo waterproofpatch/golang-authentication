@@ -16,6 +16,7 @@ export class CommentsComponent {
   comments: Comment[] = []
   commentContent: string = ""
   plantId: number = 0
+  plantUsername: string = ""
 
   constructor(
     public commentsService: CommentsService,
@@ -27,6 +28,7 @@ export class CommentsComponent {
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
       this.plantId = parseInt(params['plantId']);
+      this.plantUsername = params['plantUsername'];
       this.commentsService.getCommentsByPlantId(this.plantId).subscribe((x) => {
         this.comments = x.sort((a: Comment, b: Comment) => b.id - a.id)
       })

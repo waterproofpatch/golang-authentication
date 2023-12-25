@@ -39,7 +39,7 @@
 				<button *ngIf="plant.username == username" mat-menu-item (click)="openCareDialog()"
 					color="primary"><mat-icon style="color:blue;">
 						local_drink</mat-icon><span>Care</span></button>
-				<a mat-button [routerLink]="['/comments', plant.id]"><mat-icon>
+				<a mat-button [routerLink]="['/comments', plant.id, plant.username]"><mat-icon>
 						comment</mat-icon><span>Comments</span></a>
 				<button *ngIf="plant.username == username" mat-menu-item (click)="deletePlant()"
 					color="warn">

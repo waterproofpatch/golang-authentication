@@ -10,7 +10,7 @@ const routes: Routes = [
   { path: 'authentication', canActivate: [HttpsGuard], component: AuthenticationComponent },
   { path: 'home', canActivate: [HttpsGuard], component: PlantsComponent },
   { path: 'profile', canActivate: [HttpsGuard], component: ProfileComponent },
-  { path: 'comments/:plantId', canActivate: [HttpsGuard], component: CommentsComponent },
+  { path: 'comments/:plantId/:plantUsername', canActivate: [HttpsGuard], component: CommentsComponent },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
 ];
 
