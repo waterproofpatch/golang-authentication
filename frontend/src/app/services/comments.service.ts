@@ -39,22 +39,26 @@ export class CommentsService extends BaseService {
     );
   }
 
+  /**
+   * create a new comment
+   * @param comment the comment to post
+   * @returns an observable
+   */
   public postComment(comment: Comment): Observable<any> {
     this.isLoading$.next(true);
     // delete comment.CreatedAt;
     return this.post(comment).pipe(
-      catchError((error: any) => {
-        if (error instanceof HttpErrorResponse) {
-        } else {
-        }
-        return throwError(error);
-      }),
       finalize(() => {
         this.isLoading$.next(false);
       })
     );
   }
 
+  /**
+   * create a new comment on the server
+   * @param comment comment to post
+   * @returns an observable
+   */
   post(comment: Comment): Observable<any> {
     return this.http.post(this.getUrlBase() + this.commentsApiUrl + "/" + comment.id, comment, this.httpOptions);
   }
