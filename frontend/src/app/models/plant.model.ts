@@ -1,5 +1,5 @@
 import { PlantLog } from "../types";
-import { Comment } from "../types";
+import { Comment } from "./comment.model";
 
 export class Plant {
 	constructor(public id: number,

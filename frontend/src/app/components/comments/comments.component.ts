@@ -5,8 +5,9 @@ import { Location } from '@angular/common';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { PlantsService } from 'src/app/services/plants.service';
 import { CommentsService } from 'src/app/services/comments.service';
-import { Comment } from 'src/app/types';
+import { Comment } from 'src/app/models/comment.model';
 import { Plant } from 'src/app/models/plant.model';
+
 @Component({
   selector: 'app-comments',
   templateUrl: './comments.component.html',
@@ -41,10 +42,7 @@ export class CommentsComponent {
       this.isLoading = false;
       console.log("Got " + plant.comments.length + " comments for plantId=" + plant.id)
       this.comments = plant.comments.sort((a: Comment, b: Comment) => {
-        if (!b.CreatedAt || !a.CreatedAt) {
-          return 0;
-        }
-        return new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime();
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       });
       if (this.authenticationService.isAuthenticated$.value) {
         this.comments.forEach((x) => {

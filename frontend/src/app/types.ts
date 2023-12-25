@@ -30,15 +30,6 @@ export abstract class UserFactory {
   }
 }
 
-export interface Comment {
-  id: number;
-  CreatedAt?: string;
-  plantId: number;
-  content: string;
-  username: string;
-  email: string;
-  viewed: boolean;
-}
 export interface PlantLog {
   id: number;
   log: string;

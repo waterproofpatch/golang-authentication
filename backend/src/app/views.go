@@ -401,7 +401,7 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 			return
 		}
 
-		// Declare a new Person struct.
+		// Declare a new Comment struct.
 		var comment CommentModel
 		var plant PlantModel
 
@@ -414,7 +414,7 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 			return
 		}
 
-		fmt.Printf("comment received: %v for plantId=%s", comment, comment.PlantID)
+		fmt.Printf("comment received: %v for plantId=%d", comment, comment.PlantID)
 
 		// make sure the plant is public
 		db.Where("id = ?", comment.PlantID).First(&plant)

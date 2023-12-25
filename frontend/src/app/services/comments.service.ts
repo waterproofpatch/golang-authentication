@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable, Subject, finalize } from 'rxjs';
 import { catchError, throwError } from 'rxjs';
 import { HttpErrorResponse, HttpClient } from '@angular/common/http';
 
-import { Comment } from '../types';
+import { Comment } from '../models/comment.model';
 import { BaseService } from './base.service';
 
 @Injectable({
@@ -22,11 +22,11 @@ export class CommentsService extends BaseService {
       const comment: Comment = {
         content: content,
         plantId: plantId,
-        username: "", //authoritative
-        email: "", //authoritative
-        id: 0, //authoritative
-        CreatedAt: "", // authoritative
-        viewed: false, //authoritative
+        username: "", // authoritative
+        email: "", // authoritative
+        id: 0, // authoritative
+        createdAt: new Date(), // authoritative
+        viewed: false, // authoritative
       }
       return comment;
     }
@@ -61,7 +61,7 @@ export class CommentsService extends BaseService {
 
   public postComment(comment: Comment): Observable<any> {
     this.isLoading$.next(true);
-    delete comment.CreatedAt;
+    // delete comment.CreatedAt;
     return this.post(comment).pipe(
       catchError((error: any) => {
         if (error instanceof HttpErrorResponse) {

@@ -30,6 +30,10 @@ type CommentModel struct {
 	Username string `json:"username"`
 	Content  string `json:"content"`
 	Viewed   bool   `json:"viewed" gorm:"-"`
+	// allow JSON POST to leave these empty
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 }
 
 type PlantModel struct {
