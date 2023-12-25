@@ -15,18 +15,6 @@ export class CommentsService extends BaseService {
 
   constructor(private http: HttpClient) { super() }
 
-  /**
-   * mark the comment to view
-   * @param comment comment to view
-   */
-  public viewComment(comment: Comment): void {
-    // this check prevents us from recuring
-    if (!comment.viewed) {
-      console.log("viewing comment: " + comment.id)
-      this.put(comment).subscribe((x) => { })
-    }
-  }
-
   public getCommentsByPlantId(plantId: number): Observable<any> {
     this.isLoading$.next(true);
     return this.get(plantId).pipe(
@@ -75,15 +63,6 @@ export class CommentsService extends BaseService {
    */
   private post(comment: Comment): Observable<any> {
     return this.http.post(this.getUrlBase() + this.commentsApiUrl + "/" + comment.id, comment, this.httpOptions);
-  }
-
-  /**
-   * update the comment on the server (sets it to viewed)
-   * @param comment the comment to update
-   * @returns 
-   */
-  private put(comment: Comment): Observable<any> {
-    return this.http.put(this.getUrlBase() + this.commentsApiUrl + "/" + comment.id, comment, this.httpOptions);
   }
 
   /**

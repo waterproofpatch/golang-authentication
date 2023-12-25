@@ -54,42 +54,6 @@ describe('CommentsService', () => {
 		expect(req.request.headers.get("Content-Type")).toBe('application/json');
 		req.flush({});
 	});
-	it('should call put method if comment is not viewed', () => {
-		const dummyComment: Comment = {
-			content: 'test content',
-			plantId: 1,
-			username: 'test user',
-			email: 'test email',
-			id: 1,
-			createdAt: new Date(),
-			viewed: false,
-		};
-
-		const putSpy = spyOn(service, 'put').and.callThrough();
-
-		service.viewComment(dummyComment);
-
-		const req = httpMock.expectOne(`${service.getUrlBase()}${service.commentsApiUrl}/${dummyComment.id}`);
-		expect(putSpy).toHaveBeenCalledWith(dummyComment);
-		req.flush(dummyComment)
-	});
-	it('should not call put method if comment is viewed', () => {
-		const dummyComment: Comment = {
-			content: 'test content',
-			plantId: 1,
-			username: 'test user',
-			email: 'test email',
-			id: 1,
-			createdAt: new Date(),
-			viewed: true,
-		};
-
-		const putSpy = spyOn(service, 'put').and.callThrough();
-
-		service.viewComment(dummyComment);
-
-		expect(putSpy).toHaveBeenCalledTimes(0);
-	});
 
 
 	afterEach(() => {

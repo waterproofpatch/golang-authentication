@@ -29,7 +29,7 @@ type CommentModel struct {
 	Email    string `json:"-"`
 	Username string `json:"username"`
 	Content  string `json:"content"`
-	Viewed   bool   `json:"viewed" gorm:"-"`
+	Viewed   bool   `json:"viewed"`
 	// allow JSON POST to leave these empty
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
@@ -58,11 +58,6 @@ type PlantModel struct {
 	Logs                    []PlantLogModel `json:"logs" gorm:"foreignKey:PlantID"`
 	Comments                []CommentModel  `json:"comments" gorm:"foreignKey:PlantID"`
 	Notes                   string          `json:"notes"`
-}
-type UserCommentView struct {
-	CommentID int
-	Email     string
-	ViewedAt  time.Time
 }
 
 // render a plant
@@ -327,5 +322,4 @@ func InitModels(db *gorm.DB) {
 	db.AutoMigrate(&CommentModel{})
 	db.AutoMigrate(&ImageModel{})
 	db.AutoMigrate(&PlantLogModel{})
-	db.AutoMigrate(&UserCommentView{})
 }

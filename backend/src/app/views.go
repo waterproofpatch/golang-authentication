@@ -348,12 +348,8 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		for i := range plants {
 			for j := range plants[i].Comments {
 				var count int64
-				db.Model(&UserCommentView{}).Where("email = ? AND comment_id = ?", claims.Email, plants[i].Comments[j].Id).Count(&count)
-				if count > 0 {
-					fmt.Printf("Returning comment %d as viewed=%v by %s\n", plants[i].Comments[j].Id, true, claims.Email)
-					plants[i].Comments[j].Viewed = true
-				} else {
-					fmt.Printf("returning comment %d as viewed=%v by %s\n", plants[i].Comments[j].Id, false, claims.Email)
+				if !plants[i].Comments[j].Viewed {
+					count += 1
 				}
 			}
 		}
@@ -436,34 +432,6 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		var comments []CommentModel
 		db.Where("plant_id = ?", plant.Id).Find(&comments)
 		json.NewEncoder(w).Encode(comments)
-	case "PUT":
-		commentId, hasCommentId := vars["id"]
-		if !hasCommentId {
-			authentication.WriteError(w, "Invalid commentId ID", http.StatusBadRequest)
-			return
-		}
-		if claims == nil {
-			authentication.WriteError(w, "Must be logged in to update comments.", http.StatusUnauthorized)
-			return
-		}
-
-		var comment CommentModel
-		result := db.Where("id = ?", commentId).First(&comment)
-		if result.Error != nil {
-			fmt.Println("No comments found!")
-		} else {
-			fmt.Printf("%v is viewing comment %s\n", claims.Email, commentId)
-			var count int64
-			db.Model(&UserCommentView{}).Where("email = ? AND comment_id = ?", claims.Email, comment.Id).Count(&count)
-			if count == 0 {
-				view := UserCommentView{
-					Email:     claims.Email,
-					CommentID: comment.Id,
-					ViewedAt:  time.Now(),
-				}
-				db.Create(&view)
-			}
-		}
 	}
 }
 
