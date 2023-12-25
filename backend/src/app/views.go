@@ -348,7 +348,9 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		for i := range plants {
 			for j := range plants[i].Comments {
 				var count int64
-				if !plants[i].Comments[j].Viewed {
+				// if the plant is ours and we have not yet seen this comment...
+				// TODO is this even necessary
+				if !plants[i].Comments[j].Viewed && claims.Email == plants[i].Email {
 					count += 1
 				}
 			}
@@ -371,9 +373,23 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		plantId := r.URL.Query().Get("plantId")
 		fmt.Printf("getting comments for plantId=%v", plantId)
 		var comments []CommentModel
+		var plant PlantModel
 		db.Where("plant_id = ?", plantId).Find(&comments)
+		db.Where("id = ?", plantId).Find(&plant)
+
+		// update all comments here as viewed if the plant the comments are for is the owners plant
+		if claims != nil {
+			if plant.Email == claims.Email {
+				fmt.Println("Owner of the plant is viewing comments, marking as viewed...")
+				for i := range comments {
+					comments[i].Viewed = true
+					db.Save(&comments[i])
+				}
+			}
+		}
 		json.NewEncoder(w).Encode(comments)
 		break
+
 	case "DELETE":
 		commentId, hasCommentId := vars["id"]
 		if !hasCommentId {

@@ -26,8 +26,8 @@
 		</mat-card-subtitle>
 		<div class="menu-icon">
 
-			<button mat-icon-button [matBadgeHidden]="(numComments|async)==0"
-				[matBadge]="numComments | async" matBadgeColor="warn" [matMenuTriggerFor]="menu"
+			<button mat-icon-button [matBadgeHidden]="(numComments$|async)==0"
+				[matBadge]="numComments$ | async" matBadgeColor="warn" [matMenuTriggerFor]="menu"
 				aria-label="Actions">
 				<mat-icon>more_vert</mat-icon>
 			</button>

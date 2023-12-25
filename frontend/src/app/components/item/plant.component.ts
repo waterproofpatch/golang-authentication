@@ -50,7 +50,7 @@ export class PlantComponent {
   backgroundColorWater: string = 'black';
   backgroundColorFertilize: string = 'black';
 
-  numComments: BehaviorSubject<number> = new BehaviorSubject<number>(0)
+  numComments$: BehaviorSubject<number> = new BehaviorSubject<number>(0)
 
   constructor(private router: Router,
     private plantsService: PlantsService,
@@ -82,12 +82,12 @@ export class PlantComponent {
         this.backgroundColorMoist = "red"
       }
     }
-    if (this.plant && this.authenticationService.isAuthenticated$.value) {
+    if (this.plant && this.authenticationService.isAuthenticated$.value && this.plant.username == this.authenticationService.username()) {
       let unviewedComments = this.plant?.comments.filter(x =>
         !x.viewed
       ).length
       console.log("plantId=" + this.plant.id + " has " + unviewedComments + " unviewed comments.")
-      this.numComments.next(unviewedComments)
+      this.numComments$.next(unviewedComments)
     }
   }
 
