@@ -369,16 +369,21 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 
 	vars := mux.Vars(r)
 	db := authentication.GetDb()
-	commentId, hasCommentId := vars["id"]
-	if !hasCommentId {
-		authentication.WriteError(w, "Invalid commentId ID", http.StatusBadRequest)
-		return
-	}
 
 	switch r.Method {
 	case "GET":
+		plantId := r.URL.Query().Get("plantId")
+		fmt.Printf("getting comments for plantId=%v", plantId)
+		var comments []CommentModel
+		db.Where("plant_id = ?", plantId).Find(&comments)
+		json.NewEncoder(w).Encode(comments)
 		break
 	case "DELETE":
+		commentId, hasCommentId := vars["id"]
+		if !hasCommentId {
+			authentication.WriteError(w, "Invalid commentId ID", http.StatusBadRequest)
+			return
+		}
 		if claims == nil {
 			authentication.WriteError(w, "Must be logged in to delete comments.", http.StatusUnauthorized)
 			return
@@ -425,6 +430,11 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 
 		AddComment(db, comment.Content, claims.Email, claims.Username, comment.PlantID)
 	case "PUT":
+		commentId, hasCommentId := vars["id"]
+		if !hasCommentId {
+			authentication.WriteError(w, "Invalid commentId ID", http.StatusBadRequest)
+			return
+		}
 		if claims == nil {
 			authentication.WriteError(w, "Must be logged in to update comments.", http.StatusUnauthorized)
 			return
@@ -469,6 +479,7 @@ func InitViews(router *mux.Router) {
 	router.HandleFunc("/api/dashboard/{id:[0-9]+}", authentication.VerifiedOnly(dashboard, false)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	router.HandleFunc("/api/dashboard", authentication.VerifiedOnly(dashboard, false)).Methods("GET", "POST", "PUT", "OPTIONS")
 	router.HandleFunc("/api/comments/{id:[0-9]+}", authentication.VerifiedOnly(comments, true)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+	router.HandleFunc("/api/comments", authentication.VerifiedOnly(comments, true)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	router.HandleFunc("/api/plants", authentication.VerifiedOnly(plants, true)).Methods("GET", "POST", "PUT", "OPTIONS")
 	router.HandleFunc("/api/plants/{id:[0-9]+}", authentication.VerifiedOnly(plants, true)).Methods("GET", "POST", "DELETE", "PUT", "OPTIONS")
 	router.HandleFunc("/api/images/{id:[0-9]+}", images).Methods("GET", "OPTIONS")

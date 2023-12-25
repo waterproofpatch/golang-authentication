@@ -27,6 +27,15 @@ export class CommentsService extends BaseService {
     }
   }
 
+  public getCommentsByPlantId(plantId: number): Observable<any> {
+    this.isLoading$.next(true);
+    return this.get(plantId).pipe(
+      finalize(() => {
+        this.isLoading$.next(false)
+      })
+    )
+  }
+
   /**
    * delete a comment by id
    * @param id the id of the comment to delete
@@ -48,12 +57,15 @@ export class CommentsService extends BaseService {
    */
   public postComment(comment: Comment): Observable<any> {
     this.isLoading$.next(true);
-    // delete comment.CreatedAt;
     return this.post(comment).pipe(
       finalize(() => {
         this.isLoading$.next(false);
       })
     );
+  }
+
+  private get(plantId: number): Observable<any> {
+    return this.http.get(this.getUrlBase() + this.commentsApiUrl + "?plantId=" + plantId, this.httpOptions)
   }
 
   /**

@@ -30,7 +30,10 @@ export class CommentsComponent {
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
       this.plantId = parseInt(params['plantId']);
-      this.updateCommentsForPlant()
+      this.commentsService.getCommentsByPlantId(this.plantId).subscribe((x) => {
+        this.comments = x
+      })
+      // this.updateCommentsForPlant()
     });
   }
 
