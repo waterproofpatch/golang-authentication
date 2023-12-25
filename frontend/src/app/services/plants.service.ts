@@ -12,7 +12,6 @@ import { AuthenticationService } from './authentication.service';
   providedIn: 'root'
 })
 export class PlantsService extends BaseService {
-  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
   formProcessingSucceeded$: Subject<boolean> = new Subject<boolean>()
   imageCache: Map<number, Blob> = new Map<number, Blob>();
 
@@ -42,7 +41,6 @@ export class PlantsService extends BaseService {
       if (!isAuth) {
 
         console.log("logout event detected, getting updated plants list...")
-        // this.plants = []
         this.getPlants();
       }
     })
@@ -102,8 +100,6 @@ export class PlantsService extends BaseService {
       })
     );
   }
-
-
 
   /**
    * Delete an existing plant by its ID

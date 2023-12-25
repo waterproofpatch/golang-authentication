@@ -27,9 +27,6 @@ export class AuthenticationService extends BaseService {
   // this error string is for modals to display login or registration errors.
   error$ = new Subject<string>();
 
-  // indicate to subscribers when we're done loading
-  isLoading$ = new Subject<boolean>();
-
   // UI can subscribe to this to reflect authentication state
   isAuthenticated$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 

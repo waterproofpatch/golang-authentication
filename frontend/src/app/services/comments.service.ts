@@ -12,7 +12,6 @@ import { BaseService } from './base.service';
 export class CommentsService extends BaseService {
 
   commentsApiUrl = '/api/comments';
-  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
 
   constructor(private http: HttpClient) { super() }
 
