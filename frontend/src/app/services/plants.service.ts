@@ -271,6 +271,11 @@ export class PlantsService extends BaseService {
   }
 
 
+  /**
+   * get a plant by its id
+   * @param id the id of the plant to get
+   * @returns a plant
+   */
   public getPlant(id: number): Observable<Plant> {
     return this.getById(id = id) as Observable<Plant>
   }
