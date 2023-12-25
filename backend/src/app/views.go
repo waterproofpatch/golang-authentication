@@ -367,27 +367,11 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 
 	vars := mux.Vars(r)
 	db := authentication.GetDb()
+	plantId := "0"
 
 	switch r.Method {
 	case "GET":
-		plantId := r.URL.Query().Get("plantId")
-		fmt.Printf("getting comments for plantId=%v", plantId)
-		var comments []CommentModel
-		var plant PlantModel
-		db.Where("plant_id = ?", plantId).Find(&comments)
-		db.Where("id = ?", plantId).Find(&plant)
-
-		// update all comments here as viewed if the plant the comments are for is the owners plant
-		if claims != nil {
-			if plant.Email == claims.Email {
-				fmt.Println("Owner of the plant is viewing comments, marking as viewed...")
-				for i := range comments {
-					comments[i].Viewed = true
-					db.Save(&comments[i])
-				}
-			}
-		}
-		json.NewEncoder(w).Encode(comments)
+		plantId = r.URL.Query().Get("plantId")
 		break
 
 	case "DELETE":
@@ -413,9 +397,7 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 
 		db.Delete(&comment)
 
-		var comments []CommentModel
-		db.Where("plant_id = ?", plant.Id).Find(&comments)
-		json.NewEncoder(w).Encode(comments)
+		plantId = strconv.Itoa(plant.Id)
 	case "POST":
 		if claims == nil {
 			authentication.WriteError(w, "Must be logged in to post comments.", http.StatusUnauthorized)
@@ -445,10 +427,25 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		}
 
 		AddComment(db, comment.Content, claims.Email, claims.Username, comment.PlantID)
-		var comments []CommentModel
-		db.Where("plant_id = ?", plant.Id).Find(&comments)
-		json.NewEncoder(w).Encode(comments)
+		plantId = strconv.Itoa(plant.Id)
 	}
+	fmt.Printf("getting comments for plantId=%v", plantId)
+	var comments []CommentModel
+	var plant PlantModel
+	db.Where("plant_id = ?", plantId).Find(&comments)
+	db.Where("id = ?", plantId).Find(&plant)
+
+	// update all comments here as viewed if the plant the comments are for is the owners plant
+	if claims != nil {
+		if plant.Email == claims.Email {
+			fmt.Println("Owner of the plant is viewing comments, marking as viewed...")
+			for i := range comments {
+				comments[i].Viewed = true
+				db.Save(&comments[i])
+			}
+		}
+	}
+	json.NewEncoder(w).Encode(comments)
 }
 
 func dashboard(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
