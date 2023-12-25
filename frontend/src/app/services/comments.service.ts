@@ -17,6 +17,10 @@ export class CommentsService extends BaseService {
 
   constructor(private http: HttpClient) { super() }
 
+  /**
+   * mark the comment to view
+   * @param comment comment to view
+   */
   public viewComment(comment: Comment): void {
     // this check prevents us from recuring
     if (!comment.viewed) {
@@ -62,11 +66,21 @@ export class CommentsService extends BaseService {
   post(comment: Comment): Observable<any> {
     return this.http.post(this.getUrlBase() + this.commentsApiUrl + "/" + comment.id, comment, this.httpOptions);
   }
-  // updating the comment marks it as viewed on the remote side
+
+  /**
+   * update the comment on the server (sets it to viewed)
+   * @param comment the comment to update
+   * @returns 
+   */
   put(comment: Comment): Observable<any> {
     return this.http.put(this.getUrlBase() + this.commentsApiUrl + "/" + comment.id, comment, this.httpOptions);
   }
 
+  /**
+   * remove a comment from the server
+   * @param id the ID of the comment to delete
+   * @returns an observable
+   */
   delete(
     id: number,
   ): Observable<any> {
