@@ -400,6 +400,10 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		}
 
 		db.Delete(&comment)
+
+		var comments []CommentModel
+		db.Where("plant_id = ?", plant.Id).Find(&comments)
+		json.NewEncoder(w).Encode(comments)
 	case "POST":
 		if claims == nil {
 			authentication.WriteError(w, "Must be logged in to post comments.", http.StatusUnauthorized)
@@ -429,6 +433,9 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		}
 
 		AddComment(db, comment.Content, claims.Email, claims.Username, comment.PlantID)
+		var comments []CommentModel
+		db.Where("plant_id = ?", plant.Id).Find(&comments)
+		json.NewEncoder(w).Encode(comments)
 	case "PUT":
 		commentId, hasCommentId := vars["id"]
 		if !hasCommentId {
