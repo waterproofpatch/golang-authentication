@@ -15,13 +15,12 @@ import { Plant } from 'src/app/models/plant.model';
 })
 export class CommentsComponent {
 
-  isLoading: boolean = false
   comments: Comment[] = []
   commentContent: string = ""
   plantId: number = 0
 
   constructor(
-    private commentsService: CommentsService,
+    public commentsService: CommentsService,
     private plantsService: PlantsService,
     private activatedRoute: ActivatedRoute,
     private location: Location,
@@ -29,7 +28,6 @@ export class CommentsComponent {
   }
 
   ngOnInit() {
-    this.commentsService.isLoading$.subscribe((x) => this.isLoading = x)
     this.activatedRoute.params.subscribe(params => {
       this.plantId = parseInt(params['plantId']);
       this.updateCommentsForPlant()
@@ -37,9 +35,7 @@ export class CommentsComponent {
   }
 
   private updateCommentsForPlant(): void {
-    this.isLoading = true;
     this.plantsService.getPlant(this.plantId).subscribe((plant: Plant) => {
-      this.isLoading = false;
       console.log("Got " + plant.comments.length + " comments for plantId=" + plant.id)
       this.comments = plant.comments.sort((a: Comment, b: Comment) => {
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();

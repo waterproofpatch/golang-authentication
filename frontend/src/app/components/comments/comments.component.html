@@ -12,7 +12,7 @@
 		<mat-divider></mat-divider>
 	</div>
 
-	<mat-spinner *ngIf="isLoading"></mat-spinner>
+	<mat-spinner *ngIf="commentsService.isLoading$ | async"></mat-spinner>
 	<mat-card class="comment" *ngFor="let comment of comments">
 		<mat-card-header>
 			<mat-card-title>{{ comment.username }}</mat-card-title>
