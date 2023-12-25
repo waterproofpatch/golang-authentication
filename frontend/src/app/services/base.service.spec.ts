@@ -41,4 +41,15 @@ describe('BaseService', () => {
 
 		expect(service.httpOptionsNonJson.headers.get('Access-Control-Allow-Origin')).toEqual(expectedHttpOptionsNonJson.headers.get('Access-Control-Allow-Origin'));
 	});
+	it('httpOptions should only have two headers', () => {
+		const expectedHeaders = ['Content-Type', 'Access-Control-Allow-Origin'];
+
+		const actualHeaders = service.httpOptions.headers.keys();
+		expect(actualHeaders.length).toEqual(expectedHeaders.length);
+
+		expectedHeaders.forEach(header => {
+			expect(actualHeaders).toContain(header);
+		});
+	});
+
 });
