@@ -52,6 +52,11 @@ export class CommentsService extends BaseService {
     );
   }
 
+  /**
+   * get comments by plant id
+   * @param plantId the plant to get comments for
+   * @returns 
+   */
   private get(plantId: number): Observable<any> {
     return this.http.get(this.getUrlBase() + this.commentsApiUrl + "?plantId=" + plantId, this.httpOptions)
   }
