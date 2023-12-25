@@ -51,5 +51,20 @@ describe('BaseService', () => {
 			expect(actualHeaders).toContain(header);
 		});
 	});
+	it('isLoading$ should be defined and emit false initially', (done: DoneFn) => {
+		service.isLoading$.subscribe(value => {
+			expect(value).toBeFalse();
+			done();
+		});
+	});
+	it('isLoading$ should emit true when set to true', (done: DoneFn) => {
+		service.isLoading$.next(true);
+
+		service.isLoading$.subscribe(value => {
+			expect(value).toBeTrue();
+			done();
+		});
+	});
+
 
 });
