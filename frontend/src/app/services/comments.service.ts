@@ -61,7 +61,7 @@ export class CommentsService extends BaseService {
    * @param comment comment to post
    * @returns an observable
    */
-  post(comment: Comment): Observable<any> {
+  private post(comment: Comment): Observable<any> {
     return this.http.post(this.getUrlBase() + this.commentsApiUrl + "/" + comment.id, comment, this.httpOptions);
   }
 
@@ -70,7 +70,7 @@ export class CommentsService extends BaseService {
    * @param comment the comment to update
    * @returns 
    */
-  put(comment: Comment): Observable<any> {
+  private put(comment: Comment): Observable<any> {
     return this.http.put(this.getUrlBase() + this.commentsApiUrl + "/" + comment.id, comment, this.httpOptions);
   }
 
@@ -79,7 +79,7 @@ export class CommentsService extends BaseService {
    * @param id the ID of the comment to delete
    * @returns an observable
    */
-  delete(
+  private delete(
     id: number,
   ): Observable<any> {
     return this.http.delete(
