@@ -42,6 +42,7 @@ export class CommentsComponent {
 
   public addComment() {
     const comment = Comment.makeComment(this.commentContent, this.plantId)
+    this.commentContent = ""
     this.commentsService.addComment(comment)
   }
 }

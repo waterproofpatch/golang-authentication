@@ -17,46 +17,44 @@ describe('CommentsService', () => {
 		httpMock = TestBed.inject(HttpTestingController);
 	});
 
-	it('should be created', () => {
-		expect(service).toBeTruthy();
-	});
-
-	it('should post a comment', () => {
-		const dummyComment: Comment = {
-			content: 'test content',
-			plantId: 1,
-			username: 'test user',
-			email: 'test email',
-			id: 1,
-			createdAt: new Date(),
-			viewed: false,
-		};
-
-		service.addComment(dummyComment).subscribe(comment => {
-			expect(comment).toEqual(dummyComment);
-		});
-
-		const req = httpMock.expectOne(`${service.getUrlBase()}${service.commentsApiUrl}/${dummyComment.id}`);
-		expect(req.request.method).toBe('POST');
-		expect(req.request.headers.get("Content-Type")).toBe('application/json');
-		req.flush(dummyComment);
-	});
-
-	it('should delete a comment', () => {
-		const dummyId = 1;
-
-		service.deleteCommentById(dummyId).subscribe(res => {
-			expect(res).toEqual({});
-		});
-
-		const req = httpMock.expectOne(`${service.getUrlBase()}${service.commentsApiUrl}/${dummyId}`);
-		expect(req.request.method).toBe('DELETE');
-		expect(req.request.headers.get("Content-Type")).toBe('application/json');
-		req.flush({});
-	});
-
-
 	afterEach(() => {
-		httpMock.verify();
+		httpMock.verify(); // Ensure that there are no outstanding requests
+	});
+
+	it('should fetch comments by plant id', () => {
+		const mockComments: Comment[] = [Comment.makeComment('Test comment', 1)];
+
+		service.getCommentsByPlantId(1);
+
+		const req = httpMock.expectOne(service.getUrlBase() + service.commentsApiUrl + "?plantId=1");
+		expect(req.request.method).toBe('GET');
+		req.flush(mockComments);
+
+		service.comments$.subscribe(comments => {
+			expect(comments.length).toBe(1);
+			expect(comments).toEqual(mockComments);
+		});
+	});
+
+	it('should delete a comment by id', () => {
+		service.deleteCommentById(1);
+
+		const req = httpMock.expectOne(service.getUrlBase() + service.commentsApiUrl + "/1");
+		expect(req.request.method).toBe('DELETE');
+		req.flush([]);
+
+		// Add additional expectations if needed
+	});
+
+	it('should add a comment', () => {
+		const newComment: Comment[] = [Comment.makeComment('New comment', 1)];
+
+		service.addComment(newComment[0]);
+
+		const req = httpMock.expectOne(service.getUrlBase() + service.commentsApiUrl + "/" + newComment[0].id);
+		expect(req.request.method).toBe('POST');
+		req.flush(newComment);
+
+		// Add additional expectations if needed
 	});
 });

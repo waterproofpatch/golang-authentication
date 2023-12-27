@@ -20,7 +20,7 @@ export class CommentsService extends BaseService {
   public getCommentsByPlantId(plantId: number): void {
     this.isLoading$.next(true);
     this.get(plantId).pipe(
-      map((comments: any[]) => {
+      map((comments: Comment[]) => {
         return comments.sort((a: Comment, b: Comment) => b.id - a.id)
       }),
       finalize(() => {
@@ -36,7 +36,7 @@ export class CommentsService extends BaseService {
   public deleteCommentById(id: number): void {
     this.isLoading$.next(true);
     this.delete(id).pipe(
-      map((comments: any[]) => {
+      map((comments: Comment[]) => {
         return comments.sort((a: Comment, b: Comment) => b.id - a.id)
       }),
       finalize(() => {
@@ -52,7 +52,7 @@ export class CommentsService extends BaseService {
   public addComment(comment: Comment): void {
     this.isLoading$.next(true);
     this.post(comment).pipe(
-      map((comments: any[]) => {
+      map((comments: Comment[]) => {
         return comments.sort((a: Comment, b: Comment) => b.id - a.id)
       }),
       finalize(() => {
