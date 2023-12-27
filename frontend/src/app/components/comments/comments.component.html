@@ -13,7 +13,7 @@
 	</div>
 
 	<mat-spinner *ngIf="commentsService.isLoading$ | async"></mat-spinner>
-	<mat-card class="comment" *ngFor="let comment of comments">
+	<mat-card class="comment" *ngFor="let comment of commentsService.comments$ | async">
 		<mat-card-header>
 			<mat-card-title>{{ comment.username }}</mat-card-title>
 			<mat-card-subtitle>{{ comment.createdAt | date:'MM/dd/yyyy' }}</mat-card-subtitle>

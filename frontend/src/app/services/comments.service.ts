@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, finalize } from 'rxjs';
+import { map, BehaviorSubject, Observable, finalize } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { Comment } from '../models/comment.model';
@@ -12,43 +12,53 @@ export class CommentsService extends BaseService {
 
   commentsApiUrl = '/api/comments';
 
+  // list of comments
+  comments$: BehaviorSubject<Comment[]> = new BehaviorSubject<Comment[]>([])
+
   constructor(private http: HttpClient) { super() }
 
-  public getCommentsByPlantId(plantId: number): Observable<any> {
+  public getCommentsByPlantId(plantId: number): void {
     this.isLoading$.next(true);
-    return this.get(plantId).pipe(
+    this.get(plantId).pipe(
+      map((comments: any[]) => {
+        return comments.sort((a: Comment, b: Comment) => b.id - a.id)
+      }),
       finalize(() => {
         this.isLoading$.next(false)
       })
-    )
+    ).subscribe((comments: Comment[]) => this.comments$.next(comments))
   }
 
   /**
    * delete a comment by id
    * @param id the id of the comment to delete
-   * @returns an observable
    */
-  public deleteCommentById(id: number): Observable<any> {
+  public deleteCommentById(id: number): void {
     this.isLoading$.next(true);
-    return this.delete(id).pipe(
+    this.delete(id).pipe(
+      map((comments: any[]) => {
+        return comments.sort((a: Comment, b: Comment) => b.id - a.id)
+      }),
       finalize(() => {
         this.isLoading$.next(false);
       })
-    );
+    ).subscribe((comments: Comment[]) => this.comments$.next(comments))
   }
 
   /**
    * create a new comment
    * @param comment the comment to post
-   * @returns an observable
    */
-  public addComment(comment: Comment): Observable<any> {
+  public addComment(comment: Comment): void {
     this.isLoading$.next(true);
-    return this.post(comment).pipe(
+    this.post(comment).pipe(
+      map((comments: any[]) => {
+        return comments.sort((a: Comment, b: Comment) => b.id - a.id)
+      }),
       finalize(() => {
         this.isLoading$.next(false);
       })
-    );
+    ).subscribe((comments: Comment[]) => this.comments$.next(comments))
   }
 
   /**

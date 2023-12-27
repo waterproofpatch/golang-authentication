@@ -13,7 +13,6 @@ import { Comment } from 'src/app/models/comment.model';
 })
 export class CommentsComponent {
 
-  comments: Comment[] = []
   commentContent: string = ""
   plantId: number = 0
   plantUsername: string = ""
@@ -29,9 +28,7 @@ export class CommentsComponent {
     this.activatedRoute.params.subscribe(params => {
       this.plantId = parseInt(params['plantId']);
       this.plantUsername = params['plantUsername'];
-      this.commentsService.getCommentsByPlantId(this.plantId).subscribe((x) => {
-        this.comments = x.sort((a: Comment, b: Comment) => b.id - a.id)
-      })
+      this.commentsService.getCommentsByPlantId(this.plantId)
     });
   }
 
@@ -40,16 +37,11 @@ export class CommentsComponent {
   }
 
   public deleteComment(comment: Comment) {
-    this.commentsService.deleteCommentById(comment.id).subscribe((x) => {
-      this.comments = x.sort((a: Comment, b: Comment) => b.id - a.id)
-    })
+    this.commentsService.deleteCommentById(comment.id)
   }
 
   public addComment() {
     const comment = Comment.makeComment(this.commentContent, this.plantId)
-    this.commentsService.addComment(comment).subscribe((x) => {
-      this.commentContent = ""
-      this.comments = x.sort((a: Comment, b: Comment) => b.id - a.id)
-    })
+    this.commentsService.addComment(comment)
   }
 }
