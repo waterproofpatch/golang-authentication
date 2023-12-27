@@ -54,8 +54,35 @@ describe('CommentsComponent', () => {
 		spyOn(commentsService, 'getCommentsByPlantId').and.returnValue(of(comments));
 		component.ngOnInit();
 		expect(component.comments).toEqual(comments);
+		expect(component.plantUsername).toEqual("test");
 		expect(commentsService.getCommentsByPlantId).toHaveBeenCalledWith(1);
 	});
+	it('should delete comment', () => {
+		const comments = [
+			new Comment(1, new Date(), 123, "comment", "username", "email", false),
+			new Comment(2, new Date(), 345, "comment2", "username2", "email2", true)
+		];
+		const updatedComments = [
+			new Comment(2, new Date(), 345, "comment2", "username2", "email2", true)
+		];
+		spyOn(commentsService, 'deleteCommentById').and.returnValue(of(updatedComments));
+		component.deleteComment(comments[0]);
+		expect(component.comments).toEqual(updatedComments);
+		expect(commentsService.deleteCommentById).toHaveBeenCalledWith(comments[0].id);
+	});
+	it('should add comment', () => {
+		const comments = [
+			new Comment(1, new Date(), 123, "comment", "username", "email", false),
+			new Comment(2, new Date(), 345, "comment2", "username2", "email2", true)
+		];
+		const newComment = Comment.makeComment("new comment", 1); // Use the same method and values as in your component
+		const updatedComments = [...comments, newComment];
+		component.commentContent = "new comment";
+		spyOn(commentsService, 'addComment').and.returnValue(of(updatedComments));
+		component.addComment();
+		expect(component.comments).toEqual(updatedComments);
+		expect(component.commentContent).toEqual("");
+		expect(commentsService.addComment).toHaveBeenCalledWith(newComment);
+	});
 
-	// Add more tests for deleteComment and addComment methods
 });
