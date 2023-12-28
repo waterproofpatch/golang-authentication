@@ -77,7 +77,6 @@ func getEstTime(theTime time.Time) (time.Time, error) {
 
 func needsCare(lastCareDate string, intervalDays int) bool {
 	dateLayoutStr := "01/02/2006"
-	// fmt.Printf("lastCareDate=%v\n", lastCareDate)
 	lastCareTime, err := time.Parse(dateLayoutStr, lastCareDate)
 	if err != nil {
 		// attempt format migration
@@ -111,11 +110,9 @@ func needsCare(lastCareDate string, intervalDays int) bool {
 	}
 	timeNow := time.Now()
 	timeNowEst, err := getEstTime(timeNow)
-	// fmt.Printf("timeNowEst=%v\n", timeNowEst)
 	// email reminders should be sent as reminders, not alerts - so
-	// add a day after the last care date to send reminders.
-	nextCareTime := lastCareTime.AddDate(0, 0, intervalDays+1)
-	// fmt.Printf("nextCareTime=%v\n", nextCareTime)
+	// add a few days after the last care date to send reminders.
+	nextCareTime := lastCareTime.AddDate(0, 0, intervalDays+3)
 	if nextCareTime.Before(timeNowEst) {
 		fmt.Printf("Needs care: last care time: %v, next care time: %v, today is %v\n", lastCareTime, nextCareTime, timeNowEst)
 		return true

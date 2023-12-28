@@ -19,8 +19,11 @@ def send_email(
     :param needs_fertilizer: if the plant needs fertilizing
     :param needs_water: if the plant needs water
     """
-    if os.environ.get("DEBUG", False):
-        print("In DEBUG mode, not really sending...")
+    if (
+        os.environ.get("DEBUG_EMAIL", False)
+        and os.environ.get("DEBUG_EMAIL") != recipient
+    ):
+        print("Debug email does not match recipient. Not sending.")
         return
     try:
         conn_string = os.environ["AZ_EMAIL_CONNECTION_STRING"]
