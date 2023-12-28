@@ -13,3 +13,4 @@ frontend/cert.pem
 frontend/key.pem
 backup_db.sh
 _dump.sql
+backup.sql
