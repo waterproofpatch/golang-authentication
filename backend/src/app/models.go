@@ -11,20 +11,17 @@ import (
 
 type PlantLogModel struct {
 	gorm.Model
-	Id      int    `json:"id"`
 	Log     string `json:"log"`
 	PlantID int    `json:"plantId"`
 }
 type ImageModel struct {
 	gorm.Model
-	ID   uint
 	Name string
 	Data []byte
 }
 
 type CommentModel struct {
 	gorm.Model
-	Id       int    `json:"id"`
 	PlantID  int    `json:"plantId"`
 	Email    string `json:"-"`
 	Username string `json:"username"`
@@ -38,7 +35,6 @@ type CommentModel struct {
 
 type PlantModel struct {
 	gorm.Model
-	Id                      int             `json:"id"`
 	Email                   string          `json:"-"`
 	Username                string          `json:"username"`
 	Name                    string          `json:"name"`
@@ -64,7 +60,7 @@ type PlantModel struct {
 func (i PlantModel) String() string {
 	return fmt.Sprintf(
 		"ID: %d, %d/%d/%d - %d:%d:%d, name=%s, waterFrequency=%d, fertilizeFrequency=%d, lastWateringDate=%s, lastFertlizeDate=%s, lastFertilizeNotifyDate=%s, lastWaterNotifyDate=%s, skippedLastFertilize=%v, username=%s, isPublic=%t, doNotify=%t\n",
-		i.Id,
+		i.ID,
 		i.CreatedAt.Year(),
 		i.CreatedAt.Month(),
 		i.CreatedAt.Day(),
@@ -87,14 +83,14 @@ func (i PlantModel) String() string {
 
 func deleteOldestPlantLog(db *gorm.DB, plant *PlantModel) error {
 	var count int64
-	result := db.Model(&PlantLogModel{}).Where("plant_id = ?", plant.Id).Count(&count)
+	result := db.Model(&PlantLogModel{}).Where("plant_id = ?", plant.ID).Count(&count)
 	if result.Error != nil {
 		return result.Error
 	}
 
 	if count > 10 {
 		var oldestLogs []PlantLogModel
-		result = db.Where("plant_id = ?", plant.Id).Order("created_at asc").Limit(int(count) - 10).Find(&oldestLogs)
+		result = db.Where("plant_id = ?", plant.ID).Order("created_at asc").Limit(int(count) - 10).Find(&oldestLogs)
 		if result.Error != nil {
 			return result.Error
 		}
@@ -138,7 +134,7 @@ func validatePlantInfo(plantName string, wateringFrequency int, lastWaterDate st
 
 func UpdatePlant(
 	db *gorm.DB,
-	id int,
+	id uint,
 	name string,
 	wateringFrequency int,
 	fertilizingFrequency int,
@@ -158,7 +154,7 @@ func UpdatePlant(
 		return err
 	}
 	var existingplant PlantModel
-	existingplant.Id = id
+	existingplant.ID = id
 	db.Preload("Logs").First(&existingplant)
 	fmt.Printf("Existing plant: %s\n", existingplant)
 	// imageId exists by now since we process the image before calling this function to update the plant

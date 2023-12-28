@@ -300,7 +300,7 @@ export class PlantsComponent {
     })
     if (this.addOrEditMode == EditMode.EDIT && this.editingPlant) {
       console.log("A plant has been edited (not added)")
-      plant.id = this.editingPlant.id
+      plant.ID = this.editingPlant.ID
       this.plantsService.updatePlant(plant, this.selectedImage)
     } else {
       this.plantsService.addPlant(plant, this.selectedImage)

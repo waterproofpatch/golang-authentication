@@ -60,3 +60,16 @@ Then run the deploy target:
 ```bash
 make deploy
 ```
+
+## Backup Production Database
+
+```bash
+source secret.env
+pg_dump -h $DB_SERVER.postgres.database.azure.com -d $DB_NAME -U $DB_USER -p 5432 -T cron.job -T cron.job_run_details > backup.sql
+```
+
+## Load Database into Docker Container
+
+```bash
+docker cp _dump.sql backend-db:/_dump.sql
+```

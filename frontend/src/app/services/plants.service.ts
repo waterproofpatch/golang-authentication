@@ -53,7 +53,7 @@ export class PlantsService extends BaseService {
    */
   private mapPlant(plant: any): Plant {
     return new Plant(
-      plant.id,
+      plant.ID,
       plant.name,
       plant.username,
       plant.email,
@@ -129,7 +129,7 @@ export class PlantsService extends BaseService {
   // plant's that have moist soil make a PUT request 
   public markMoist(plant: Plant): void {
     const formData = new FormData();
-    formData.append("id", plant.id.toString())
+    formData.append("id", plant.ID.toString())
     this.putMoist(formData)
       .pipe(
         map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
@@ -162,7 +162,7 @@ export class PlantsService extends BaseService {
     if (image) {
       formData.append('image', image, image.name);
     }
-    formData.append('id', plant.id.toString())
+    formData.append('id', plant.ID.toString())
     formData.append('nameOfPlant', plant.name)
     formData.append('wateringFrequency', plant.wateringFrequency.toString())
     formData.append('fertilizingFrequency', plant.fertilizingFrequency.toString())
@@ -340,7 +340,7 @@ export class PlantsService extends BaseService {
     return this.http.post<Plant[]>(this.getUrlBase() + this.plantsApiUrl, plant, this.httpOptions);
   }
   put(plant: Plant): Observable<Plant[]> {
-    console.log("Updating plant " + plant.id)
+    console.log("Updating plant " + plant.ID)
     return this.http.put<Plant[]>(this.getUrlBase() + this.plantsApiUrl, plant, this.httpOptions);
   }
   getImage(id: number): Observable<any> {

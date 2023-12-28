@@ -2,7 +2,8 @@ import { PlantLog } from "../types";
 import { Comment } from "./comment.model";
 
 export class Plant {
-	constructor(public id: number,
+	constructor(
+		public ID: number,
 		public name: string,
 		public username: string,
 		public email: string,
@@ -27,7 +28,7 @@ export class Plant {
 	 */
 	public toString(): string {
 		let plantDetails = `
-		ID: ${this.id}
+		ID: ${this.ID}
 		Name: ${this.name}
 		Username: ${this.username}
 		Email: ${this.email}

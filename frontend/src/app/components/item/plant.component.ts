@@ -86,7 +86,7 @@ export class PlantComponent {
       let unviewedComments = this.plant?.comments.filter(x =>
         !x.viewed
       ).length
-      console.log("plantId=" + this.plant.id + " has " + unviewedComments + " unviewed comments.")
+      console.log("plantId=" + this.plant.ID + " has " + unviewedComments + " unviewed comments.")
       this.numComments$.next(unviewedComments)
     }
   }
@@ -322,7 +322,7 @@ export class PlantComponent {
         if (!this.plant) {
           return;
         }
-        this.plantsService.deletePlant(this.plant.id);
+        this.plantsService.deletePlant(this.plant.ID);
       } else {
         console.log("Dialog declined.")
       }

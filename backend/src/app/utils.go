@@ -172,7 +172,7 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 				if needsFertilizeCare || needsWaterCare {
 					fmt.Printf("LastFertilizeNotifyDate=%s\n", plant.LastFertilizeNotifyDate)
 					fmt.Printf("LastWaterNotifyDate=%s\n", plant.LastWaterNotifyDate)
-					fmt.Printf("Sending notification to owner of plant %d (name=%s): %v (needsWaterCare=%v, needsFertilizeCare=%v)!\n", plant.Id, plant.Name, plant.Email, needsWaterCare, needsFertilizeCare)
+					fmt.Printf("Sending notification to owner of plant %d (name=%s): %v (needsWaterCare=%v, needsFertilizeCare=%v)!\n", plant.ID, plant.Name, plant.Email, needsWaterCare, needsFertilizeCare)
 					sendEmail(&plant,
 						needsFertilizeCare,
 						needsWaterCare)

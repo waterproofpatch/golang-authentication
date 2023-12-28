@@ -174,7 +174,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		}
 		fmt.Printf("Deleting plant imageId=%d\n", plant.ImageId)
 		db.Delete(&ImageModel{}, plant.ImageId)
-		fmt.Printf("Deleting plant id=%d\n", plant.Id)
+		fmt.Printf("Deleting plant id=%d\n", plant.ID)
 		db.Delete(&PlantModel{}, id)
 		break
 	case "POST":
@@ -316,13 +316,13 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		newPlant.IsPublic = isPublic
 
 		// copy old values
-		newPlant.Id = existingPlant.Id
+		newPlant.ID = existingPlant.ID
 		newPlant.Username = existingPlant.Username
 		newPlant.Email = existingPlant.Email
-		fmt.Printf("Updating plant id=%d to: %s", newPlant.Id, newPlant)
+		fmt.Printf("Updating plant id=%d to: %s", newPlant.ID, newPlant)
 
 		err = UpdatePlant(db,
-			newPlant.Id,
+			newPlant.ID,
 			newPlant.Name,
 			newPlant.WateringFrequency,
 			newPlant.FertilizingFrequency,
@@ -397,7 +397,7 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 
 		db.Delete(&comment)
 
-		plantId = strconv.Itoa(plant.Id)
+		plantId = strconv.FormatUint(uint64(plant.ID), 10)
 	case "POST":
 		if claims == nil {
 			authentication.WriteError(w, "Must be logged in to post comments.", http.StatusUnauthorized)
@@ -427,7 +427,7 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		}
 
 		AddComment(db, comment.Content, claims.Email, claims.Username, comment.PlantID)
-		plantId = strconv.Itoa(plant.Id)
+		plantId = strconv.FormatUint(uint64(plant.ID), 10)
 	}
 	fmt.Printf("getting comments for plantId=%v", plantId)
 	var comments []CommentModel
