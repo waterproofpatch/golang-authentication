@@ -27,7 +27,7 @@ RUN venv/bin/python -m pip install -r requirements.txt
 WORKDIR /usr/bin
 COPY --from=build /web-app .
 
-ENV SITE_TIMESTAMP="ids_4b913ba_12/28/23 00:32:03"
+ENV SITE_TIMESTAMP="ids_ec77559_12/28/23 00:57:25"
 
 EXPOSE 80
 CMD /usr/bin/web-app --port $PORT 
