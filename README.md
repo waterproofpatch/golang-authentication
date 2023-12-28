@@ -70,6 +70,17 @@ pg_dump -h $DB_SERVER.postgres.database.azure.com -d $DB_NAME -U $DB_USER -p 543
 
 ## Load Database into Docker Container
 
+1. Drop old database
+
+```bash
+docker-compose up -d db
+docker exec -it backend-db psql -d postgres -U app-db-user -c "DROP DATABASE IF EXISTS \"app-db\";"
+```
+
 ```bash
 docker cp _dump.sql backend-db:/_dump.sql
+docker exec -it backend-db psql -d postgres -U app-db-user -c "CREATE DATABASE \"app-db\";"
+cat _dump.sql | docker exec -i backend-db psql -U app-db-user -d app-db
 ```
+
+The last command will produce errors about extensions, but this doesn't seem to matter.
