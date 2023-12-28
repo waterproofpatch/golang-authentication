@@ -21,7 +21,7 @@ export class CommentsService extends BaseService {
     this.isLoading$.next(true);
     this.get(plantId).pipe(
       map((comments: Comment[]) => {
-        return comments.sort((a: Comment, b: Comment) => b.id - a.id)
+        return comments.sort((a: Comment, b: Comment) => b.ID - a.ID)
       }),
       finalize(() => {
         this.isLoading$.next(false)
@@ -37,7 +37,7 @@ export class CommentsService extends BaseService {
     this.isLoading$.next(true);
     this.delete(id).pipe(
       map((comments: Comment[]) => {
-        return comments.sort((a: Comment, b: Comment) => b.id - a.id)
+        return comments.sort((a: Comment, b: Comment) => b.ID - a.ID)
       }),
       finalize(() => {
         this.isLoading$.next(false);
@@ -53,7 +53,7 @@ export class CommentsService extends BaseService {
     this.isLoading$.next(true);
     this.post(comment).pipe(
       map((comments: Comment[]) => {
-        return comments.sort((a: Comment, b: Comment) => b.id - a.id)
+        return comments.sort((a: Comment, b: Comment) => b.ID - a.ID)
       }),
       finalize(() => {
         this.isLoading$.next(false);
@@ -76,7 +76,7 @@ export class CommentsService extends BaseService {
    * @returns an observable
    */
   private post(comment: Comment): Observable<any> {
-    return this.http.post(this.getUrlBase() + this.commentsApiUrl + "/" + comment.id, comment, this.httpOptions);
+    return this.http.post(this.getUrlBase() + this.commentsApiUrl + "/" + comment.ID, comment, this.httpOptions);
   }
 
   /**

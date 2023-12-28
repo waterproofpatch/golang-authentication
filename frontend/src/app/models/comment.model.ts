@@ -1,6 +1,6 @@
 export class Comment {
 	constructor(
-		public id: number,
+		public ID: number,
 		public createdAt: Date,
 		public plantId: number,
 		public content: string,
@@ -14,7 +14,7 @@ export class Comment {
 			plantId: plantId,
 			username: "", // authoritative
 			email: "", // authoritative
-			id: 0, // authoritative
+			ID: 0, // authoritative
 			createdAt: new Date(), // authoritative
 			viewed: false, // authoritative
 		}

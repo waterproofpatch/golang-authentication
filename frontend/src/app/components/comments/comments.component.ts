@@ -37,7 +37,7 @@ export class CommentsComponent {
   }
 
   public deleteComment(comment: Comment) {
-    this.commentsService.deleteCommentById(comment.id)
+    this.commentsService.deleteCommentById(comment.ID)
   }
 
   public addComment() {
