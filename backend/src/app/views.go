@@ -17,13 +17,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func getApiKey() string {
-	apiKey := os.Getenv("OPENAI_API_KEY")
-	return apiKey
-}
-
 // returns -1 on failure, 0 on no-op, ImageModel.ID stored in database on success
-func uploadHandler(w http.ResponseWriter, r *http.Request) int {
+func imageUploadHandler(w http.ResponseWriter, r *http.Request) int {
 	// Parse the multipart form in the request
 	err := r.ParseMultipartForm(10 << 20) // 10 MB maximum file size
 	if err != nil {
@@ -182,7 +177,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			authentication.WriteError(w, "Must be logged in to add plants.", http.StatusUnauthorized)
 			return
 		}
-		imageId := uploadHandler(w, r)
+		imageId := imageUploadHandler(w, r)
 		if imageId == 0 {
 			fmt.Println("Upload did not contain an image.")
 		}
@@ -224,7 +219,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		}
 
 		// conditionally upload a new image. An imageId of 0 means no image provided
-		imageId := uploadHandler(w, r)
+		imageId := imageUploadHandler(w, r)
 		isNewImage := false
 		if imageId == 0 {
 			fmt.Println("Upload did not contain an image.")
