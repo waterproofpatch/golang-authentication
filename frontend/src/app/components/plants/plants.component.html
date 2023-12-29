@@ -166,16 +166,16 @@
 </div>
 
 <div *ngIf="!isInEditOrAddMode()">
-	<div
-		*ngIf="(plantsService.getPlantsForMode(mode) | async) | plantFilter:filters:plantNameFilter:filterTags as filteredPlants">
-		<p>Showing {{filteredPlants.length}} of {{(plantsService.getPlantsForMode(mode) | async)?.length}}
-			plants.
-		</p>
-		<div class="plants">
-			<div *ngFor="let plant of filteredPlants">
-				<app-plant [isCondensed]="condensedView"
-					(editModeEmitter)="switchToditPlantMode($event)" [plant]="plant"></app-plant>
+	<ng-container *ngIf="plantsService.getPlantsForMode(mode) | async as plants">
+		<div *ngIf="plants | plantFilter:filters:plantNameFilter:filterTags as filteredPlants">
+			<p>Showing {{filteredPlants.length}} of {{plants.length}} plants.</p>
+			<div class="plants">
+				<div *ngFor="let plant of filteredPlants">
+					<app-plant [isCondensed]="condensedView"
+						(editModeEmitter)="switchToditPlantMode($event)"
+						[plant]="plant"></app-plant>
+				</div>
 			</div>
 		</div>
-	</div>
+	</ng-container>
 </div>
