@@ -167,7 +167,7 @@ export class PlantComponent {
         }
         if (result.moist) {
           console.log("Plant is moist - only updating that attribute")
-          this.plant.lastMoistDate = this.formatDate(new Date())
+          this.plant.lastMoistDate = Plant.formatDate(new Date())
           // this.plantsService.markMoist(this.plant)
           this.plantsService.updatePlant(this.plant, null)
           return;
@@ -188,7 +188,7 @@ export class PlantComponent {
    */
   public transformLastPlantCareDate(date: string): string {
     let myDate = new Date(date);
-    return this.formatDate(myDate)
+    return Plant.formatDate(myDate)
   }
 
   /**
@@ -219,20 +219,6 @@ export class PlantComponent {
     return formattedDate;
   }
 
-
-
-  /**
-   * @param date to format for display in HTML - not for sending to backend.
-   * @returns formatted @c date
-   */
-  private formatDate(date: Date): string {
-    const day = date.getDate().toString().padStart(2, '0'); // Get the day of the month (1-31) and pad it with a leading zero if necessary
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Get the month (0-11), add 1 to get the month as a number (1-12), and pad it with a leading zero if necessary
-    const year = date.getFullYear().toString(); // Get the year (4 digits)
-
-    const formattedDate = `${month}/${day}/${year}`;
-    return formattedDate
-  }
   /**
    * Obtain a formatted next-action-date from the difference between this plant's last action date 
    * and action frequency.
@@ -250,7 +236,7 @@ export class PlantComponent {
     nextActionDate.setMonth(lastActionDate.getMonth());
     var frequencyInMs = frequency * 24 * 60 * 60 * 1000;
     nextActionDate.setTime(lastActionDate.getTime() + frequencyInMs);
-    return this.formatDate(nextActionDate)
+    return Plant.formatDate(nextActionDate)
   }
 
   /**
@@ -286,7 +272,7 @@ export class PlantComponent {
     nextMoistDate.setMonth(lastMoistDate.getMonth());
     var frequencyInMs = 1 * 24 * 60 * 60 * 1000;
     nextMoistDate.setTime(lastMoistDate.getTime() + frequencyInMs);
-    return this.formatDate(nextMoistDate)
+    return Plant.formatDate(nextMoistDate)
   }
 
   /**
