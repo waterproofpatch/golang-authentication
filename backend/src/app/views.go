@@ -190,14 +190,13 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			fmt.Println("Bailing early, critical error handling image.")
 			return
 		}
-		var newPlant PlantModel
-		json.Unmarshal([]byte(r.FormValue("plant")), &newPlant)
-		newPlant.ImageId = imageId
-		newPlant.Email = claims.Email
-		newPlant.Username = claims.Username
+		json.Unmarshal([]byte(r.FormValue("plant")), &plant)
+		plant.ImageId = imageId
+		plant.Email = claims.Email
+		plant.Username = claims.Username
 
-		fmt.Printf("Adding plant as: %v", newPlant)
-		err := AddPlant(db, &newPlant)
+		fmt.Printf("Adding plant as: %v", plant)
+		err := AddPlant(db, &plant)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			return
@@ -209,8 +208,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			return
 		}
 		// make a new plant based on form values
-		var newPlant PlantModel
-		err := json.Unmarshal([]byte(r.FormValue("plant")), &newPlant)
+		err := json.Unmarshal([]byte(r.FormValue("plant")), &plant)
 		if err != nil {
 			authentication.WriteError(w, "Invalid plant ID", http.StatusBadRequest)
 			return
@@ -218,7 +216,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 
 		// get the existing plant so we can obtain its old imageId
 		var existingPlant PlantModel
-		db.First(&existingPlant, newPlant.ID)
+		db.First(&existingPlant, plant.ID)
 		if existingPlant.Email != claims.Email {
 			fmt.Printf("User %s tried editing plant belonging to %s\n", claims.Email, existingPlant.Email)
 			authentication.WriteError(w, "This isn't your plant!", http.StatusBadRequest)
@@ -230,7 +228,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		isNewImage := false
 		if imageId == 0 {
 			fmt.Println("Upload did not contain an image.")
-			newPlant.ImageId = existingPlant.ImageId
+			plant.ImageId = existingPlant.ImageId
 		} else if imageId < 0 {
 			fmt.Println("Critical error updating image. Bailing early")
 			return
@@ -239,7 +237,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			// they may have only updated non-image stuff. If they had the
 			// default image before, they'll still have it. If they didn't update
 			// their image, then their plant has the old imageId.
-			newPlant.ImageId = imageId
+			plant.ImageId = imageId
 			isNewImage = true
 
 		}
@@ -255,11 +253,11 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			db.Save(&existingPlant)
 			break
 		}
-		newPlant.Username = existingPlant.Username
-		newPlant.Email = existingPlant.Email
-		fmt.Printf("Updating plant id=%d to: %s", newPlant.ID, newPlant)
+		plant.Username = existingPlant.Username
+		plant.Email = existingPlant.Email
+		fmt.Printf("Updating plant id=%d to: %s", plant.ID, plant)
 
-		err = UpdatePlant(db, &newPlant, isNewImage)
+		err = UpdatePlant(db, &plant, isNewImage)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			return
