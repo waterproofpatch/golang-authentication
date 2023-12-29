@@ -268,21 +268,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		newPlant.Email = existingPlant.Email
 		fmt.Printf("Updating plant id=%d to: %s", newPlant.ID, newPlant)
 
-		err = UpdatePlant(db,
-			newPlant.ID,
-			newPlant.Name,
-			newPlant.WateringFrequency,
-			newPlant.FertilizingFrequency,
-			newPlant.ImageId,
-			newPlant.LastWaterDate,
-			newPlant.LastFertilizeDate,
-			newPlant.LastMoistDate,
-			newPlant.SkippedLastFertilize,
-			newPlant.Tag,
-			isNewImage,
-			newPlant.IsPublic,
-			newPlant.DoNotify,
-			newPlant.Notes)
+		err = UpdatePlant(db, &newPlant, isNewImage)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			return

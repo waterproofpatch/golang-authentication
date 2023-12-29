@@ -132,29 +132,13 @@ func validatePlantInfo(plantName string, wateringFrequency int, lastWaterDate st
 	return nil
 }
 
-func UpdatePlant(
-	db *gorm.DB,
-	id uint,
-	name string,
-	wateringFrequency int,
-	fertilizingFrequency int,
-	imageId int,
-	lastWaterDate string,
-	lastFertilizeDate string,
-	lastMoistDate string,
-	skippedLastFertilize bool,
-	tag string,
-	isNewImage bool,
-	isPublic bool,
-	doNotify bool,
-	notes string,
-) error {
-	err := validatePlantInfo(name, wateringFrequency, lastWaterDate, lastFertilizeDate)
+func UpdatePlant(db *gorm.DB, plant *PlantModel, isNewImage bool) error {
+	err := validatePlantInfo(plant.Name, plant.WateringFrequency, plant.LastWaterDate, plant.LastFertilizeDate)
 	if err != nil {
 		return err
 	}
 	var existingplant PlantModel
-	existingplant.ID = id
+	existingplant.ID = plant.ID
 	db.Preload("Logs").First(&existingplant)
 	fmt.Printf("Existing plant: %s\n", existingplant)
 	// imageId exists by now since we process the image before calling this function to update the plant
@@ -163,69 +147,68 @@ func UpdatePlant(
 		db.Delete(&ImageModel{}, existingplant.ImageId)
 	}
 
-	if existingplant.LastWaterDate != lastWaterDate || existingplant.LastMoistDate != lastMoistDate {
+	if existingplant.LastWaterDate != plant.LastWaterDate || existingplant.LastMoistDate != plant.LastMoistDate {
 		fmt.Println("Resetting LastWaterNotifyDate something has changed!")
 		existingplant.LastWaterNotifyDate = ""
-		lastMoistDate = ""
 	}
-	if existingplant.LastFertilizeDate != lastFertilizeDate {
+	if existingplant.LastFertilizeDate != plant.LastFertilizeDate {
 		fmt.Println("Resetting LastFertilizeNotifyDate something has changed!")
 		existingplant.LastFertilizeNotifyDate = ""
 	}
 
-	if existingplant.IsPublic != isPublic {
-		logMsg := fmt.Sprintf("Plant changed from public=%t to public=%t", existingplant.IsPublic, isPublic)
+	if existingplant.IsPublic != plant.IsPublic {
+		logMsg := fmt.Sprintf("Plant changed from public=%t to public=%t", existingplant.IsPublic, plant.IsPublic)
 		addPlantLog(db, &existingplant, logMsg)
 	}
-	if existingplant.Name != name {
-		logMsg := fmt.Sprintf("Name changed from %s to %s", existingplant.Name, name)
+	if existingplant.Name != plant.Name {
+		logMsg := fmt.Sprintf("Name changed from %s to %s", existingplant.Name, plant.Name)
 		addPlantLog(db, &existingplant, logMsg)
 	}
-	if existingplant.LastMoistDate != lastMoistDate {
-		logMsg := fmt.Sprintf("Last soil moist date changed from %s to %s", existingplant.LastMoistDate, lastMoistDate)
+	if existingplant.LastMoistDate != plant.LastMoistDate {
+		logMsg := fmt.Sprintf("Last soil moist date changed from %s to %s", existingplant.LastMoistDate, plant.LastMoistDate)
 		addPlantLog(db, &existingplant, logMsg)
 	}
-	if existingplant.LastWaterDate != lastWaterDate {
-		logMsg := fmt.Sprintf("Last water date changed from %s to %s", existingplant.LastWaterDate, lastWaterDate)
+	if existingplant.LastWaterDate != plant.LastWaterDate {
+		logMsg := fmt.Sprintf("Last water date changed from %s to %s", existingplant.LastWaterDate, plant.LastWaterDate)
 		addPlantLog(db, &existingplant, logMsg)
 	}
-	if existingplant.LastFertilizeDate != lastFertilizeDate {
+	if existingplant.LastFertilizeDate != plant.LastFertilizeDate {
 		logMsg := ""
-		if skippedLastFertilize {
-			logMsg = fmt.Sprintf("Fertilizing skipped, last fertilize date changed from %s to %s", existingplant.LastFertilizeDate, lastFertilizeDate)
+		if plant.SkippedLastFertilize {
+			logMsg = fmt.Sprintf("Fertilizing skipped, last fertilize date changed from %s to %s", existingplant.LastFertilizeDate, plant.LastFertilizeDate)
 		} else {
-			logMsg = fmt.Sprintf("Last fertilize date changed from %s to %s", existingplant.LastFertilizeDate, lastFertilizeDate)
+			logMsg = fmt.Sprintf("Last fertilize date changed from %s to %s", existingplant.LastFertilizeDate, plant.LastFertilizeDate)
 		}
 		addPlantLog(db, &existingplant, logMsg)
 	}
-	if existingplant.WateringFrequency != wateringFrequency {
-		logMsg := fmt.Sprintf("Watering frequency changed from %d to %d days", existingplant.WateringFrequency, wateringFrequency)
+	if existingplant.WateringFrequency != plant.WateringFrequency {
+		logMsg := fmt.Sprintf("Watering frequency changed from %d to %d days", existingplant.WateringFrequency, plant.WateringFrequency)
 		addPlantLog(db, &existingplant, logMsg)
 	}
-	if existingplant.Tag != tag {
-		logMsg := fmt.Sprintf("Tag changed from %s to %s", existingplant.Tag, tag)
+	if existingplant.Tag != plant.Tag {
+		logMsg := fmt.Sprintf("Tag changed from %s to %s", existingplant.Tag, plant.Tag)
 		addPlantLog(db, &existingplant, logMsg)
 	}
-	if existingplant.FertilizingFrequency != fertilizingFrequency {
-		logMsg := fmt.Sprintf("Fertilizing frequency changed from %d to %d days", existingplant.FertilizingFrequency, fertilizingFrequency)
+	if existingplant.FertilizingFrequency != plant.FertilizingFrequency {
+		logMsg := fmt.Sprintf("Fertilizing frequency changed from %d to %d days", existingplant.FertilizingFrequency, plant.FertilizingFrequency)
 		addPlantLog(db, &existingplant, logMsg)
 	}
-	if existingplant.Notes != notes {
-		logMsg := fmt.Sprintf("Notes changed from %s to %s", existingplant.Notes, notes)
+	if existingplant.Notes != plant.Notes {
+		logMsg := fmt.Sprintf("Notes changed from %s to %s", existingplant.Notes, plant.Notes)
 		addPlantLog(db, &existingplant, logMsg)
 	}
-	existingplant.DoNotify = doNotify
-	existingplant.IsPublic = isPublic
-	existingplant.ImageId = imageId
-	existingplant.LastMoistDate = lastMoistDate
-	existingplant.Name = name
-	existingplant.Tag = tag
-	existingplant.WateringFrequency = wateringFrequency
-	existingplant.FertilizingFrequency = fertilizingFrequency
-	existingplant.LastWaterDate = lastWaterDate
-	existingplant.LastFertilizeDate = lastFertilizeDate
-	existingplant.SkippedLastFertilize = skippedLastFertilize
-	existingplant.Notes = notes
+	existingplant.DoNotify = plant.DoNotify
+	existingplant.IsPublic = plant.IsPublic
+	existingplant.ImageId = plant.ImageId
+	existingplant.LastMoistDate = plant.LastMoistDate
+	existingplant.Name = plant.Name
+	existingplant.Tag = plant.Tag
+	existingplant.WateringFrequency = plant.WateringFrequency
+	existingplant.FertilizingFrequency = plant.FertilizingFrequency
+	existingplant.LastWaterDate = plant.LastWaterDate
+	existingplant.LastFertilizeDate = plant.LastFertilizeDate
+	existingplant.SkippedLastFertilize = plant.SkippedLastFertilize
+	existingplant.Notes = plant.Notes
 	db.Save(existingplant)
 	return nil
 }
