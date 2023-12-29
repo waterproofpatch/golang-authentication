@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, Subject, BehaviorSubject, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, BehaviorSubject, throwError } from 'rxjs';
+import { finalize, catchError } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-
 import jwt_decode, { JwtPayload } from 'jwt-decode';
-import { finalize } from 'rxjs/operators';
 
 import { BaseService } from './base.service';
 import { DialogService } from './dialog.service';
-import { JWTData } from '../types';
+
+interface JWTData {
+  email: string;
+  username: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -62,7 +64,6 @@ export class AuthenticationService extends BaseService {
       return this.token
     }
   }
-
 
   /**
    *
@@ -141,11 +142,11 @@ export class AuthenticationService extends BaseService {
   /**
    * obtain the token
    */
-  get token() {
+  public get token() {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  logout(modalText?: string, redirectToLogin?: boolean) {
+  public logout(modalText?: string, redirectToLogin?: boolean) {
     this.logoutHttp().subscribe((x) => {
       console.log("Logged out.")
     })
@@ -189,7 +190,7 @@ export class AuthenticationService extends BaseService {
           } else {
             this.error$.next('Unexpected error');
           }
-          return throwError(error);
+          return throwError(() => new Error("Failed registering"));
         }),
         finalize(() => this.isLoading$.next(false))
       )
@@ -215,7 +216,7 @@ export class AuthenticationService extends BaseService {
           } else {
             this.error$.next('Unexpected error');
           }
-          return throwError(error);
+          return throwError(() => new Error("Failed logging in"));
         }),
         finalize(() => this.isLoading$.next(false))
       )
@@ -226,11 +227,11 @@ export class AuthenticationService extends BaseService {
         this.router.navigateByUrl('/');
       });
   }
-  refreshHttp(): Observable<any> {
+  private refreshHttp(): Observable<any> {
     return this.http.get(this.getUrlBase() + this.refreshApiUrl, this.httpOptions)
   }
 
-  registerHttp(
+  private registerHttp(
     email: string,
     username: string,
     password: string,
@@ -247,11 +248,11 @@ export class AuthenticationService extends BaseService {
     );
   }
 
-  logoutHttp(): Observable<any> {
+  private logoutHttp(): Observable<any> {
     return this.http.post(this.getUrlBase() + this.logoutApiUrl, null, this.httpOptions)
   }
 
-  loginHttp(email: string, password: string): Observable<any> {
+  private loginHttp(email: string, password: string): Observable<any> {
     const data = {
       email: email,
       password: password,

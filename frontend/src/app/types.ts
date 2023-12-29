@@ -1,16 +1,3 @@
-export interface JWTData {
-  email: string;
-  username: string;
-}
-
-export interface Version {
-  version: string;
-}
-
-export interface Error {
-  message: string;
-}
-
 
 export interface PlantLog {
   ID: number;
@@ -18,7 +5,3 @@ export interface PlantLog {
   CreatedAt: string;
 }
 
-export enum PlantCareType {
-  FERTILIZE = 1,
-  WATER,
-}

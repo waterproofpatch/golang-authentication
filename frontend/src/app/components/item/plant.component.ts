@@ -6,7 +6,6 @@ import { BehaviorSubject } from 'rxjs';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { DialogService, PlantCareDialogData, PlantNotesDialogData } from 'src/app/services/dialog.service';
 import { PlantsService } from 'src/app/services/plants.service';
-import { PlantCareType } from 'src/app/types';
 import { Plant } from 'src/app/models/plant.model';
 
 @Component({
@@ -16,7 +15,6 @@ import { Plant } from 'src/app/models/plant.model';
 })
 export class PlantComponent {
   panelOpenState: boolean = false;
-  plantCareType = PlantCareType
 
   // passed from the parent component
   @Input() plant: Plant | undefined
