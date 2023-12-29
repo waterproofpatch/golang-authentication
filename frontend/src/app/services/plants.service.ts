@@ -108,8 +108,8 @@ export class PlantsService extends BaseService {
     this.isLoading$.next(true)
     this.delete(id)
       .pipe(
-        map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
-        map((plants: any[]) => {
+        map((plants: Plant[]) => plants.map(plant => this.mapPlant(plant))),
+        map((plants: Plant[]) => {
           return plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
         }),
         catchError((error: any) => {
@@ -132,8 +132,8 @@ export class PlantsService extends BaseService {
     formData.append("id", plant.ID.toString())
     this.putMoist(formData)
       .pipe(
-        map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
-        map((plants: any[]) => {
+        map((plants: Plant[]) => plants.map(plant => this.mapPlant(plant))),
+        map((plants: Plant[]) => {
           return plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
         }),
         catchError((error: any) => {
@@ -176,8 +176,8 @@ export class PlantsService extends BaseService {
     formData.append('notes', plant.notes)
     this.put(formData)
       .pipe(
-        map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
-        map((plants: any[]) => {
+        map((plants: Plant[]) => plants.map(plant => this.mapPlant(plant))),
+        map((plants: Plant[]) => {
           return plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
         }),
         catchError((error: any) => {
@@ -210,8 +210,8 @@ export class PlantsService extends BaseService {
     formData.append('plant', JSON.stringify(plant));
     this.post(formData)
       .pipe(
-        map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
-        map((plants: any[]) => {
+        map((plants: Plant[]) => plants.map(plant => this.mapPlant(plant))),
+        map((plants: Plant[]) => {
           return plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
         }),
         catchError((error: any) => {
@@ -241,8 +241,8 @@ export class PlantsService extends BaseService {
     this.isLoading$.next(true)
     this.get()
       .pipe(
-        map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
-        map((plants: any[]) => {
+        map((plants: Plant[]) => plants.map(plant => this.mapPlant(plant))),
+        map((plants: Plant[]) => {
           return plants.sort((a: Plant, b: Plant) => this.getDaysUntilNextCareActivity(a) - this.getDaysUntilNextCareActivity(b))
         }),
         catchError((error: any) => {
@@ -329,25 +329,22 @@ export class PlantsService extends BaseService {
   private put(formData: any): Observable<Plant[]> {
     return this.http.put<Plant[]>(this.getUrlBase() + this.plantsApiUrl, formData, this.httpOptionsNonJson);
   }
-  private putMoist(formData: any): Observable<Plant[]> {
-    return this.http.put<Plant[]>(this.getUrlBase() + this.plantsApiUrl + "?moist=true", formData, this.httpOptionsNonJson)
-  }
-  private getImage(id: number): Observable<any> {
-    return this.http.get(this.getUrlBase() + this.imagesApiUrl + '/' + id, { responseType: 'blob', headers: { 'Access-Control-Allow-Origin': '*' } })
-  }
-
-  get(): Observable<Plant[]> {
+  private get(): Observable<Plant[]> {
     return this.http.get<Plant[]>(
       this.getUrlBase() + this.plantsApiUrl,
       this.httpOptions
     );
   }
-  delete(
-    id: number,
-  ): Observable<Plant[]> {
+  private delete(id: number): Observable<Plant[]> {
     return this.http.delete<Plant[]>(
       this.getUrlBase() + this.plantsApiUrl + "/" + id,
       this.httpOptions);
+  }
+  private putMoist(formData: any): Observable<Plant[]> {
+    return this.http.put<Plant[]>(this.getUrlBase() + this.plantsApiUrl + "?moist=true", formData, this.httpOptionsNonJson)
+  }
+  private getImage(id: number): Observable<any> {
+    return this.http.get(this.getUrlBase() + this.imagesApiUrl + '/' + id, { responseType: 'blob', headers: { 'Access-Control-Allow-Origin': '*' } })
   }
 
   /**
