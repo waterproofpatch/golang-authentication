@@ -174,7 +174,7 @@ export class PlantsService extends BaseService {
     formData.append('isPublic', plant.isPublic.toString())
     formData.append('doNotify', plant.doNotify.toString())
     formData.append('notes', plant.notes)
-    this.putFormData(formData)
+    this.put(formData)
       .pipe(
         map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
         map((plants: any[]) => {
@@ -208,7 +208,7 @@ export class PlantsService extends BaseService {
       formData.append('image', image, image.name);
     }
     formData.append('plant', JSON.stringify(plant));
-    this.postFormData(formData)
+    this.post(formData)
       .pipe(
         map((plants: any[]) => plants.map(plant => this.mapPlant(plant))),
         map((plants: any[]) => {
@@ -265,7 +265,10 @@ export class PlantsService extends BaseService {
    * @returns a plant
    */
   public getPlantById(id: number): Observable<Plant> {
-    return this.getById(id = id) as Observable<Plant>
+    return this.http.get<Plant>(
+      this.getUrlBase() + this.plantsApiUrl + "/" + id,
+      this.httpOptions
+    );
   }
 
   /**
@@ -320,34 +323,19 @@ export class PlantsService extends BaseService {
 
     return diffInDays;
   }
-  postFormData(formData: any): Observable<Plant[]> {
+  private post(formData: any): Observable<Plant[]> {
     return this.http.post<Plant[]>(this.getUrlBase() + this.plantsApiUrl, formData, this.httpOptionsNonJson);
   }
-  putFormData(formData: any): Observable<Plant[]> {
+  private put(formData: any): Observable<Plant[]> {
     return this.http.put<Plant[]>(this.getUrlBase() + this.plantsApiUrl, formData, this.httpOptionsNonJson);
   }
-  putMoist(formData: any): Observable<Plant[]> {
+  private putMoist(formData: any): Observable<Plant[]> {
     return this.http.put<Plant[]>(this.getUrlBase() + this.plantsApiUrl + "?moist=true", formData, this.httpOptionsNonJson)
   }
-  post(plant: Plant): Observable<Plant[]> {
-    return this.http.post<Plant[]>(this.getUrlBase() + this.plantsApiUrl, plant, this.httpOptions);
-  }
-  put(plant: Plant): Observable<Plant[]> {
-    console.log("Updating plant " + plant.ID)
-    return this.http.put<Plant[]>(this.getUrlBase() + this.plantsApiUrl, plant, this.httpOptions);
-  }
-  getImage(id: number): Observable<any> {
+  private getImage(id: number): Observable<any> {
     return this.http.get(this.getUrlBase() + this.imagesApiUrl + '/' + id, { responseType: 'blob', headers: { 'Access-Control-Allow-Origin': '*' } })
   }
 
-  getById(
-    id: number,
-  ): Observable<Plant> {
-    return this.http.get<Plant>(
-      this.getUrlBase() + this.plantsApiUrl + "/" + id,
-      this.httpOptions
-    );
-  }
   get(): Observable<Plant[]> {
     return this.http.get<Plant[]>(
       this.getUrlBase() + this.plantsApiUrl,
