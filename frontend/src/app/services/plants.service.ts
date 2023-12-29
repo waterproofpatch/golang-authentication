@@ -78,7 +78,7 @@ export class PlantsService extends BaseService {
    * @param imageId the imageId to obtain.
    * @returns observable
    */
-  getPlantImage(imageId: number): Observable<any> {
+  public getPlantImage(imageId: number): Observable<any> {
     const request = new Request(`/my-data-store/${imageId}`);
     return from(
       caches.open('my-cache').then(cache => {

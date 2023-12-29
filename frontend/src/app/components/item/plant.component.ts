@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { Router } from '@angular/router';
 import { EventEmitter } from '@angular/core';
 import { Output } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
@@ -20,7 +19,7 @@ export class PlantComponent {
   plantCareType = PlantCareType
 
   // passed from the parent component
-  @Input() plant?: Plant
+  @Input() plant: Plant | undefined
 
   // whether or not we're supposed to take up less screen space per plant
   @Input() isCondensed?: boolean
@@ -52,7 +51,7 @@ export class PlantComponent {
 
   numComments$: BehaviorSubject<number> = new BehaviorSubject<number>(0)
 
-  constructor(private router: Router,
+  constructor(
     private plantsService: PlantsService,
     private dialogService: DialogService,
     private authenticationService: AuthenticationService) {
@@ -235,40 +234,43 @@ export class PlantComponent {
     return formattedDate
   }
   /**
-   * obtain a formatted next-fertilize-date from the difference between this plants last fertilize date 
-   * and fertilize frequency.
-   * @returns the date to next fertilize this plant.
+   * Obtain a formatted next-action-date from the difference between this plant's last action date 
+   * and action frequency.
+   * @param {string} lastActionDate - The last date the action was performed.
+   * @param {number} frequency - The frequency of the action in days.
+   * @returns {string} The date to next perform the action on this plant.
    */
-  public getNextFertilizeDate(): string {
+  public getNextActionDate(lastActionDateStr: string, frequency: number): string {
     if (!this.plant) {
       return "N/A"
     }
-    var nextFertilizeDate = new Date()
-    var lastFertilizeDate = new Date(this.plant.lastFertilizeDate)
-    nextFertilizeDate.setFullYear(lastFertilizeDate.getFullYear());
-    nextFertilizeDate.setMonth(lastFertilizeDate.getMonth());
-    var frequencyInMs = this.plant.fertilizingFrequency * 24 * 60 * 60 * 1000;
-    nextFertilizeDate.setTime(lastFertilizeDate.getTime() + frequencyInMs);
-    return this.formatDate(nextFertilizeDate)
+    var nextActionDate = new Date()
+    var lastActionDate = new Date(lastActionDateStr)
+    nextActionDate.setFullYear(lastActionDate.getFullYear());
+    nextActionDate.setMonth(lastActionDate.getMonth());
+    var frequencyInMs = frequency * 24 * 60 * 60 * 1000;
+    nextActionDate.setTime(lastActionDate.getTime() + frequencyInMs);
+    return this.formatDate(nextActionDate)
   }
 
   /**
-   * obtain a formatted next-water-date from the difference between this plants last water date 
+   * Obtain a formatted next-fertilize-date from the difference between this plant's last fertilize date 
+   * and fertilize frequency.
+   * @returns {string} The date to next fertilize this plant.
+   */
+  public getNextFertilizeDate(): string {
+    return this.getNextActionDate(this.plant!.lastFertilizeDate, this.plant!.fertilizingFrequency);
+  }
+
+  /**
+   * Obtain a formatted next-water-date from the difference between this plant's last water date 
    * and water frequency.
-   * @returns the date to next water this plant.
+   * @returns {string} The date to next water this plant.
    */
   public getNextWaterDate(): string {
-    if (!this.plant) {
-      return "N/A"
-    }
-    var nextWaterDate = new Date()
-    var lastWaterDate = new Date(this.plant.lastWaterDate)
-    nextWaterDate.setFullYear(lastWaterDate.getFullYear());
-    nextWaterDate.setMonth(lastWaterDate.getMonth());
-    var frequencyInMs = this.plant.wateringFrequency * 24 * 60 * 60 * 1000;
-    nextWaterDate.setTime(lastWaterDate.getTime() + frequencyInMs);
-    return this.formatDate(nextWaterDate)
+    return this.getNextActionDate(this.plant!.lastWaterDate, this.plant!.wateringFrequency);
   }
+
   /**
    * obtain a formatted next-moist-check-date from the difference between this plants last moist date 
    * and one day.
