@@ -30,10 +30,6 @@ export class PlantComponent {
   // whether or not this plant is overdue for fertilizing
   needsFertilizing: boolean = false
 
-  // the username for our user from the authentication service
-  // TODO make this something we subscribe to
-  username: string = ''
-
   // whether or not the image for this plant is in progress loading
   isImageLoading: boolean = false
 
@@ -54,13 +50,12 @@ export class PlantComponent {
   constructor(
     private plantsService: PlantsService,
     private dialogService: DialogService,
-    private authenticationService: AuthenticationService) {
+    public authenticationService: AuthenticationService) {
     this.isCondensed = false // deafult value
 
   }
 
   ngOnInit() {
-    this.username = this.authenticationService.username()
     this.getImage()
     if (new Date(this.getNextFertilizeDate()) < new Date()) {
       if (this.plant) {
