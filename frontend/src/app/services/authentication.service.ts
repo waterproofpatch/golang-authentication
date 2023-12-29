@@ -69,7 +69,7 @@ export class AuthenticationService extends BaseService {
    *
    * @returns The username we're logged in with.
    */
-  public username(): string {
+  public get username(): string {
     if (!this.token) {
       return '';
     }
@@ -84,7 +84,7 @@ export class AuthenticationService extends BaseService {
    *
    * @returns The email address we're logged in with.
    */
-  public email(): string {
+  public get email(): string {
     if (!this.token) {
       return '';
     }
@@ -142,7 +142,7 @@ export class AuthenticationService extends BaseService {
   /**
    * obtain the token
    */
-  public get token() {
+  public get token(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 

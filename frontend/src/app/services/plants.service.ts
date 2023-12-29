@@ -341,7 +341,7 @@ export class PlantsService extends BaseService {
     console.log(`mode=${mode}`)
     if (mode !== "public") {
       return this.plants$.pipe(
-        map(plants => plants.filter(plant => plant.username === this.authenticationService.username()))
+        map(plants => plants.filter(plant => plant.username === this.authenticationService.username))
       );
     }
     else {

@@ -32,18 +32,18 @@
 				<mat-icon>more_vert</mat-icon>
 			</button>
 			<mat-menu #menu="matMenu">
-				<button *ngIf="plant.username == authenticationService.username()" mat-menu-item
+				<button *ngIf="plant.username == authenticationService.username" mat-menu-item
 					(click)="editPlantNotes()"
 					color="primary"><mat-icon>assignment</mat-icon><span>Notes</span></button>
-				<button *ngIf="plant.username == authenticationService.username()" mat-menu-item
+				<button *ngIf="plant.username == authenticationService.username" mat-menu-item
 					(click)="editPlant()"
 					color="primary"><mat-icon>edit</mat-icon><span>Edit</span></button>
-				<button *ngIf="plant.username == authenticationService.username()" mat-menu-item
+				<button *ngIf="plant.username == authenticationService.username" mat-menu-item
 					(click)="openCareDialog()" color="primary"><mat-icon style="color:blue;">
 						local_drink</mat-icon><span>Care</span></button>
 				<a mat-button [routerLink]="['/comments', plant.ID, plant.username]"><mat-icon>
 						comment</mat-icon><span>Comments</span></a>
-				<button *ngIf="plant.username == authenticationService.username()" mat-menu-item
+				<button *ngIf="plant.username == authenticationService.username" mat-menu-item
 					(click)="deletePlant()" color="warn">
 					<mat-icon>delete_outline</mat-icon><span>Delete</span></button>
 			</mat-menu>
@@ -86,7 +86,7 @@
 			</span>
 		</div>
 	</mat-card-content>
-	<mat-accordion *ngIf="plant.username==authenticationService.username()">
+	<mat-accordion *ngIf="plant.username==authenticationService.username">
 		<mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
 			<mat-expansion-panel-header>
 				<mat-panel-title>

@@ -74,7 +74,7 @@ export class PlantComponent {
         this.backgroundColorMoist = "red"
       }
     }
-    if (this.plant && this.authenticationService.isAuthenticated$.value && this.plant.username == this.authenticationService.username()) {
+    if (this.plant && this.authenticationService.isAuthenticated$.value && this.plant.username == this.authenticationService.username) {
       let unviewedComments = this.plant?.comments.filter(x =>
         !x.viewed
       ).length

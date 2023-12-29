@@ -22,7 +22,7 @@
 			{{ comment.content }}
 		</mat-card-content>
 		<mat-card-actions
-			*ngIf="(authenticationService.isAuthenticated$ | async) && (comment.username == authenticationService.username() || plantUsername == authenticationService.username())">
+			*ngIf="(authenticationService.isAuthenticated$ | async) && (comment.username == authenticationService.username || plantUsername == authenticationService.username)">
 			<button mat-button mat-raised-button color="warn"
 				(click)="deleteComment(comment)">Delete</button>
 		</mat-card-actions>
