@@ -287,7 +287,7 @@ export class PlantsComponent {
       [],
       [])
 
-    this.plantsService.formProcessingSucceeded$.subscribe((x) => {
+    this.plantsService.formProcessingSucceeded$.subscribe((x: boolean) => {
       this.isProcessingAddOrUpdate = false;
       // a backend error results in x coming in as false - don't hide the form
       if (x) {
