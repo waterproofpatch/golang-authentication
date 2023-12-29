@@ -370,24 +370,7 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 	json.NewEncoder(w).Encode(comments)
 }
 
-func dashboard(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
-	switch r.Method {
-	case "GET":
-		break
-	case "DELETE":
-		break
-	case "POST":
-		break
-	case "PUT":
-		break
-	}
-
-	return
-}
-
 func InitViews(router *mux.Router) {
-	router.HandleFunc("/api/dashboard/{id:[0-9]+}", authentication.VerifiedOnly(dashboard, false)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-	router.HandleFunc("/api/dashboard", authentication.VerifiedOnly(dashboard, false)).Methods("GET", "POST", "PUT", "OPTIONS")
 	router.HandleFunc("/api/comments/{id:[0-9]+}", authentication.VerifiedOnly(comments, true)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	router.HandleFunc("/api/comments", authentication.VerifiedOnly(comments, true)).Methods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	router.HandleFunc("/api/plants", authentication.VerifiedOnly(plants, true)).Methods("GET", "POST", "PUT", "OPTIONS")
