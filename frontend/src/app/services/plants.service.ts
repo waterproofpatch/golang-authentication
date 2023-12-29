@@ -162,18 +162,7 @@ export class PlantsService extends BaseService {
     if (image) {
       formData.append('image', image, image.name);
     }
-    formData.append('id', plant.ID.toString())
-    formData.append('nameOfPlant', plant.name)
-    formData.append('wateringFrequency', plant.wateringFrequency.toString())
-    formData.append('fertilizingFrequency', plant.fertilizingFrequency.toString())
-    formData.append('lastFertilizeDate', plant.lastFertilizeDate)
-    formData.append('lastWateredDate', plant.lastWaterDate)
-    formData.append('lastMoistDate', plant.lastMoistDate)
-    formData.append('skippedLastFertilize', plant.skippedLastFertilize ? "true" : "false")
-    formData.append('tag', plant.tag)
-    formData.append('isPublic', plant.isPublic.toString())
-    formData.append('doNotify', plant.doNotify.toString())
-    formData.append('notes', plant.notes)
+    formData.append('plant', JSON.stringify(plant));
     this.put(formData)
       .pipe(
         map((plants: Plant[]) => plants.map(plant => this.mapPlant(plant))),
@@ -323,10 +312,10 @@ export class PlantsService extends BaseService {
 
     return diffInDays;
   }
-  private post(formData: any): Observable<Plant[]> {
+  private post(formData: FormData): Observable<Plant[]> {
     return this.http.post<Plant[]>(this.getUrlBase() + this.plantsApiUrl, formData, this.httpOptionsNonJson);
   }
-  private put(formData: any): Observable<Plant[]> {
+  private put(formData: FormData): Observable<Plant[]> {
     return this.http.put<Plant[]>(this.getUrlBase() + this.plantsApiUrl, formData, this.httpOptionsNonJson);
   }
   private get(): Observable<Plant[]> {
@@ -340,7 +329,7 @@ export class PlantsService extends BaseService {
       this.getUrlBase() + this.plantsApiUrl + "/" + id,
       this.httpOptions);
   }
-  private putMoist(formData: any): Observable<Plant[]> {
+  private putMoist(formData: FormData): Observable<Plant[]> {
     return this.http.put<Plant[]>(this.getUrlBase() + this.plantsApiUrl + "?moist=true", formData, this.httpOptionsNonJson)
   }
   private getImage(id: number): Observable<any> {

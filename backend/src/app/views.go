@@ -217,7 +217,10 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			authentication.WriteError(w, "Must be logged in to edit plants.", http.StatusUnauthorized)
 			return
 		}
-		plantId, err := strconv.Atoi(r.FormValue("id"))
+		// make a new plant based on form values
+		var newPlant PlantModel
+		err := json.Unmarshal([]byte(r.FormValue("plant")), &newPlant)
+
 		isNewImage := false
 		if err != nil {
 			authentication.WriteError(w, "Invalid plant ID", http.StatusBadRequest)
@@ -226,15 +229,12 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 
 		// get the existing plant so we can obtain its old imageId
 		var existingPlant PlantModel
-		db.First(&existingPlant, plantId)
+		db.First(&existingPlant, newPlant.ID)
 		if existingPlant.Email != claims.Email {
 			fmt.Printf("User %s tried editing plant belonging to %s\n", claims.Email, existingPlant.Email)
 			authentication.WriteError(w, "This isn't your plant!", http.StatusBadRequest)
 			return
 		}
-
-		// make a new plant based on form values
-		var newPlant PlantModel
 
 		// conditionally upload a new image. An imageId of 0 means no image provided
 		imageId := uploadHandler(w, r)
@@ -266,38 +266,6 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			db.Save(&existingPlant)
 			break
 		}
-		// update to new values
-		newPlant.Name = r.FormValue("nameOfPlant")
-		newPlant.Tag = r.FormValue("tag")
-		newPlant.WateringFrequency, _ = strconv.Atoi(r.FormValue("wateringFrequency"))
-		newPlant.FertilizingFrequency, _ = strconv.Atoi(r.FormValue("fertilizingFrequency"))
-		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
-		newPlant.LastFertilizeDate = r.FormValue("lastFertilizeDate")
-		newPlant.LastMoistDate = r.FormValue("lastMoistDate")
-		newPlant.Notes = r.FormValue("notes")
-		newPlant.SkippedLastFertilize, err = strconv.ParseBool(r.FormValue("skippedLastFertilize"))
-		if err != nil {
-			authentication.WriteError(w, "Invalid skipped last fertilize date setting", http.StatusBadRequest)
-			return
-		}
-
-		doNotify, err := strconv.ParseBool(r.FormValue("doNotify"))
-		if err != nil {
-			// handle error
-			authentication.WriteError(w, "Invalid public/private setting.", http.StatusBadRequest)
-			return
-		}
-		newPlant.DoNotify = doNotify
-		isPublic, err := strconv.ParseBool(r.FormValue("isPublic"))
-		if err != nil {
-			// handle error
-			authentication.WriteError(w, "Invalid public/private setting.", http.StatusBadRequest)
-			return
-		}
-		newPlant.IsPublic = isPublic
-
-		// copy old values
-		newPlant.ID = existingPlant.ID
 		newPlant.Username = existingPlant.Username
 		newPlant.Email = existingPlant.Email
 		fmt.Printf("Updating plant id=%d to: %s", newPlant.ID, newPlant)
