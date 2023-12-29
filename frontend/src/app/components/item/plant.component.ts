@@ -168,7 +168,9 @@ export class PlantComponent {
         }
         if (result.moist) {
           console.log("Plant is moist - only updating that attribute")
-          this.plantsService.markMoist(this.plant)
+          this.plant.lastMoistDate = this.formatDate(new Date())
+          // this.plantsService.markMoist(this.plant)
+          this.plantsService.updatePlant(this.plant, null)
           return;
         }
 

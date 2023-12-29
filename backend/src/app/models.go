@@ -147,8 +147,9 @@ func UpdatePlant(db *gorm.DB, plant *PlantModel, isNewImage bool) error {
 		db.Delete(&ImageModel{}, existingplant.ImageId)
 	}
 
+	// handle resetting notification dates
 	if existingplant.LastWaterDate != plant.LastWaterDate || existingplant.LastMoistDate != plant.LastMoistDate {
-		fmt.Println("Resetting LastWaterNotifyDate something has changed!")
+		fmt.Println("Resetting LastWaterNotifyDate since the soil is either moist or the plant was watered!")
 		existingplant.LastWaterNotifyDate = ""
 	}
 	if existingplant.LastFertilizeDate != plant.LastFertilizeDate {
@@ -156,6 +157,7 @@ func UpdatePlant(db *gorm.DB, plant *PlantModel, isNewImage bool) error {
 		existingplant.LastFertilizeNotifyDate = ""
 	}
 
+	// update the plant log
 	if existingplant.IsPublic != plant.IsPublic {
 		logMsg := fmt.Sprintf("Plant changed from public=%t to public=%t", existingplant.IsPublic, plant.IsPublic)
 		addPlantLog(db, &existingplant, logMsg)

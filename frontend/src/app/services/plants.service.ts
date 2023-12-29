@@ -130,7 +130,7 @@ export class PlantsService extends BaseService {
   public markMoist(plant: Plant): void {
     const formData = new FormData();
     formData.append('plant', JSON.stringify(plant));
-    this.putMoist(formData)
+    this.put(formData)
       .pipe(
         map((plants: Plant[]) => plants.map(plant => this.mapPlant(plant))),
         map((plants: Plant[]) => {
@@ -328,9 +328,6 @@ export class PlantsService extends BaseService {
     return this.http.delete<Plant[]>(
       this.getUrlBase() + this.plantsApiUrl + "/" + id,
       this.httpOptions);
-  }
-  private putMoist(formData: FormData): Observable<Plant[]> {
-    return this.http.put<Plant[]>(this.getUrlBase() + this.plantsApiUrl + "?moist=true", formData, this.httpOptionsNonJson)
   }
   private getImage(id: number): Observable<any> {
     return this.http.get(this.getUrlBase() + this.imagesApiUrl + '/' + id, { responseType: 'blob', headers: { 'Access-Control-Allow-Origin': '*' } })
