@@ -213,20 +213,8 @@ func UpdatePlant(db *gorm.DB, plant *PlantModel, isNewImage bool) error {
 	return nil
 }
 
-func AddPlant(db *gorm.DB,
-	name string,
-	wateringFrequency int,
-	fertilizingFrequency int,
-	imageId int,
-	lastWaterDate string,
-	lastFertilizeDate string,
-	tag string,
-	email string,
-	username string,
-	isPublic bool,
-	doNotify bool,
-) error {
-	err := validatePlantInfo(name, wateringFrequency, lastWaterDate, lastFertilizeDate)
+func AddPlant(db *gorm.DB, plant *PlantModel) error {
+	err := validatePlantInfo(plant.Name, plant.WateringFrequency, plant.LastWaterDate, plant.LastFertilizeDate)
 	if err != nil {
 		return err
 	}
@@ -239,28 +227,15 @@ func AddPlant(db *gorm.DB,
 		db.Order("id asc").Limit(int(count) - 500).Find(&plants)
 		db.Delete(&plants)
 	}
-	plant := PlantModel{
-		Name:                    name,
-		WateringFrequency:       wateringFrequency,
-		FertilizingFrequency:    fertilizingFrequency,
-		ImageId:                 imageId,
-		Email:                   email,
-		Username:                username,
-		IsPublic:                isPublic,
-		DoNotify:                doNotify,
-		LastWaterDate:           lastWaterDate,
-		LastFertilizeDate:       lastFertilizeDate,
-		LastMoistDate:           "",
-		LastWaterNotifyDate:     "",
-		LastFertilizeNotifyDate: "",
-		Tag:                     tag,
-		Logs: []PlantLogModel{
-			{Log: "Created plant!"},
-		},
-		Notes: "",
+	plant.LastWaterNotifyDate = ""
+	plant.LastFertilizeNotifyDate = ""
+	plant.LastMoistDate = ""
+	plant.Notes = ""
+	plant.Logs = []PlantLogModel{
+		{Log: "Created plant!"},
 	}
 
-	log.Printf("Adding plant %s", plant)
+	log.Printf("Adding plant %v", plant)
 
 	err = db.Create(&plant).Error
 	if err != nil {

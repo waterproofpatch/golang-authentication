@@ -193,20 +193,11 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		var newPlant PlantModel
 		json.Unmarshal([]byte(r.FormValue("plant")), &newPlant)
 		newPlant.ImageId = imageId
+		newPlant.Email = claims.Email
+		newPlant.Username = claims.Username
 
 		fmt.Printf("Adding plant as: %v", newPlant)
-		err := AddPlant(db,
-			newPlant.Name,
-			newPlant.WateringFrequency,
-			newPlant.FertilizingFrequency,
-			newPlant.ImageId,
-			newPlant.LastWaterDate,
-			newPlant.LastFertilizeDate,
-			newPlant.Tag,
-			claims.Email,
-			claims.Username,
-			newPlant.IsPublic,
-			newPlant.DoNotify)
+		err := AddPlant(db, &newPlant)
 		if err != nil {
 			authentication.WriteError(w, err.Error(), 400)
 			return
