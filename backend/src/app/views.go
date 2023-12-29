@@ -220,8 +220,6 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		// make a new plant based on form values
 		var newPlant PlantModel
 		err := json.Unmarshal([]byte(r.FormValue("plant")), &newPlant)
-
-		isNewImage := false
 		if err != nil {
 			authentication.WriteError(w, "Invalid plant ID", http.StatusBadRequest)
 			return
@@ -238,7 +236,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 
 		// conditionally upload a new image. An imageId of 0 means no image provided
 		imageId := uploadHandler(w, r)
-
+		isNewImage := false
 		if imageId == 0 {
 			fmt.Println("Upload did not contain an image.")
 			newPlant.ImageId = existingPlant.ImageId

@@ -129,7 +129,7 @@ export class PlantsService extends BaseService {
   // plant's that have moist soil make a PUT request 
   public markMoist(plant: Plant): void {
     const formData = new FormData();
-    formData.append("id", plant.ID.toString())
+    formData.append('plant', JSON.stringify(plant));
     this.putMoist(formData)
       .pipe(
         map((plants: Plant[]) => plants.map(plant => this.mapPlant(plant))),
