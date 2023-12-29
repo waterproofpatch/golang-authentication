@@ -191,30 +191,11 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			return
 		}
 		var newPlant PlantModel
+		json.Unmarshal([]byte(r.FormValue("plant")), &newPlant)
 		newPlant.ImageId = imageId
-		newPlant.Name = r.FormValue("nameOfPlant")
-		newPlant.Tag = r.FormValue("tag")
-		newPlant.WateringFrequency, _ = strconv.Atoi(r.FormValue("wateringFrequency"))
-		newPlant.FertilizingFrequency, _ = strconv.Atoi(r.FormValue("fertilizingFrequency"))
-		newPlant.LastWaterDate = r.FormValue("lastWateredDate")
-		newPlant.LastFertilizeDate = r.FormValue("lastFertilizeDate")
-		doNotify, err := strconv.ParseBool(r.FormValue("doNotify"))
-		if err != nil {
-			// handle error
-			authentication.WriteError(w, "Invalid notification setting.", http.StatusBadRequest)
-			return
-		}
-		newPlant.DoNotify = doNotify
-		isPublic, err := strconv.ParseBool(r.FormValue("isPublic"))
-		if err != nil {
-			// handle error
-			authentication.WriteError(w, "Invalid public/private setting.", http.StatusBadRequest)
-			return
-		}
-		newPlant.IsPublic = isPublic
 
 		fmt.Printf("Adding plant as: %v", newPlant)
-		err = AddPlant(db,
+		err := AddPlant(db,
 			newPlant.Name,
 			newPlant.WateringFrequency,
 			newPlant.FertilizingFrequency,
