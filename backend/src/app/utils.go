@@ -1,13 +1,19 @@
 package app
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"image"
+	"image/jpeg"
+	"io/ioutil"
+	"net/http"
 	"os/exec"
 	"regexp"
 	"time"
 	_ "time/tzdata"
 
+	"github.com/waterproofpatch/go_authentication/authentication"
 	"gorm.io/gorm"
 )
 
@@ -183,4 +189,75 @@ func StartTimer(stopCh chan bool, db *gorm.DB) {
 			return
 		}
 	}
+}
+
+// returns -1 on failure, 0 on no-op, ImageModel.ID stored in database on success
+func ImageUploadHandler(w http.ResponseWriter, r *http.Request) int {
+	// Parse the multipart form in the request
+	err := r.ParseMultipartForm(10 << 20) // 10 MB maximum file size
+	if err != nil {
+		authentication.WriteError(w, "Invalid file size", http.StatusBadRequest)
+		return -1
+	}
+
+	// Get the image file from the form data
+	file, _, err := r.FormFile("image")
+	if err != nil {
+		// not critical, images are optional
+		return 0
+	}
+	defer file.Close()
+
+	// Read the file data into a byte slice
+	fileData, err := ioutil.ReadAll(file)
+	if err != nil {
+		authentication.WriteError(w, "Failed reading image.", http.StatusBadRequest)
+		return -1
+	}
+
+	// Print the original file size
+	fmt.Printf("Original file size: %d bytes\n", len(fileData))
+
+	// Decode the image data into an image.Image
+	img, _, err := image.Decode(bytes.NewReader(fileData))
+	if err != nil {
+		authentication.WriteError(w, "Failed decoding image.", http.StatusBadRequest)
+		return -1
+	}
+
+	// Create a new buffer to hold the compressed image data
+	var buf bytes.Buffer
+
+	// Compress the image using the jpeg.Encode function
+	err = jpeg.Encode(&buf, img, &jpeg.Options{Quality: 75})
+	if err != nil {
+		authentication.WriteError(w, "Failed compressing image.", http.StatusBadRequest)
+		return -1
+	}
+
+	// Get the compressed image data as a byte slice
+	compressedFileData := buf.Bytes()
+
+	// Print the compressed file size
+	fmt.Printf("Compressed file size: %d bytes\n", len(compressedFileData))
+
+	// Open a connection to the database
+	db := authentication.GetDb()
+
+	// Create a new Image instance and set its fields
+	image := ImageModel{
+		Name: "image.jpg",
+		Data: compressedFileData,
+	}
+
+	// Insert the record into the database
+	result := db.Create(&image)
+	if result.Error != nil {
+		authentication.WriteError(w, "Failed writing image to db", http.StatusBadRequest)
+		return -1
+	}
+
+	// Return a success message
+	fmt.Println("Stored image successfully.")
+	return int(image.ID)
 }

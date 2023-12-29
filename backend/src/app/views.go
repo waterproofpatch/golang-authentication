@@ -1,12 +1,8 @@
 package app
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"image"
-	"image/jpeg"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -16,77 +12,6 @@ import (
 
 	"github.com/gorilla/mux"
 )
-
-// returns -1 on failure, 0 on no-op, ImageModel.ID stored in database on success
-func imageUploadHandler(w http.ResponseWriter, r *http.Request) int {
-	// Parse the multipart form in the request
-	err := r.ParseMultipartForm(10 << 20) // 10 MB maximum file size
-	if err != nil {
-		authentication.WriteError(w, "Invalid file size", http.StatusBadRequest)
-		return -1
-	}
-
-	// Get the image file from the form data
-	file, _, err := r.FormFile("image")
-	if err != nil {
-		// not critical, images are optional
-		return 0
-	}
-	defer file.Close()
-
-	// Read the file data into a byte slice
-	fileData, err := ioutil.ReadAll(file)
-	if err != nil {
-		authentication.WriteError(w, "Failed reading image.", http.StatusBadRequest)
-		return -1
-	}
-
-	// Print the original file size
-	fmt.Printf("Original file size: %d bytes\n", len(fileData))
-
-	// Decode the image data into an image.Image
-	img, _, err := image.Decode(bytes.NewReader(fileData))
-	if err != nil {
-		authentication.WriteError(w, "Failed decoding image.", http.StatusBadRequest)
-		return -1
-	}
-
-	// Create a new buffer to hold the compressed image data
-	var buf bytes.Buffer
-
-	// Compress the image using the jpeg.Encode function
-	err = jpeg.Encode(&buf, img, &jpeg.Options{Quality: 75})
-	if err != nil {
-		authentication.WriteError(w, "Failed compressing image.", http.StatusBadRequest)
-		return -1
-	}
-
-	// Get the compressed image data as a byte slice
-	compressedFileData := buf.Bytes()
-
-	// Print the compressed file size
-	fmt.Printf("Compressed file size: %d bytes\n", len(compressedFileData))
-
-	// Open a connection to the database
-	db := authentication.GetDb()
-
-	// Create a new Image instance and set its fields
-	image := ImageModel{
-		Name: "image.jpg",
-		Data: compressedFileData,
-	}
-
-	// Insert the record into the database
-	result := db.Create(&image)
-	if result.Error != nil {
-		authentication.WriteError(w, "Failed writing image to db", http.StatusBadRequest)
-		return -1
-	}
-
-	// Return a success message
-	fmt.Println("Stored image successfully.")
-	return int(image.ID)
-}
 
 func images(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -177,7 +102,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 			authentication.WriteError(w, "Must be logged in to add plants.", http.StatusUnauthorized)
 			return
 		}
-		imageId := imageUploadHandler(w, r)
+		imageId := ImageUploadHandler(w, r)
 		if imageId == 0 {
 			fmt.Println("Upload did not contain an image.")
 		}
@@ -219,7 +144,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		}
 
 		// conditionally upload a new image. An imageId of 0 means no image provided
-		imageId := imageUploadHandler(w, r)
+		imageId := ImageUploadHandler(w, r)
 		isNewImage := false
 		if imageId == 0 {
 			fmt.Println("Upload did not contain an image.")
