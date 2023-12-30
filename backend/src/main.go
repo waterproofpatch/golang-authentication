@@ -96,7 +96,7 @@ func main() {
 	db := authentication.GetDb()
 
 	app.InitViews(router)
-	app.InitModels(db)
+	app.InitModels(db, dropTables)
 
 	// Run the function in a goroutine
 	go app.StartTimer(stopCh, db)

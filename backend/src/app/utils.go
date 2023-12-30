@@ -31,10 +31,10 @@ func isValidInput(input string) bool {
 	return alphanumeric.MatchString(input)
 }
 
-// execute the python script 'main.py' in /email_service to send an email
+// execute the python script 'plant_care_driver.py' in /email_service to send an email
 func sendEmail(plant *PlantModel, needsFertilizer bool, needsWater bool) {
 	fmt.Println("Building email...")
-	args := []string{"/email_service/main.py", "--recipient", plant.Email, "--plant-name", plant.Name, "--username", plant.Username}
+	args := []string{"/email_service/plant_care_driver.py", "--recipient", plant.Email, "--plant-name", plant.Name, "--username", plant.Username}
 	if needsFertilizer {
 		args = append(args, "--needs-fertilizer")
 	}
@@ -262,8 +262,22 @@ func ImageUploadHandler(w http.ResponseWriter, r *http.Request) int {
 	return int(image.ID)
 }
 
+// send a generic email message
+func sendGenericEmail(email string, content string) error {
+	args := []string{"/email_service/generic_driver.py", "--recipient", email, "--content", content, "--subject", "Verify your account"}
+	cmd := exec.Command("/email_service/venv/bin/python", args...)
+	stdout, err := cmd.Output()
+	if err != nil {
+		fmt.Println(string(stdout), err.Error())
+		return err
+	}
+	fmt.Println(string(stdout))
+	return nil
+}
+
 // handle new user registered and needs to be emailed their verification code
 func RegistrationCallback(email string, verificationCode string) error {
 	fmt.Printf("email=%v, verificationCode=%v\n", email, verificationCode)
+	sendGenericEmail(email, "Some Generic Content")
 	return nil
 }

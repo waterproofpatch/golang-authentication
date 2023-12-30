@@ -272,10 +272,24 @@ func AddComment(db *gorm.DB, content string, email string, username string, plan
 	return nil
 }
 
-func InitModels(db *gorm.DB) {
+func InitModels(db *gorm.DB, dropTables bool) {
+	models := []interface{}{
+		&PlantLogModel{},
+		&PlantModel{},
+		&CommentModel{},
+		&ImageModel{},
+	}
+
+	if dropTables {
+		log.Printf("Dropping tables...")
+		for _, model := range models {
+			db.Migrator().DropTable(model)
+		}
+	}
+
 	log.Printf("Initializing models...\n")
-	db.AutoMigrate(&PlantModel{})
-	db.AutoMigrate(&CommentModel{})
-	db.AutoMigrate(&ImageModel{})
-	db.AutoMigrate(&PlantLogModel{})
+
+	for _, model := range models {
+		db.AutoMigrate(model)
+	}
 }
