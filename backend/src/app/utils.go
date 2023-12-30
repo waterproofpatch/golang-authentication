@@ -8,6 +8,7 @@ import (
 	"image/jpeg"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"os/exec"
 	"regexp"
 	"time"
@@ -41,10 +42,8 @@ func sendEmail(plant *PlantModel, needsFertilizer bool, needsWater bool) {
 	if needsWater {
 		args = append(args, "--needs-water")
 	}
-	fmt.Println("About to send email...")
 	cmd := exec.Command("/email_service/venv/bin/python", args...)
-	fmt.Println("Sent email.")
-	stdout, err := cmd.Output()
+	stdout, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(string(stdout), err.Error())
 		return
@@ -266,7 +265,7 @@ func ImageUploadHandler(w http.ResponseWriter, r *http.Request) int {
 func sendGenericEmail(email string, content string) error {
 	args := []string{"/email_service/generic_driver.py", "--recipient", email, "--content", content, "--subject", "Verify your account"}
 	cmd := exec.Command("/email_service/venv/bin/python", args...)
-	stdout, err := cmd.Output()
+	stdout, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(string(stdout), err.Error())
 		return err
@@ -278,6 +277,25 @@ func sendGenericEmail(email string, content string) error {
 // handle new user registered and needs to be emailed their verification code
 func RegistrationCallback(email string, verificationCode string) error {
 	fmt.Printf("email=%v, verificationCode=%v\n", email, verificationCode)
-	sendGenericEmail(email, "Some Generic Content")
+	// the backend will redirect
+	url := fmt.Sprintf("https://strider.azurewebsites.net/api/verify?code=%s", verificationCode)
+	if os.Getenv("DEBUG") == "true" {
+		url = fmt.Sprintf("http://localhost:5000/api/verify?code=%s", verificationCode)
+	}
+	// Craft the email content
+	emailContent := fmt.Sprintf(`Hello,
+
+Thank you for registering with us. We're excited to have you on board!
+
+To verify your account, please click the link below:
+
+%s
+
+If you did not request this, please ignore this email.
+
+Your friends at
+plantmindr.com`, url)
+
+	sendGenericEmail(email, emailContent)
 	return nil
 }

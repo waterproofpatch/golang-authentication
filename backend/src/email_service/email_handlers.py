@@ -55,7 +55,7 @@ def send_care_email(
                 "subject": f"{plant_name} needs some care!",
                 # "plainText": f"Time to water plant {plant_name}",
                 "plainText": content,
-                "html": f"<html><h1>{content}. Visit https://www.plantmindr.com to view your plants.</h1></html>",
+                "html": f"<html><p>{content}. Visit https://www.plantmindr.com to view your plants.</p></html>",
             },
             "recipients": {
                 "to": [{"address": f"{recipient}", "displayName": f"{username}"}]
@@ -73,13 +73,11 @@ def send_email(email_address: str, content: str, subject: str) -> None:
     try:
         email_client, sender_address = _get_az_email_client()
 
-        content = content
         message = {
             "content": {
                 "subject": subject,
-                # "plainText": f"Time to water plant {plant_name}",
                 "plainText": content,
-                "html": f"<html><h1>{content}</h1></html>",
+                "html": f"<html><p>{content}</p></html>",
             },
             "recipients": {
                 "to": [
