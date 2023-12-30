@@ -278,9 +278,9 @@ func sendGenericEmail(email string, content string) error {
 func RegistrationCallback(email string, verificationCode string) error {
 	fmt.Printf("email=%v, verificationCode=%v\n", email, verificationCode)
 	// the backend will redirect
-	url := fmt.Sprintf("https://strider.azurewebsites.net/api/verify?code=%s", verificationCode)
+	url := fmt.Sprintf("https://strider.azurewebsites.net/api/verify?code=%s&email=%s", verificationCode, email)
 	if os.Getenv("DEBUG") == "true" {
-		url = fmt.Sprintf("http://localhost:5000/api/verify?code=%s", verificationCode)
+		url = fmt.Sprintf("http://localhost:5000/api/verify?code=%s&email=%s", verificationCode, email)
 	}
 	// Craft the email content
 	emailContent := fmt.Sprintf(`Hello,
