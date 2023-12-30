@@ -90,7 +90,8 @@ func main() {
 		router,
 		os.Getenv("DATABASE_URL"),
 		dropTables,
-		false)
+		true,
+		app.RegistrationCallback) // requires verification
 
 	db := authentication.GetDb()
 

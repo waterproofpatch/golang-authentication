@@ -261,3 +261,9 @@ func ImageUploadHandler(w http.ResponseWriter, r *http.Request) int {
 	fmt.Println("Stored image successfully.")
 	return int(image.ID)
 }
+
+// handle new user registered and needs to be emailed their verification code
+func RegistrationCallback(email string, verificationCode string) error {
+	fmt.Printf("email=%v, verificationCode=%v\n", email, verificationCode)
+	return nil
+}
