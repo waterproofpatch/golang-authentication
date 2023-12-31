@@ -81,6 +81,10 @@ func main() {
 	log.Printf("Default admin user name will be %s", os.Getenv("DEFAULT_ADMIN_USERNAME"))
 
 	// must happen before we get the db
+	registrationCallbackUrl := "https://www.plantmindr.com/authentication?mode=login&verified=true"
+	if os.Getenv("DEBUG") == "true" {
+		registrationCallbackUrl = "https://localhost:4200/authentication?mode=login&verified=true"
+	}
 	authentication.Init(
 		os.Getenv("SECRET"),
 		os.Getenv("REFRESH_SECRET"),
@@ -90,8 +94,9 @@ func main() {
 		router,
 		os.Getenv("DATABASE_URL"),
 		dropTables,
-		true,
-		app.RegistrationCallback) // requires verification
+		true, // requiresVerificaiton
+		app.RegistrationCallback,
+		registrationCallbackUrl)
 
 	db := authentication.GetDb()
 
