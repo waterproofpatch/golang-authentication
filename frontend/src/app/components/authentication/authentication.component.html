@@ -23,7 +23,8 @@
           <input type="password" matInput formControlName="password" required />
         </mat-form-field>
         <div mat-dialog-actions>
-          <button (click)="register()" mat-stroked-button color="primary">
+          <button (click)="register()" mat-stroked-button color="primary" [hideText]="true"
+            [mtBasicSpinner]="(authenticationService.isLoading$ | async) ?? false">
             Register
           </button>
         </div>
