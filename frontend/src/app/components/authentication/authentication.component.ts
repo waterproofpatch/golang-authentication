@@ -31,8 +31,11 @@ export class AuthenticationComponent implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
+      // mode is "login" or "register"
       this.mode = params['mode'];
       this.verified = params['verified'];
+      // user navigated away from a page that may have contained an error
+      this.error = ""
     });
   }
 
