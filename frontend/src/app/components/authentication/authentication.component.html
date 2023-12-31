@@ -34,7 +34,9 @@
 
   <div *ngIf="mode == 'login'">
     <h1 mat-dialog-title>Login</h1>
-    <h1 *ngIf="verified==='true'" mat-dialog-title>Account verified successfully.</h1>
+    <p *ngIf="verified==='true'">Account verified successfully.</p>
+    <p *ngIf="requiresVerification==='true'">Account creation successful! Check your email for a
+      verificaiton code.</p>
     <div *ngIf="error" class="error">Login failed: {{ error }}</div>
     <div mat-dialog-content>
       <form [formGroup]="loginForm">

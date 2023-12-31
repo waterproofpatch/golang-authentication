@@ -13,6 +13,10 @@ interface JWTData {
   username: string;
 }
 
+interface RegisterResponse {
+  requiresVerification: boolean
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -194,10 +198,10 @@ export class AuthenticationService extends BaseService {
         }),
         finalize(() => this.isLoading$.next(false))
       )
-      .subscribe((x) => {
-        console.log('registration completed OK');
+      .subscribe((x: RegisterResponse) => {
+        console.log('registration completed OK: ' + x.requiresVerification);
         this.error$.next(''); // send a benign event so observers can close modals
-        this.router.navigateByUrl('/authentication?mode=login');
+        this.router.navigateByUrl(`/authentication?mode=login&requiresVerification=${x.requiresVerification}`);
       });
   }
 
