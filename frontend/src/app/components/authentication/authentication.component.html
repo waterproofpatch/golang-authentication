@@ -34,12 +34,9 @@
 
   <div *ngIf="mode == 'login'">
     <h1 mat-dialog-title>Login</h1>
-    <h2 *ngIf="verified==='true'" mat-dialog-title>Account verified successfully.</h2>
+    <h1 *ngIf="verified==='true'" mat-dialog-title>Account verified successfully.</h1>
     <div *ngIf="error" class="error">
       Login failed: {{ error }}
-      <button mat-stroked-button [routerLink]="['/authentication']" [queryParams]="{ mode: 'register' }">
-        Create account
-      </button>
     </div>
 
     <div mat-dialog-content>

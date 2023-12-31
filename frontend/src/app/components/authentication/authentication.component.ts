@@ -39,7 +39,11 @@ export class AuthenticationComponent implements OnInit {
     });
   }
 
-  register(): void {
+  /**
+   * called from the UI when the user clicks the register button
+   * @returns 
+   */
+  public register(): void {
     if (!this.registerForm.valid) {
       this.error = 'Fix validation errors.';
       return;
@@ -62,7 +66,11 @@ export class AuthenticationComponent implements OnInit {
     );
   }
 
-  login() {
+  /**
+   * called from the UI when the user clicks the login button
+   * @returns 
+   */
+  public login() {
     this.error = '';
     this.authenticationService.error$.subscribe((error: string) => {
       if (error.length > 0) {
@@ -84,7 +92,13 @@ export class AuthenticationComponent implements OnInit {
       this.loginForm.controls.password.value
     );
   }
-  getErrorMessage() {
+
+  /**
+   * called from the UI via the forms error handling code to display errors 
+   * to the user
+   * @returns string error representation
+   */
+  public getErrorMessage(): string {
     if (this.loginForm.controls.email.hasError('required')) {
       return 'You must enter a value';
     }
