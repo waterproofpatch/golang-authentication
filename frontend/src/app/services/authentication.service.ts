@@ -233,6 +233,7 @@ export class AuthenticationService extends BaseService {
       .pipe(
         catchError((error: any) => {
           if (error instanceof HttpErrorResponse) {
+            // TODO use a well defined type
             if (error.error.error_code == 2) {
 
               this.error$.next(`Account not yet verified.`);
@@ -248,6 +249,13 @@ export class AuthenticationService extends BaseService {
         finalize(() => this.isLoading$.next(false))
       )
       .subscribe((x) => {
+        if (x.token == undefined) {
+          console.log("Got something other than a token...")
+          // ugly; we know we get a message in this case. 
+          // TODO handle with a normalized code
+          this.error$.next(x.message)
+          return
+        }
         console.log('Setting token to ' + x.token);
         this.setToken(x.token)
         this.error$.next(''); // send a benign event so observers can close modals
