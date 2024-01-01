@@ -232,6 +232,11 @@ export class AuthenticationService extends BaseService {
       .pipe(
         catchError((error: any) => {
           if (error instanceof HttpErrorResponse) {
+            if (error.error.error_code == 2) {
+
+              this.error$.next("Account not yet verified. Resend code");
+              return throwError(() => new Error("Failed logging in"));
+            }
             this.error$.next(error.error.error_message);
           } else {
             this.error$.next('Unexpected error');
