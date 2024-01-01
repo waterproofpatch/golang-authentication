@@ -15,12 +15,14 @@ interface JWTData {
 
 interface RegisterResponse {
   requiresVerification: boolean
+  alreadyVerified: boolean
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthenticationService extends BaseService {
+  // apis for the authentication service
   loginApiUrl = '/api/login';
   logoutApiUrl = '/api/logout';
   registerApiUrl = '/api/register';
@@ -38,16 +40,24 @@ export class AuthenticationService extends BaseService {
     private http: HttpClient
   ) {
     super();
+    // notify observers that we think we're authenticated
     if (this.token) {
       this.isAuthenticated$.next(true);
     }
   }
 
+  /**
+   * clear the stored token
+   */
   private clearToken(): void {
     localStorage.removeItem(this.TOKEN_KEY)
     this.isAuthenticated$.next(false)
   }
 
+  /**
+   * set the token
+   * @param token token string
+   */
   public setToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
     this.isAuthenticated$.next(true)
@@ -150,7 +160,13 @@ export class AuthenticationService extends BaseService {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  public logout(modalText?: string, redirectToLogin?: boolean) {
+  /**
+   * 
+   * @param modalText optional modal text to display upon logout.
+   * @param redirectToLogin whether or not to redirect the user to the login page
+   * when they log out.
+   */
+  public logout(modalText?: string, redirectToLogin?: boolean): void {
     this.logoutHttp().subscribe((x) => {
       console.log("Logged out.")
     })
@@ -231,10 +247,22 @@ export class AuthenticationService extends BaseService {
         this.router.navigateByUrl('/');
       });
   }
+
+  /**
+   * obtain a new access token by sending the browser cookie refresh-token.
+   * @returns an observable for obtaining a new access token.
+   */
   private refreshHttp(): Observable<any> {
     return this.http.get(this.getUrlBase() + this.refreshApiUrl, this.httpOptions)
   }
 
+  /**
+   * register a new account
+   * @param email email to register with
+   * @param username username to register with
+   * @param password password to register with
+   * @returns 
+   */
   private registerHttp(
     email: string,
     username: string,
@@ -252,10 +280,20 @@ export class AuthenticationService extends BaseService {
     );
   }
 
+  /**
+   * log out.
+   * @returns an observable for completing the logout workflow.
+   */
   private logoutHttp(): Observable<any> {
     return this.http.post(this.getUrlBase() + this.logoutApiUrl, null, this.httpOptions)
   }
 
+  /**
+   * 
+   * @param email email to log in with
+   * @param password password to log in with
+   * @returns 
+   */
   private loginHttp(email: string, password: string): Observable<any> {
     const data = {
       email: email,
