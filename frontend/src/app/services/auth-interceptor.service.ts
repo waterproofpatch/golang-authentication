@@ -50,7 +50,7 @@ export class AuthInterceptorService implements HttpInterceptor {
                 // if even the frontend doesn't think we're authenticated, then
                 // user probably tried just accessing a protected endpoint
                 if (!this.authenticationService.isAuthenticated$.value) {
-                  this.dialogService.displayErrorDialog(error.error["error_message"])
+                  this.dialogService.displayErrorDialog(`${error.error["error_message"]} - code ${error.error["code"]}`)
                   this.authenticationService.logout(undefined, true)
                   break
                 }
