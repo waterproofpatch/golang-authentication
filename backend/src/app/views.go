@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/waterproofpatch/go_authentication/authentication"
+	"github.com/waterproofpatch/go_authentication/types"
 
 	"github.com/gorilla/mux"
 )
@@ -61,7 +62,7 @@ func version(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
+func plants(w http.ResponseWriter, r *http.Request, claims *types.JWTData) {
 	db := authentication.GetDb()
 	var plants []PlantModel
 	var plant PlantModel
@@ -191,7 +192,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 	json.NewEncoder(w).Encode(plants)
 }
 
-func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
+func comments(w http.ResponseWriter, r *http.Request, claims *types.JWTData) {
 	w.Header().Set("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
