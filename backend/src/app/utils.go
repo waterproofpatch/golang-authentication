@@ -262,16 +262,17 @@ func ImageUploadHandler(w http.ResponseWriter, r *http.Request) int {
 }
 
 // send a generic email message
-func sendGenericEmail(email string, content string) error {
-	args := []string{"/email_service/generic_driver.py", "--recipient", email, "--content", content, "--subject", "Verify your account"}
-	cmd := exec.Command("/email_service/venv/bin/python", args...)
-	stdout, err := cmd.CombinedOutput()
-	if err != nil {
-		fmt.Println(string(stdout), err.Error())
-		return err
-	}
-	fmt.Println(string(stdout))
-	return nil
+func sendGenericEmail(email string, content string) {
+	go func() {
+		args := []string{"/email_service/generic_driver.py", "--recipient", email, "--content", content, "--subject", "Verify your account"}
+		cmd := exec.Command("/email_service/venv/bin/python", args...)
+		stdout, err := cmd.CombinedOutput()
+		if err != nil {
+			fmt.Println(string(stdout), err.Error())
+			return
+		}
+		fmt.Println(string(stdout))
+	}()
 }
 
 // handle new user registered and needs to be emailed their verification code
