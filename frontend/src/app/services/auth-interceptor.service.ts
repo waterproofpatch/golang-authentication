@@ -14,8 +14,13 @@ export class AuthInterceptorService implements HttpInterceptor {
     private authenticationService: AuthenticationService
   ) { }
 
+  /**
+   * format an error message from the backend
+   * @param error error message type, see go_authentication/types.go
+   * @returns an error string
+   */
   private formatErrorMessage(error: any): string {
-    return `${error.error["code"]}: ${error.error["error_message"]}`
+    return `${error.error["error_code"]}: ${error.error["error_message"]}`
   }
 
   intercept(req: any, next: any) {
