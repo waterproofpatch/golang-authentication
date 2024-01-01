@@ -5,6 +5,8 @@ import { HttpInterceptor, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from './authentication.service';
 import { DialogService } from './dialog.service';
 
+import { AuthError, HttpResponse } from '../types';
+
 @Injectable()
 export class AuthInterceptorService implements HttpInterceptor {
   private isRefreshing: boolean = false;
@@ -19,8 +21,14 @@ export class AuthInterceptorService implements HttpInterceptor {
    * @param error error message type, see go_authentication/types.go
    * @returns an error string
    */
-  private formatErrorMessage(error: any): string {
-    return `${error.error["error_code"]}: ${error.error["error_message"]}`
+  private formatErrorMessage(error: HttpResponse | AuthError): string {
+    if ('error_message' in error) {
+      return `${error.code}: ${error.error_message}`
+    }
+    if ('message' in error) {
+      return `${error.code}: ${error.message}`
+    }
+    throw new Error("Unexpected type for error!")
   }
 
   intercept(req: any, next: any) {
@@ -52,14 +60,14 @@ export class AuthInterceptorService implements HttpInterceptor {
             switch (error.status) {
               case 400:
                 this.dialogService.displayErrorDialog(
-                  'Bad request: ' + this.formatErrorMessage(error)
+                  'Bad request: ' + this.formatErrorMessage(error.error)
                 );
                 break;
               case 401: // login or token expired
                 // if even the frontend doesn't think we're authenticated, then
                 // user probably tried just accessing a protected endpoint
                 if (!this.authenticationService.isAuthenticated$.value) {
-                  this.dialogService.displayErrorDialog(`Code ${this.formatErrorMessage(error)}`)
+                  this.dialogService.displayErrorDialog(`Code ${this.formatErrorMessage(error.error)}`)
                   this.authenticationService.logout(undefined, true)
                   break
                 }
@@ -95,7 +103,7 @@ export class AuthInterceptorService implements HttpInterceptor {
                 }
                 break;
               case 403: //forbidden
-                this.dialogService.displayErrorDialog(`403 - Forbidden: ${this.formatErrorMessage(error)}`);
+                this.dialogService.displayErrorDialog(`403 - Forbidden: ${this.formatErrorMessage(error.error)}`);
                 this.authenticationService.logout(undefined, true);
                 break;
               default:

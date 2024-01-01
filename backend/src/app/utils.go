@@ -2,6 +2,7 @@ package app
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"image"
@@ -299,4 +300,11 @@ plantmindr.com`, url)
 
 	sendGenericEmail(email, emailContent)
 	return nil
+}
+
+// write an HTTP JSON response message
+func WriteResponse(w http.ResponseWriter, message string, status int, code ResponseCode) {
+	w.Header().Set("content-type", "application/json")
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(&HttpResponse{Message: message, Code: code})
 }
