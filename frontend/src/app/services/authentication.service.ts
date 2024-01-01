@@ -46,6 +46,7 @@ export class AuthenticationService extends BaseService {
     }
   }
 
+
   /**
    * clear the stored token
    */
@@ -226,15 +227,16 @@ export class AuthenticationService extends BaseService {
    * @param email the email to use for logging in
    * @param password the password to use for logging in
    */
-  public login(email: string, password: string) {
+  public login(email: string, password: string, resendCode?: boolean) {
     this.isLoading$.next(true)
-    this.loginHttp(email, password)
+    this.loginHttp(email, password, resendCode)
       .pipe(
         catchError((error: any) => {
           if (error instanceof HttpErrorResponse) {
             if (error.error.error_code == 2) {
 
-              this.error$.next("Account not yet verified. Resend code");
+              this.error$.next(`Account not yet verified.`);
+              this.error_code$.next(error.error.error_code)
               return throwError(() => new Error("Failed logging in"));
             }
             this.error$.next(error.error.error_message);
@@ -299,12 +301,20 @@ export class AuthenticationService extends BaseService {
    * @param password password to log in with
    * @returns 
    */
-  private loginHttp(email: string, password: string): Observable<any> {
+  private loginHttp(email: string, password: string, resendCode?: boolean): Observable<any> {
     const data = {
       email: email,
       password: password,
     };
 
+    if (resendCode) {
+
+      return this.http.post(
+        this.getUrlBase() + this.loginApiUrl + "?resend=true",
+        data,
+        this.httpOptions
+      );
+    }
     return this.http.post(
       this.getUrlBase() + this.loginApiUrl,
       data,

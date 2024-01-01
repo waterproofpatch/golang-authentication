@@ -39,6 +39,13 @@ export class AuthenticationComponent implements OnInit {
       // user navigated away from a page that may have contained an error
       this.error = ""
     });
+    this.authenticationService.error$.subscribe((error: string) => {
+      if (error.length > 0) {
+        this.error = error;
+      } else {
+        this.error = '';
+      }
+    });
   }
 
   /**
@@ -72,15 +79,8 @@ export class AuthenticationComponent implements OnInit {
    * called from the UI when the user clicks the login button
    * @returns 
    */
-  public login() {
+  public login(resendCode?: boolean) {
     this.error = '';
-    this.authenticationService.error$.subscribe((error: string) => {
-      if (error.length > 0) {
-        this.error = error;
-      } else {
-        this.error = '';
-      }
-    });
     if (this.loginForm.controls.email.value == null) {
       console.log("Email is NULL")
       return;
@@ -91,7 +91,8 @@ export class AuthenticationComponent implements OnInit {
     }
     this.authenticationService.login(
       this.loginForm.controls.email.value,
-      this.loginForm.controls.password.value
+      this.loginForm.controls.password.value,
+      resendCode
     );
   }
 
