@@ -5,7 +5,6 @@ go 1.18
 require (
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
-	github.com/gorilla/websocket v1.5.0
 	github.com/waterproofpatch/go_authentication v0.0.0-alpha.10
 	gorm.io/gorm v1.24.2
 )
