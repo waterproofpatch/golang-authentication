@@ -16,6 +16,8 @@ export class AuthInterceptorService implements HttpInterceptor {
 
   intercept(req: any, next: any) {
     const authenticationService = this.injector.get(AuthenticationService);
+
+    // put a token in each request if we have one
     const authRequest = req.clone({
       headers: req.headers.append(
         'Authorization',
@@ -23,6 +25,7 @@ export class AuthInterceptorService implements HttpInterceptor {
       ),
     });
 
+    // issue that request with the token and handle any errors
     return next.handle(authRequest).pipe(
       tap((x: any) => {
         if (x.hasOwnProperty('body') && x.body != null && x.body.hasOwnProperty('token')) {
@@ -44,12 +47,15 @@ export class AuthInterceptorService implements HttpInterceptor {
                 );
                 break;
               case 401: // login or token expired
+                // if even the frontend doesn't think we're authenticated, then
+                // user probably tried just accessing a protected endpoint
                 if (!this.authenticationService.isAuthenticated$.value) {
-                  // this.dialogService.displayErrorDialog("Invalid credentials.")
                   this.dialogService.displayErrorDialog(error.error["error_message"])
                   this.authenticationService.logout(undefined, true)
                   break
                 }
+
+                // we may get 401 if the access token is expired
                 if (!this.isRefreshing) {
                   console.log("Trying to use refresh token...")
                   this.isRefreshing = true
@@ -59,21 +65,23 @@ export class AuthInterceptorService implements HttpInterceptor {
                       console.log('Error refreshing token:', error);
                       return throwError(error);
                     }),
+
+                    // the refresh API responds with a new access token
                     switchMap((token) => {
+                      // issue a new non-refresh request using the new token
                       this.isRefreshing = false;
-                      const authRequest2 = req.clone({
+                      const retryRequest = req.clone({
                         headers: req.headers.append(
                           'Authorization',
                           'Bearer ' + token.token
                         ),
                       });
-                      console.log("Trying request " + authRequest2.urlWithParams + " again with new token " + token.token);
-                      return next.handle(authRequest2);
+                      console.log("Trying request " + retryRequest.urlWithParams + " again with new token " + token.token);
+                      return next.handle(retryRequest);
                     })
                   );
                 } else {
                   console.log("We were refreshing and still got an error!")
-                  // this.dialogService.displayErrorDialog("Login expired.")
                   this.authenticationService.logout("Login expired!", true)
                 }
                 break;
