@@ -12,6 +12,8 @@ export class AuthenticationComponent implements OnInit {
   mode: string = '';
   verified: string = '';
   requiresVerification: string = '';
+  codeResent: string = '';
+
   hide = true;
   registerForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -36,6 +38,7 @@ export class AuthenticationComponent implements OnInit {
       this.mode = params['mode'];
       this.verified = params['verified'];
       this.requiresVerification = params['requiresVerification'];
+      this.codeResent = params['codeResent'];
       // user navigated away from a page that may have contained an error
       this.error = ""
     });

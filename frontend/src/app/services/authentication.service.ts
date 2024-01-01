@@ -46,7 +46,6 @@ export class AuthenticationService extends BaseService {
     }
   }
 
-
   /**
    * clear the stored token
    */
@@ -62,22 +61,6 @@ export class AuthenticationService extends BaseService {
   public setToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
     this.isAuthenticated$.next(true)
-  }
-
-  public async getFreshToken(): Promise<string | null> {
-    if (!this.token || this.isTokenExpired()) {
-      const result: string = await new Promise((resolve, reject) => {
-        this.refresh().subscribe((x) => {
-          console.log("Token refreshed, it is: " + x.token)
-          resolve(x.token)
-        })
-      })
-      console.log("Promise for new token resolved. Returning it.")
-      return result
-    } else {
-      console.log("Token isn't expired!")
-      return this.token
-    }
   }
 
   /**
@@ -208,8 +191,10 @@ export class AuthenticationService extends BaseService {
         catchError((error: any) => {
           if (error instanceof HttpErrorResponse) {
             this.error$.next(error.error.error_message);
+            this.error_code$.next(0); // send a benign event so observers can close modals
           } else {
             this.error$.next('Unexpected error');
+            this.error_code$.next(0); // send a benign event so observers can close modals
           }
           return throwError(() => new Error("Failed registering"));
         }),
@@ -218,6 +203,7 @@ export class AuthenticationService extends BaseService {
       .subscribe((x: RegisterResponse) => {
         console.log('registration completed OK: ' + x.requiresVerification);
         this.error$.next(''); // send a benign event so observers can close modals
+        this.error_code$.next(0); // send a benign event so observers can close modals
         this.router.navigateByUrl(`/authentication?mode=login&requiresVerification=${x.requiresVerification}`);
       });
   }
@@ -241,24 +227,27 @@ export class AuthenticationService extends BaseService {
               return throwError(() => new Error("Failed logging in"));
             }
             this.error$.next(error.error.error_message);
+            this.error_code$.next(0); // send a benign event so observers can close modals
           } else {
             this.error$.next('Unexpected error');
+            this.error_code$.next(0); // send a benign event so observers can close modals
           }
           return throwError(() => new Error("Failed logging in"));
         }),
         finalize(() => this.isLoading$.next(false))
       )
       .subscribe((x) => {
-        if (x.token == undefined) {
+        if (x.token == undefined && x.message != undefined) {
           console.log("Got something other than a token...")
-          // ugly; we know we get a message in this case. 
-          // TODO handle with a normalized code
-          this.error$.next(x.message)
+          this.error$.next(''); // send a benign event so observers can close modals
+          this.error_code$.next(0); // send a benign event so observers can close modals
+          this.router.navigateByUrl(`/authentication?mode=login&codeResent=true`);
           return
         }
         console.log('Setting token to ' + x.token);
         this.setToken(x.token)
         this.error$.next(''); // send a benign event so observers can close modals
+        this.error_code$.next(0); // send a benign event so observers can close modals
         this.router.navigateByUrl('/');
       });
   }
