@@ -14,6 +14,10 @@ export class AuthInterceptorService implements HttpInterceptor {
     private authenticationService: AuthenticationService
   ) { }
 
+  private formatErrorMessage(error: any): string {
+    return `${error.error["code"]}: ${error.error["error_message"]}`
+  }
+
   intercept(req: any, next: any) {
     const authenticationService = this.injector.get(AuthenticationService);
 
@@ -43,14 +47,14 @@ export class AuthInterceptorService implements HttpInterceptor {
             switch (error.status) {
               case 400:
                 this.dialogService.displayErrorDialog(
-                  'Bad request: ' + error.error['error_message']
+                  'Bad request: ' + this.formatErrorMessage(error)
                 );
                 break;
               case 401: // login or token expired
                 // if even the frontend doesn't think we're authenticated, then
                 // user probably tried just accessing a protected endpoint
                 if (!this.authenticationService.isAuthenticated$.value) {
-                  this.dialogService.displayErrorDialog(`${error.error["error_message"]} - code ${error.error["code"]}`)
+                  this.dialogService.displayErrorDialog(`Code ${this.formatErrorMessage(error)}`)
                   this.authenticationService.logout(undefined, true)
                   break
                 }
@@ -86,9 +90,7 @@ export class AuthInterceptorService implements HttpInterceptor {
                 }
                 break;
               case 403: //forbidden
-                this.dialogService.displayErrorDialog(
-                  '403 - Forbidden: ' + error.error.error_message
-                );
+                this.dialogService.displayErrorDialog(`403 - Forbidden: ${this.formatErrorMessage(error)}`);
                 this.authenticationService.logout(undefined, true);
                 break;
               default:
