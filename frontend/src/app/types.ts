@@ -1,7 +1,7 @@
 
 export interface AuthError {
   errorMessage: string
-  code: number
+  errorCode: number
 }
 
 export interface HttpResponse {

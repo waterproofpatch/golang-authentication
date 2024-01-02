@@ -39,7 +39,7 @@
       verificaiton code.</p>
     <p *ngIf="codeResent==='true'">Verification code resent.</p>
     <div *ngIf="error" class="error">Login failed: {{ error }}</div>
-    <div *ngIf="(authenticationService.error_code$ | async)==2" (click)="login(true)">Resend Code</div>
+    <div *ngIf="(authenticationService.errorCode$ | async)==2" (click)="login(true)">Resend Code</div>
     <div mat-dialog-content>
       <form [formGroup]="loginForm">
         <mat-form-field appearance="fill">

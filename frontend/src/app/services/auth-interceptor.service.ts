@@ -22,9 +22,11 @@ export class AuthInterceptorService implements HttpInterceptor {
    * @returns an error string
    */
   private formatErrorMessage(error: HttpResponse | AuthError): string {
-    if ('error_message' in error) {
-      return `${error.code}: ${error.error_message}`
+    // authentication
+    if ('errorMessage' in error) {
+      return `${error.errorCode}: ${error.errorMessage}`
     }
+    // app
     if ('message' in error) {
       return `${error.code}: ${error.message}`
     }

@@ -190,11 +190,11 @@ export class AuthenticationService extends BaseService {
       .pipe(
         catchError((error: any) => {
           if (error instanceof HttpErrorResponse) {
-            this.error$.next(error.error.error_message);
-            this.error_code$.next(0); // send a benign event so observers can close modals
+            this.error$.next(error.error.errorMessage);
+            this.errorCode$.next(0); // send a benign event so observers can close modals
           } else {
             this.error$.next('Unexpected error');
-            this.error_code$.next(0); // send a benign event so observers can close modals
+            this.errorCode$.next(0); // send a benign event so observers can close modals
           }
           return throwError(() => new Error("Failed registering"));
         }),
@@ -203,7 +203,7 @@ export class AuthenticationService extends BaseService {
       .subscribe((x: RegisterResponse) => {
         console.log('registration completed OK: ' + x.requiresVerification);
         this.error$.next(''); // send a benign event so observers can close modals
-        this.error_code$.next(0); // send a benign event so observers can close modals
+        this.errorCode$.next(0); // send a benign event so observers can close modals
         this.router.navigateByUrl(`/authentication?mode=login&requiresVerification=${x.requiresVerification}`);
       });
   }
@@ -219,18 +219,11 @@ export class AuthenticationService extends BaseService {
       .pipe(
         catchError((error: any) => {
           if (error instanceof HttpErrorResponse) {
-            // TODO use a well defined type
-            if (error.error.error_code == 2) {
-
-              this.error$.next(`Account not yet verified.`);
-              this.error_code$.next(error.error.error_code)
-              return throwError(() => new Error("Failed logging in"));
-            }
-            this.error$.next(error.error.error_message);
-            this.error_code$.next(0); // send a benign event so observers can close modals
+            this.error$.next(error.error.errorMessage);
+            this.errorCode$.next(error.error.errorCode); // send a benign event so observers can close modals
           } else {
             this.error$.next('Unexpected error');
-            this.error_code$.next(0); // send a benign event so observers can close modals
+            this.errorCode$.next(0); // send a benign event so observers can close modals
           }
           return throwError(() => new Error("Failed logging in"));
         }),
@@ -240,14 +233,14 @@ export class AuthenticationService extends BaseService {
         if (x.token == undefined && x.message != undefined) {
           console.log("Got something other than a token...")
           this.error$.next(''); // send a benign event so observers can close modals
-          this.error_code$.next(0); // send a benign event so observers can close modals
+          this.errorCode$.next(0); // send a benign event so observers can close modals
           this.router.navigateByUrl(`/authentication?mode=login&codeResent=true`);
           return
         }
         console.log('Setting token to ' + x.token);
         this.setToken(x.token)
         this.error$.next(''); // send a benign event so observers can close modals
-        this.error_code$.next(0); // send a benign event so observers can close modals
+        this.errorCode$.next(0); // send a benign event so observers can close modals
         this.router.navigateByUrl('/');
       });
   }
