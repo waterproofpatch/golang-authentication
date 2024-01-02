@@ -38,8 +38,8 @@
     <p *ngIf="requiresVerification==='true'">Account creation successful! Check your email for a
       verificaiton code.</p>
     <p *ngIf="codeResent==='true'">Verification code resent.</p>
-    <div *ngIf="error" class="error">Login failed: {{ error }}</div>
-    <div *ngIf="(authenticationService.errorCode$ | async)==2" (click)="login(true)">Resend Code</div>
+    <p *ngIf="error" class="error">Login failed: {{ error }}
+    </p>
     <div mat-dialog-content>
       <form [formGroup]="loginForm">
         <mat-form-field appearance="fill">
@@ -58,6 +58,10 @@
             [mtBasicSpinner]="(authenticationService.isLoading$ | async) ?? false">
             Login
           </button>
+        </div>
+        <div mat-dialog-actions>
+          <button mat-stroked-button color="primary" *ngIf="(authenticationService.errorCode$ | async)==2"
+            (click)="login(true)">Resend Code</button>
         </div>
       </form>
     </div>
