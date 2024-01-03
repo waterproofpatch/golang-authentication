@@ -2,12 +2,14 @@ package app
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"image"
 	"image/jpeg"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"os/exec"
 	"regexp"
 	"time"
@@ -31,20 +33,18 @@ func isValidInput(input string) bool {
 	return alphanumeric.MatchString(input)
 }
 
-// execute the python script 'main.py' in /email_service to send an email
+// execute the python script 'plant_care_driver.py' in /email_service to send an email
 func sendEmail(plant *PlantModel, needsFertilizer bool, needsWater bool) {
 	fmt.Println("Building email...")
-	args := []string{"/email_service/main.py", "--recipient", plant.Email, "--plant-name", plant.Name, "--username", plant.Username}
+	args := []string{"/email_service/plant_care_driver.py", "--recipient", plant.Email, "--plant-name", plant.Name, "--username", plant.Username}
 	if needsFertilizer {
 		args = append(args, "--needs-fertilizer")
 	}
 	if needsWater {
 		args = append(args, "--needs-water")
 	}
-	fmt.Println("About to send email...")
 	cmd := exec.Command("/email_service/venv/bin/python", args...)
-	fmt.Println("Sent email.")
-	stdout, err := cmd.Output()
+	stdout, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(string(stdout), err.Error())
 		return
@@ -260,4 +260,51 @@ func ImageUploadHandler(w http.ResponseWriter, r *http.Request) int {
 	// Return a success message
 	fmt.Println("Stored image successfully.")
 	return int(image.ID)
+}
+
+// send a generic email message
+func sendGenericEmail(email string, content string) {
+	go func() {
+		args := []string{"/email_service/generic_driver.py", "--recipient", email, "--content", content, "--subject", "Verify your account"}
+		cmd := exec.Command("/email_service/venv/bin/python", args...)
+		stdout, err := cmd.CombinedOutput()
+		if err != nil {
+			fmt.Println(string(stdout), err.Error())
+			return
+		}
+		fmt.Println(string(stdout))
+	}()
+}
+
+// handle new user registered and needs to be emailed their verification code
+func RegistrationCallback(email string, verificationCode string) error {
+	fmt.Printf("email=%v, verificationCode=%v\n", email, verificationCode)
+	// the backend will redirect
+	url := fmt.Sprintf("https://strider.azurewebsites.net/api/verify?code=%s&email=%s", verificationCode, email)
+	if os.Getenv("DEBUG") == "true" {
+		url = fmt.Sprintf("http://localhost:5000/api/verify?code=%s&email=%s", verificationCode, email)
+	}
+	// Craft the email content
+	emailContent := fmt.Sprintf(`Hello,
+
+Thank you for registering with us. We're excited to have you on board!
+
+To verify your account, please click the link below:
+
+%s
+
+If you did not request this, please ignore this email.
+
+Your friends at
+plantmindr.com`, url)
+
+	sendGenericEmail(email, emailContent)
+	return nil
+}
+
+// write an HTTP JSON response message
+func WriteResponse(w http.ResponseWriter, message string, status int, code ResponseCode) {
+	w.Header().Set("content-type", "application/json")
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(&HttpResponse{Message: message, Code: code})
 }

@@ -10,6 +10,10 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 })
 export class AuthenticationComponent implements OnInit {
   mode: string = '';
+  verified: string = '';
+  requiresVerification: string = '';
+  codeResent: string = '';
+
   hide = true;
   registerForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -30,11 +34,28 @@ export class AuthenticationComponent implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
+      // mode is "login" or "register"
       this.mode = params['mode'];
+      this.verified = params['verified'];
+      this.requiresVerification = params['requiresVerification'];
+      this.codeResent = params['codeResent'];
+      // user navigated away from a page that may have contained an error
+      this.error = ""
+    });
+    this.authenticationService.error$.subscribe((error: string) => {
+      if (error.length > 0) {
+        this.error = error;
+      } else {
+        this.error = '';
+      }
     });
   }
 
-  register(): void {
+  /**
+   * called from the UI when the user clicks the register button
+   * @returns 
+   */
+  public register(): void {
     if (!this.registerForm.valid) {
       this.error = 'Fix validation errors.';
       return;
@@ -57,15 +78,12 @@ export class AuthenticationComponent implements OnInit {
     );
   }
 
-  login() {
+  /**
+   * called from the UI when the user clicks the login button
+   * @returns 
+   */
+  public login(resendCode?: boolean) {
     this.error = '';
-    this.authenticationService.error$.subscribe((error: string) => {
-      if (error.length > 0) {
-        this.error = error;
-      } else {
-        this.error = '';
-      }
-    });
     if (this.loginForm.controls.email.value == null) {
       console.log("Email is NULL")
       return;
@@ -76,10 +94,17 @@ export class AuthenticationComponent implements OnInit {
     }
     this.authenticationService.login(
       this.loginForm.controls.email.value,
-      this.loginForm.controls.password.value
+      this.loginForm.controls.password.value,
+      resendCode
     );
   }
-  getErrorMessage() {
+
+  /**
+   * called from the UI via the forms error handling code to display errors 
+   * to the user
+   * @returns string error representation
+   */
+  public getErrorMessage(): string {
     if (this.loginForm.controls.email.hasError('required')) {
       return 'You must enter a value';
     }

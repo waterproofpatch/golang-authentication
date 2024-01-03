@@ -12,6 +12,8 @@ export class BaseService extends BaseComponent {
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
   // this error string is for modals to display login or registration errors.
   error$ = new Subject<string>();
+  // error code
+  errorCode$ = new Subject<number>();
 
   public httpOptionsNonJson = {
     headers: new HttpHeaders({

@@ -4,12 +4,12 @@ RUN apk add python3 tzdata
 RUN go install github.com/cosmtrek/air@latest
 WORKDIR /app/src
 
-COPY src/email_service/main.py /email_service/
+COPY src/email_service/*.py /email_service/
 COPY src/email_service/requirements.txt /email_service/
 WORKDIR /email_service
 RUN python3 -m venv venv
 RUN venv/bin/python -m pip install -r requirements.txt
 
-ENV SITE_TIMESTAMP="images-2_c3a2116_12/30/23 01:04:29"
+ENV SITE_TIMESTAMP="verification_2aae494_01/03/24 00:34:02"
 
 WORKDIR /app/src

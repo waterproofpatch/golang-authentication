@@ -15,6 +15,10 @@ form button {
   float: right;
 }
 
+/* button {
+  margin: 5px;
+} */
+
 .error {
   margin: 5px;
   color: red;

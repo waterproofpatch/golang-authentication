@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/waterproofpatch/go_authentication/authentication"
+	auth_types "github.com/waterproofpatch/go_authentication/types"
 
 	"github.com/gorilla/mux"
 )
@@ -24,7 +25,7 @@ func images(w http.ResponseWriter, r *http.Request) {
 		if hasImageId {
 			imageIdNo, err := strconv.Atoi(imageId)
 			if err != nil {
-				authentication.WriteError(w, "Invalid image ID", http.StatusBadRequest)
+				WriteResponse(w, "Invalid image ID", http.StatusBadRequest, Generic)
 				return
 			}
 			fmt.Printf("Handling request for imageId=%d\n", imageIdNo)
@@ -32,14 +33,14 @@ func images(w http.ResponseWriter, r *http.Request) {
 			var img ImageModel
 			img.ID = uint(imageIdNo)
 			if err := db.First(&img, img.ID).Error; err != nil {
-				authentication.WriteError(w, "Failed loading image", http.StatusBadRequest)
+				WriteResponse(w, "Failed loading image", http.StatusBadRequest, Generic)
 				return
 			}
 			w.Header().Set("Content-WateringFrequency", "image/jpeg")
 			w.Write(img.Data)
 			return
 		} else {
-			authentication.WriteError(w, "Must supply image ID!", http.StatusBadRequest)
+			WriteResponse(w, "Must supply image ID!", http.StatusBadRequest, Generic)
 		}
 		break
 	}
@@ -61,7 +62,7 @@ func version(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
+func plants(w http.ResponseWriter, r *http.Request, claims *auth_types.JWTData) {
 	db := authentication.GetDb()
 	var plants []PlantModel
 	var plant PlantModel
@@ -78,17 +79,17 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		}
 	case "DELETE":
 		if claims == nil {
-			authentication.WriteError(w, "Must be logged in to delete plants.", http.StatusUnauthorized)
+			WriteResponse(w, "Must be logged in to delete plants.", http.StatusUnauthorized, Generic)
 			return
 		}
 		if !hasPlantId {
-			authentication.WriteError(w, "Must provide id!", http.StatusBadRequest)
+			WriteResponse(w, "Must provide id!", http.StatusBadRequest, Generic)
 			break
 		}
 		db.Find(&plant, id)
 		if claims != nil && plant.Email != claims.Email {
 			fmt.Printf("User %s tried deleting plant belonging to %s\n", claims.Email, plant.Email)
-			authentication.WriteError(w, "This isn't your plant!", http.StatusBadRequest)
+			WriteResponse(w, "This isn't your plant!", http.StatusBadRequest, Generic)
 			return
 		}
 		fmt.Printf("Deleting plant imageId=%d\n", plant.ImageId)
@@ -98,7 +99,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		break
 	case "POST":
 		if claims == nil {
-			authentication.WriteError(w, "Must be logged in to add plants.", http.StatusUnauthorized)
+			WriteResponse(w, "Must be logged in to add plants.", http.StatusUnauthorized, Generic)
 			return
 		}
 		imageId := ImageUploadHandler(w, r)
@@ -117,19 +118,19 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		fmt.Printf("Adding plant as: %v", plant)
 		err := AddPlant(db, &plant)
 		if err != nil {
-			authentication.WriteError(w, err.Error(), 400)
+			WriteResponse(w, err.Error(), http.StatusBadRequest, Generic)
 			return
 		}
 		break
 	case "PUT":
 		if claims == nil {
-			authentication.WriteError(w, "Must be logged in to edit plants.", http.StatusUnauthorized)
+			WriteResponse(w, "Must be logged in to edit plants.", http.StatusUnauthorized, Generic)
 			return
 		}
 		// make a new plant based on form values
 		err := json.Unmarshal([]byte(r.FormValue("plant")), &plant)
 		if err != nil {
-			authentication.WriteError(w, "Invalid plant ID", http.StatusBadRequest)
+			WriteResponse(w, "Invalid plant ID", http.StatusBadRequest, Generic)
 			return
 		}
 
@@ -138,7 +139,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 		db.First(&existingPlant, plant.ID)
 		if existingPlant.Email != claims.Email {
 			fmt.Printf("User %s tried editing plant belonging to %s\n", claims.Email, existingPlant.Email)
-			authentication.WriteError(w, "This isn't your plant!", http.StatusBadRequest)
+			WriteResponse(w, "This isn't your plant!", http.StatusBadRequest, Generic)
 			return
 		}
 
@@ -166,7 +167,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 
 		err = UpdatePlant(db, &plant, isNewImage)
 		if err != nil {
-			authentication.WriteError(w, err.Error(), 400)
+			WriteResponse(w, err.Error(), http.StatusBadRequest, Generic)
 			return
 		}
 		break
@@ -191,7 +192,7 @@ func plants(w http.ResponseWriter, r *http.Request, claims *authentication.JWTDa
 	json.NewEncoder(w).Encode(plants)
 }
 
-func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWTData) {
+func comments(w http.ResponseWriter, r *http.Request, claims *auth_types.JWTData) {
 	w.Header().Set("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
@@ -206,11 +207,11 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 	case "DELETE":
 		commentId, hasCommentId := vars["id"]
 		if !hasCommentId {
-			authentication.WriteError(w, "Invalid commentId ID", http.StatusBadRequest)
+			WriteResponse(w, "Invalid commentId ID", http.StatusBadRequest, Generic)
 			return
 		}
 		if claims == nil {
-			authentication.WriteError(w, "Must be logged in to delete comments.", http.StatusUnauthorized)
+			WriteResponse(w, "Must be logged in to delete comments.", http.StatusUnauthorized, Generic)
 			return
 		}
 		var comment CommentModel
@@ -220,7 +221,7 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 
 		// users should be able to delete comments by others for their plant
 		if plant.Email != claims.Email && comment.Email != claims.Email {
-			authentication.WriteError(w, "This isn't your comment, nor a comment on your plant!", http.StatusBadRequest)
+			WriteResponse(w, "This isn't your comment, nor a comment on your plant!", http.StatusBadRequest, Generic)
 			return
 		}
 
@@ -229,7 +230,7 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		plantId = strconv.FormatUint(uint64(plant.ID), 10)
 	case "POST":
 		if claims == nil {
-			authentication.WriteError(w, "Must be logged in to post comments.", http.StatusUnauthorized)
+			WriteResponse(w, "Must be logged in to post comments.", http.StatusUnauthorized, Generic)
 			return
 		}
 
@@ -251,7 +252,7 @@ func comments(w http.ResponseWriter, r *http.Request, claims *authentication.JWT
 		// make sure the plant is public
 		db.Where("id = ?", comment.PlantID).First(&plant)
 		if !plant.IsPublic && plant.Email != claims.Email {
-			authentication.WriteError(w, "This plant is not public and also not yours, you cannot comment on it!", http.StatusBadRequest)
+			WriteResponse(w, "This plant is not public and also not yours, you cannot comment on it!", http.StatusBadRequest, Generic)
 			return
 		}
 
