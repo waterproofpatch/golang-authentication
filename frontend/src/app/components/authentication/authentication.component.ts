@@ -18,18 +18,18 @@ export class AuthenticationComponent implements OnInit {
     email: new FormControl('', [Validators.required, Validators.email]),
   });
   passwordResetForm = new FormGroup({
-    resetCode: new FormControl(''),
-    password: new FormControl(''),
-    passwordConfirmation: new FormControl(''),
+    resetCode: new FormControl('', [Validators.required]),
+    password: new FormControl('', [Validators.required]),
+    passwordConfirmation: new FormControl('', [Validators.required]),
   });
   registerForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     username: new FormControl('', [Validators.required]),
-    password: new FormControl(''),
+    password: new FormControl('', [Validators.required]),
   });
   loginForm = new FormGroup({
     email: new FormControl<string>('', [Validators.required, Validators.email]),
-    password: new FormControl(''),
+    password: new FormControl('', Validators.required),
   });
 
   error: string = '';
@@ -47,6 +47,7 @@ export class AuthenticationComponent implements OnInit {
       this.requiresVerification = params['requiresVerification'];
       this.resetCode = params['resetCode'];
       if (this.resetCode != null) {
+        // TODO consider making this invisible, like a user session value
         this.passwordResetForm.controls.resetCode.setValue(this.resetCode)
       }
       // user navigated away from a page that may have contained an error
@@ -187,10 +188,14 @@ export class AuthenticationComponent implements OnInit {
         this.error = '';
       }
     });
-    if (this.passwordResetForm.controls.password.value == null || this.passwordResetForm.controls.passwordConfirmation.value == null) {
+    if (this.passwordResetForm.controls.password.value == null ||
+      this.passwordResetForm.controls.passwordConfirmation.value == null ||
+      this.passwordResetForm.controls.resetCode.value == null
+    ) {
       return;
     }
-    this.authenticationService.resetPassword(
+    this.authenticationService.performPasswordReset(
+      this.passwordResetForm.controls.resetCode.value,
       this.passwordResetForm.controls.password.value,
       this.passwordResetForm.controls.passwordConfirmation.value,
     );

@@ -179,9 +179,11 @@ export class AuthenticationService extends BaseService {
    * 
    * @param password new password
    * @param passwordConfirmation confirm new password
+   * @param resetCode the reset code for authentication
    * @returns 
    */
-  public resetPassword(password: string, passwordConfirmation: string): void {
+  public performPasswordReset(password: string, passwordConfirmation: string, resetCode: string): void {
+    this.isLoading$.next(true);
     return
   }
 
