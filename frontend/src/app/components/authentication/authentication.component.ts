@@ -12,9 +12,16 @@ export class AuthenticationComponent implements OnInit {
   mode: string = '';
   verified: string = '';
   requiresVerification: string = '';
-  codeResent: string = '';
-  passwordReset: string = '';
+  resetCode: string = '';
 
+  requestPasswordResetForm = new FormGroup({
+    email: new FormControl('', [Validators.required, Validators.email]),
+  });
+  passwordResetForm = new FormGroup({
+    resetCode: new FormControl(''),
+    password: new FormControl(''),
+    passwordConfirmation: new FormControl(''),
+  });
   registerForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     username: new FormControl('', [Validators.required]),
@@ -34,12 +41,14 @@ export class AuthenticationComponent implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
-      // mode is "login" or "register"
+      // mode is "login" or "register" or "resetPassword"
       this.mode = params['mode'];
       this.verified = params['verified'];
       this.requiresVerification = params['requiresVerification'];
-      this.codeResent = params['codeResent'];
-      this.passwordReset = params['passwordReset'];
+      this.resetCode = params['resetCode'];
+      if (this.resetCode != null) {
+        this.passwordResetForm.controls.resetCode.setValue(this.resetCode)
+      }
       // user navigated away from a page that may have contained an error
       this.error = ""
     });
@@ -106,8 +115,26 @@ export class AuthenticationComponent implements OnInit {
    * @returns string error representation
    */
   public getErrorMessage(): string {
+    if (this.passwordResetForm.controls.resetCode.hasError('required')) {
+      return 'Not a valid reset code';
+    }
+    if (this.passwordResetForm.controls.password.hasError('required')) {
+      return 'Not a valid password';
+    }
+    if (this.passwordResetForm.controls.passwordConfirmation.hasError('required')) {
+      return 'Not a valid password';
+    }
+    if (this.passwordResetForm.controls.password.value != this.passwordResetForm.controls.passwordConfirmation.value) {
+      return "Passwords do not match."
+    }
     if (this.loginForm.controls.email.hasError('required')) {
       return 'You must enter a value';
+    }
+    if (this.requestPasswordResetForm.controls.email.hasError('required')) {
+      return 'You must enter a value';
+    }
+    if (this.requestPasswordResetForm.controls.email.hasError('email')) {
+      return 'Not a valid email';
     }
     if (this.registerForm.controls.email.hasError('required')) {
       return 'You must enter a value';
@@ -118,5 +145,54 @@ export class AuthenticationComponent implements OnInit {
     return this.loginForm.controls.email.hasError('email')
       ? 'Not a valid email'
       : '';
+  }
+
+  /**
+   * ask the backend to begin a password reset workflow
+   */
+  public requestPasswordReset(): void {
+    if (!this.requestPasswordResetForm.valid) {
+      this.error = 'Fix validation errors.';
+      return;
+    }
+    this.error = '';
+    // TODO subscribe to the error once at construction, not each method
+    this.authenticationService.error$.subscribe((error: string) => {
+      if (error.length > 0) {
+        this.error = error;
+      } else {
+        this.error = '';
+      }
+    });
+    if (this.requestPasswordResetForm.controls.email.value != null) {
+      this.authenticationService.requestPasswordReset(this.requestPasswordResetForm.controls.email.value)
+    }
+  }
+
+  /**
+   * when a user has filled out the password reset form, submit this request to backend
+   * @returns 
+   */
+  public performPasswordReset(): void {
+    if (!this.passwordResetForm.valid) {
+      this.error = 'Fix validation errors.';
+      return;
+    }
+    this.error = '';
+    // TODO subscribe to the error once at construction, not each method
+    this.authenticationService.error$.subscribe((error: string) => {
+      if (error.length > 0) {
+        this.error = error;
+      } else {
+        this.error = '';
+      }
+    });
+    if (this.passwordResetForm.controls.password.value == null || this.passwordResetForm.controls.passwordConfirmation.value == null) {
+      return;
+    }
+    this.authenticationService.resetPassword(
+      this.passwordResetForm.controls.password.value,
+      this.passwordResetForm.controls.passwordConfirmation.value,
+    );
   }
 }

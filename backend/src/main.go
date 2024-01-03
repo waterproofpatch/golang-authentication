@@ -98,6 +98,7 @@ func main() {
 		os.Getenv("DATABASE_URL"),
 		dropTables,
 		true, // requiresVerificaiton
+		app.ResetPasswordCallback,
 		app.RegistrationCallback,
 		registrationCallbackUrl)
 

@@ -23,6 +23,7 @@ interface RegisterResponse {
 })
 export class AuthenticationService extends BaseService {
   // apis for the authentication service
+  requestResetPasswordApiUrl = '/api/reset';
   loginApiUrl = '/api/login';
   logoutApiUrl = '/api/logout';
   registerApiUrl = '/api/register';
@@ -176,6 +177,40 @@ export class AuthenticationService extends BaseService {
 
   /**
    * 
+   * @param password new password
+   * @param passwordConfirmation confirm new password
+   * @returns 
+   */
+  public resetPassword(password: string, passwordConfirmation: string): void {
+    return
+  }
+
+  public requestPasswordReset(email: string): void {
+    this.isLoading$.next(true);
+    this.requestPasswordResetHttp(email)
+      .pipe(
+        catchError((error: any) => {
+          if (error instanceof HttpErrorResponse) {
+            this.error$.next(error.error.errorMessage);
+            this.errorCode$.next(0); // send a benign event so observers can close modals
+          } else {
+            this.error$.next('Unexpected error');
+            this.errorCode$.next(0); // send a benign event so observers can close modals
+          }
+          return throwError(() => new Error("Failed requesting password reset"));
+        }),
+        finalize(() => this.isLoading$.next(false))
+      )
+      .subscribe((x: any) => {
+        this.error$.next(''); // send a benign event so observers can close modals
+        this.errorCode$.next(0); // send a benign event so observers can close modals
+        this.router.navigateByUrl(`/authentication?mode=performPasswordReset`);
+      });
+
+  }
+
+  /**
+   * 
    * @param email the email to register with
    * @param username the username to register with
    * @param password the password to register with
@@ -307,6 +342,16 @@ export class AuthenticationService extends BaseService {
     }
     return this.http.post(
       this.getUrlBase() + this.loginApiUrl,
+      data,
+      this.httpOptions
+    );
+  }
+  private requestPasswordResetHttp(email: string): Observable<any> {
+    const data = {
+      email: email,
+    };
+    return this.http.post(
+      this.getUrlBase() + this.requestResetPasswordApiUrl,
       data,
       this.httpOptions
     );
