@@ -38,6 +38,7 @@
     <p *ngIf="requiresVerification==='true'">Account creation successful! Check your email for a
       verificaiton code.</p>
     <p *ngIf="codeResent==='true'">Verification code resent.</p>
+    <p *ngIf="passwordReset==='true'">Password reset successfully.</p>
     <p *ngIf="error" class="error">Login failed: {{ error }}
     </p>
     <div mat-dialog-content>

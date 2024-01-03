@@ -13,8 +13,8 @@ export class AuthenticationComponent implements OnInit {
   verified: string = '';
   requiresVerification: string = '';
   codeResent: string = '';
+  passwordReset: string = '';
 
-  hide = true;
   registerForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     username: new FormControl('', [Validators.required]),
@@ -39,6 +39,7 @@ export class AuthenticationComponent implements OnInit {
       this.verified = params['verified'];
       this.requiresVerification = params['requiresVerification'];
       this.codeResent = params['codeResent'];
+      this.passwordReset = params['passwordReset'];
       // user navigated away from a page that may have contained an error
       this.error = ""
     });
