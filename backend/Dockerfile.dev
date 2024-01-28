@@ -10,6 +10,6 @@ WORKDIR /email_service
 RUN python3 -m venv venv
 RUN venv/bin/python -m pip install -r requirements.txt
 
-ENV SITE_TIMESTAMP="10-add-password-reset-workflow_0944b3a_01/03/24 01:55:18"
+ENV SITE_TIMESTAMP="10-add-password-reset-workflow_571fe24_01/27/24 21:58:14"
 
 WORKDIR /app/src
