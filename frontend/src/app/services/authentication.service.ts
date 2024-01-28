@@ -187,6 +187,10 @@ export class AuthenticationService extends BaseService {
     return
   }
 
+  /**
+   * request the backend to begin the password reset workflow.
+   * @param email email requesting the password reset.
+   */
   public requestPasswordReset(email: string): void {
     this.isLoading$.next(true);
     this.requestPasswordResetHttp(email)
