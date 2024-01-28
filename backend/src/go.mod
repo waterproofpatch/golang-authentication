@@ -9,7 +9,7 @@ require (
 	gorm.io/gorm v1.24.2
 )
 
-#replace github.com/waterproofpatch/go_authentication v1.0.0 => ./go_authentication
+//replace github.com/waterproofpatch/go_authentication v1.0.0 => ./go_authentication
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
