@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 make down
 pg_dump -h ${DB_SERVER}.postgres.database.azure.com -d ${DB_NAME} -U ${DB_USERNAME} -p 5432 -T cron.job -T cron.job_run_details > backup.sql
 docker-compose up -d db
