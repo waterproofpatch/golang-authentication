@@ -128,67 +128,70 @@ func needsCare(lastCareDate string, intervalDays int) bool {
 
 func StartTimer(stopCh chan bool, db *gorm.DB) {
 	// Create a ticker that ticks every 5 seconds
-	ticker := time.NewTicker(5 * time.Second)
+	// this is bugged, and appears to be causing plants not to
+	// persist last water dates
+	return
+	// ticker := time.NewTicker(5 * time.Second)
 
-	for {
-		select {
-		case <-ticker.C:
-			// fmt.Printf("Tick...\n")
-			var plants []PlantModel
-			db.Find(&plants)
+	// for {
+	// 	select {
+	// 	case <-ticker.C:
+	// 		// fmt.Printf("Tick...\n")
+	// 		var plants []PlantModel
+	// 		db.Find(&plants)
 
-			for _, plant := range plants {
-				if !plant.DoNotify {
-					continue
-				}
-				needsWaterCare := false
-				needsFertilizeCare := false
-				if plant.LastMoistDate != "" && plant.LastMoistNotifyDate == "" {
-					// fmt.Printf("Plant was marked as moist on %s\n", plant.LastMoistDate)
-					// Parse the date string into a time.Time object
-					date, err := time.Parse("01/02/2006", plant.LastMoistDate)
-					if err != nil {
-						panic(err)
-					}
-					// Calculate the duration between the current time and the date
-					duration := time.Since(date)
+	// 		for _, plant := range plants {
+	// 			if !plant.DoNotify {
+	// 				continue
+	// 			}
+	// 			needsWaterCare := false
+	// 			needsFertilizeCare := false
+	// 			if plant.LastMoistDate != "" && plant.LastMoistNotifyDate == "" {
+	// 				// fmt.Printf("Plant was marked as moist on %s\n", plant.LastMoistDate)
+	// 				// Parse the date string into a time.Time object
+	// 				date, err := time.Parse("01/02/2006", plant.LastMoistDate)
+	// 				if err != nil {
+	// 					panic(err)
+	// 				}
+	// 				// Calculate the duration between the current time and the date
+	// 				duration := time.Since(date)
 
-					// moist checks are daily, for now
-					if duration > 24*time.Hour {
-						needsWaterCare = true
-					}
-				}
-				// if a notification has not been set since the last
-				// time the plant care date(s) have changed, check if we need
-				// to send a notification
-				if plant.LastWaterNotifyDate == "" {
-					// fmt.Printf("Checking if plant %d (name=%s) needs water care...\n", plant.Id, plant.Name)
-					needsWaterCare = needsCare(plant.LastWaterDate, plant.WateringFrequency)
-				}
-				if plant.LastFertilizeNotifyDate == "" {
-					if plant.FertilizingFrequency > 0 {
-						// fmt.Printf("Checking if plant %d (name=%s) needs fertilizer care...\n", plant.Id, plant.Name)
-						needsFertilizeCare = needsCare(plant.LastFertilizeDate, plant.FertilizingFrequency)
-					}
-				}
-				// is the plant overdue for watering
-				if needsFertilizeCare || needsWaterCare {
-					fmt.Printf("LastFertilizeNotifyDate=%s\n", plant.LastFertilizeNotifyDate)
-					fmt.Printf("LastWaterNotifyDate=%s\n", plant.LastWaterNotifyDate)
-					fmt.Printf("Sending notification to owner of plant %d (name=%s): %v (needsWaterCare=%v, needsFertilizeCare=%v)!\n", plant.ID, plant.Name, plant.Email, needsWaterCare, needsFertilizeCare)
-					sendEmail(&plant,
-						needsFertilizeCare,
-						needsWaterCare)
-					db.Save(&plant)
-				}
-			}
-		case <-stopCh:
-			// Stop the ticker and exit the goroutine
-			fmt.Println("Stopping timer...")
-			ticker.Stop()
-			return
-		}
-	}
+	// 				// moist checks are daily, for now
+	// 				if duration > 24*time.Hour {
+	// 					needsWaterCare = true
+	// 				}
+	// 			}
+	// 			// if a notification has not been set since the last
+	// 			// time the plant care date(s) have changed, check if we need
+	// 			// to send a notification
+	// 			if plant.LastWaterNotifyDate == "" {
+	// 				// fmt.Printf("Checking if plant %d (name=%s) needs water care...\n", plant.Id, plant.Name)
+	// 				needsWaterCare = needsCare(plant.LastWaterDate, plant.WateringFrequency)
+	// 			}
+	// 			if plant.LastFertilizeNotifyDate == "" {
+	// 				if plant.FertilizingFrequency > 0 {
+	// 					// fmt.Printf("Checking if plant %d (name=%s) needs fertilizer care...\n", plant.Id, plant.Name)
+	// 					needsFertilizeCare = needsCare(plant.LastFertilizeDate, plant.FertilizingFrequency)
+	// 				}
+	// 			}
+	// 			// is the plant overdue for watering
+	// 			if needsFertilizeCare || needsWaterCare {
+	// 				fmt.Printf("LastFertilizeNotifyDate=%s\n", plant.LastFertilizeNotifyDate)
+	// 				fmt.Printf("LastWaterNotifyDate=%s\n", plant.LastWaterNotifyDate)
+	// 				fmt.Printf("Sending notification to owner of plant %d (name=%s): %v (needsWaterCare=%v, needsFertilizeCare=%v)!\n", plant.ID, plant.Name, plant.Email, needsWaterCare, needsFertilizeCare)
+	// 				sendEmail(&plant,
+	// 					needsFertilizeCare,
+	// 					needsWaterCare)
+	// 				db.Save(&plant)
+	// 			}
+	// 		}
+	// 	case <-stopCh:
+	// 		// Stop the ticker and exit the goroutine
+	// 		fmt.Println("Stopping timer...")
+	// 		ticker.Stop()
+	// 		return
+	// 	}
+	// }
 }
 
 // returns -1 on failure, 0 on no-op, ImageModel.ID stored in database on success

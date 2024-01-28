@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Usage: ./your-script.sh [--load]
 # --load: Load the downloaded database into the local Docker service.
