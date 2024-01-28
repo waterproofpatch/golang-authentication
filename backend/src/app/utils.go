@@ -285,7 +285,7 @@ func ResetPasswordCallback(email string, resetCode string) error {
 	// the backend will redirect
 	url := fmt.Sprintf("https://www.plantmindr.com/authentication?mode=performPasswordReset&resetCode=%s", resetCode)
 	if os.Getenv("DEBUG") == "true" {
-		url = fmt.Sprintf("http://localhost:4200/authentication?mode=performPasswordReset&resetCode=%s", resetCode)
+		url = fmt.Sprintf("https://localhost:4200/authentication?mode=performPasswordReset&resetCode=%s", resetCode)
 	}
 	// Craft the email content
 	emailContent := fmt.Sprintf(`Hello,
