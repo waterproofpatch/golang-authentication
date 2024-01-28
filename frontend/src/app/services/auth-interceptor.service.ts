@@ -70,7 +70,9 @@ export class AuthInterceptorService implements HttpInterceptor {
                 // user probably tried just accessing a protected endpoint
                 if (!this.authenticationService.isAuthenticated$.value) {
                   this.dialogService.displayErrorDialog(`Code ${this.formatErrorMessage(error.error)}`)
-                  this.authenticationService.logout(undefined, true)
+                  if (!this.authenticationService.suspendLoginRedirects) {
+                    this.authenticationService.logout(undefined, true)
+                  }
                   break
                 }
 

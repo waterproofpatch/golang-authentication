@@ -35,6 +35,9 @@ export class AuthenticationService extends BaseService {
   // UI can subscribe to this to reflect authentication state
   isAuthenticated$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
+  // crude indicator to the http interceptor that it is to suspend redirects to login...
+  suspendLoginRedirects: boolean = false
+
   constructor(
     private router: Router,
     private dialogService: DialogService,
@@ -187,6 +190,7 @@ export class AuthenticationService extends BaseService {
     resetCode: string,
     password: string,
     passwordConfirmation: string): void {
+    this.suspendLoginRedirects = true
     this.isLoading$.next(true);
     this.performPasswordResetHttp(email, resetCode, password, passwordConfirmation)
       .pipe(
@@ -200,7 +204,7 @@ export class AuthenticationService extends BaseService {
           }
           return throwError(() => new Error("Failed requesting password reset"));
         }),
-        finalize(() => this.isLoading$.next(false))
+        finalize(() => { this.isLoading$.next(false), this.suspendLoginRedirects = false })
       )
       .subscribe((x: any) => {
         this.error$.next(''); // send a benign event so observers can close modals
@@ -215,6 +219,7 @@ export class AuthenticationService extends BaseService {
    * @param email email requesting the password reset.
    */
   public requestPasswordReset(email: string): void {
+    this.suspendLoginRedirects = true
     this.isLoading$.next(true);
     this.requestPasswordResetHttp(email)
       .pipe(
@@ -228,7 +233,7 @@ export class AuthenticationService extends BaseService {
           }
           return throwError(() => new Error("Failed requesting password reset"));
         }),
-        finalize(() => this.isLoading$.next(false))
+        finalize(() => { this.isLoading$.next(false); this.suspendLoginRedirects = false })
       )
       .subscribe((x: any) => {
         this.error$.next(''); // send a benign event so observers can close modals
