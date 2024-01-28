@@ -182,8 +182,27 @@ export class AuthenticationService extends BaseService {
    * @param resetCode the reset code for authentication
    * @returns 
    */
-  public performPasswordReset(password: string, passwordConfirmation: string, resetCode: string): void {
+  public performPasswordReset(resetCode: string, password: string, passwordConfirmation: string): void {
     this.isLoading$.next(true);
+    this.performPasswordResetHttp(resetCode, password, passwordConfirmation)
+      .pipe(
+        catchError((error: any) => {
+          if (error instanceof HttpErrorResponse) {
+            this.error$.next(error.error.errorMessage);
+            this.errorCode$.next(0); // send a benign event so observers can close modals
+          } else {
+            this.error$.next('Unexpected error');
+            this.errorCode$.next(0); // send a benign event so observers can close modals
+          }
+          return throwError(() => new Error("Failed requesting password reset"));
+        }),
+        finalize(() => this.isLoading$.next(false))
+      )
+      .subscribe((x: any) => {
+        this.error$.next(''); // send a benign event so observers can close modals
+        this.errorCode$.next(0); // send a benign event so observers can close modals
+        this.router.navigateByUrl(`/authentication?mode=login`);
+      });
     return
   }
 
@@ -358,6 +377,19 @@ export class AuthenticationService extends BaseService {
     };
     return this.http.post(
       this.getUrlBase() + this.requestResetPasswordApiUrl,
+      data,
+      this.httpOptions
+    );
+  }
+
+  private performPasswordResetHttp(resetCode: string, password: string, passwordConfirmation: string): Observable<any> {
+    const data = {
+      resetCode: resetCode,
+      password: password,
+      passwordConfirmation: passwordConfirmation,
+    };
+    return this.http.post(
+      this.getUrlBase() + this.requestResetPasswordApiUrl + "?doComplete=true",
       data,
       this.httpOptions
     );
