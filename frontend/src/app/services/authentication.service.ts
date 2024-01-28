@@ -176,7 +176,8 @@ export class AuthenticationService extends BaseService {
   }
 
   /**
-   * 
+   * this uses the reset code sent from the first step of this workflow to 
+   * set the new password.
    * @param password new password
    * @param passwordConfirmation confirm new password
    * @param resetCode the reset code for authentication
