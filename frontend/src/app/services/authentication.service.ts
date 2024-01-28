@@ -182,9 +182,12 @@ export class AuthenticationService extends BaseService {
    * @param resetCode the reset code for authentication
    * @returns 
    */
-  public performPasswordReset(resetCode: string, password: string, passwordConfirmation: string): void {
+  public performPasswordReset(email: string,
+    resetCode: string,
+    password: string,
+    passwordConfirmation: string): void {
     this.isLoading$.next(true);
-    this.performPasswordResetHttp(resetCode, password, passwordConfirmation)
+    this.performPasswordResetHttp(email, resetCode, password, passwordConfirmation)
       .pipe(
         catchError((error: any) => {
           if (error instanceof HttpErrorResponse) {
@@ -382,8 +385,9 @@ export class AuthenticationService extends BaseService {
     );
   }
 
-  private performPasswordResetHttp(resetCode: string, password: string, passwordConfirmation: string): Observable<any> {
+  private performPasswordResetHttp(email: string, resetCode: string, password: string, passwordConfirmation: string): Observable<any> {
     const data = {
+      email: email,
       resetCode: resetCode,
       password: password,
       passwordConfirmation: passwordConfirmation,

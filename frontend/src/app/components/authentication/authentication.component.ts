@@ -13,11 +13,13 @@ export class AuthenticationComponent implements OnInit {
   verified: string = '';
   requiresVerification: string = '';
   resetCode: string = '';
+  resetEmail: string = '';
 
   requestPasswordResetForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
   });
   passwordResetForm = new FormGroup({
+    resetEmail: new FormControl('', [Validators.required]),
     resetCode: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required]),
     passwordConfirmation: new FormControl('', [Validators.required]),
@@ -46,6 +48,7 @@ export class AuthenticationComponent implements OnInit {
       this.verified = params['verified'];
       this.requiresVerification = params['requiresVerification'];
       this.resetCode = params['resetCode'];
+      this.resetEmail = params['email'];
       if (this.resetCode != null) {
         // TODO consider making this invisible, like a user session value
         this.passwordResetForm.controls.resetCode.setValue(this.resetCode)
@@ -189,12 +192,14 @@ export class AuthenticationComponent implements OnInit {
       }
     });
     if (this.passwordResetForm.controls.password.value == null ||
+      this.passwordResetForm.controls.resetEmail.value == null ||
       this.passwordResetForm.controls.passwordConfirmation.value == null ||
       this.passwordResetForm.controls.resetCode.value == null
     ) {
       return;
     }
     this.authenticationService.performPasswordReset(
+      this.passwordResetForm.controls.resetEmail.value,
       this.passwordResetForm.controls.resetCode.value,
       this.passwordResetForm.controls.password.value,
       this.passwordResetForm.controls.passwordConfirmation.value,

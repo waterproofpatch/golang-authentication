@@ -283,9 +283,9 @@ func sendGenericEmail(email string, content string) {
 func ResetPasswordCallback(email string, resetCode string) error {
 	fmt.Printf("resetPasswordCallback for %v", email)
 	// the backend will redirect
-	url := fmt.Sprintf("https://www.plantmindr.com/authentication?mode=performPasswordReset&resetCode=%s", resetCode)
+	url := fmt.Sprintf("https://www.plantmindr.com/authentication?mode=performPasswordReset&resetCode=%s&resetEmail=%s", resetCode, email)
 	if os.Getenv("DEBUG") == "true" {
-		url = fmt.Sprintf("https://localhost:4200/authentication?mode=performPasswordReset&resetCode=%s", resetCode)
+		url = fmt.Sprintf("https://localhost:4200/authentication?mode=performPasswordReset&resetCode=%s&resetEmail=%s", resetCode, email)
 	}
 	// Craft the email content
 	emailContent := fmt.Sprintf(`Hello,
