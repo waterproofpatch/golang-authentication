@@ -14,6 +14,7 @@ export class AuthenticationComponent implements OnInit {
   requiresVerification: string = '';
   resetCode: string = '';
   resetEmail: string = '';
+  resetSuccessful: string = '';
 
   requestPasswordResetForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -46,6 +47,7 @@ export class AuthenticationComponent implements OnInit {
       // mode is "login" or "register" or "resetPassword"
       this.mode = params['mode'];
       this.verified = params['verified'];
+      this.resetSuccessful = params['resetSuccessful'];
       this.requiresVerification = params['requiresVerification'];
       this.resetCode = params['resetCode'];
       this.resetEmail = params['resetEmail'];

@@ -209,7 +209,7 @@ export class AuthenticationService extends BaseService {
       .subscribe((x: any) => {
         this.error$.next(''); // send a benign event so observers can close modals
         this.errorCode$.next(0); // send a benign event so observers can close modals
-        this.router.navigateByUrl(`/authentication?mode=login`);
+        this.router.navigateByUrl(`/authentication?mode=login&resetSuccessful=true`);
       });
     return
   }
