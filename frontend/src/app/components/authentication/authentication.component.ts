@@ -48,7 +48,11 @@ export class AuthenticationComponent implements OnInit {
       this.verified = params['verified'];
       this.requiresVerification = params['requiresVerification'];
       this.resetCode = params['resetCode'];
-      this.resetEmail = params['email'];
+      this.resetEmail = params['resetEmail'];
+      if (this.resetEmail != null) {
+        // TODO consider making this invisible, like a user session value
+        this.passwordResetForm.controls.resetEmail.setValue(this.resetEmail)
+      }
       if (this.resetCode != null) {
         // TODO consider making this invisible, like a user session value
         this.passwordResetForm.controls.resetCode.setValue(this.resetCode)
