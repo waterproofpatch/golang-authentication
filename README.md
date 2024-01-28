@@ -32,9 +32,6 @@ openssl genrsa -out key.pem 2048
 openssl req -new -x509 -key key.pem -out cert.pem -days 365
 ```
 
-Or use:
-```bash frontend/make_certs.sh```
-
 There is a `docker-compose.yml` file at the root of this repo that starts up
 database, backend and frontend services in development mode with auto-reload:
 
