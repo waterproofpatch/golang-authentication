@@ -33,6 +33,8 @@ func startServing(port int, router *mux.Router) {
 	methods := []string{"GET", "POST", "PUT", "DELETE"}
 	headers := []string{"Content-Type", "Access-Control-Allow-Origin", "Authorization"}
 	origins := []string{
+		// from the storage account
+		"https://plantmindrstorage.z13.web.core.windows.net",
 		"https://www.plantmindr.com",
 		"https://plantmindr.com",
 		"www.plantmindr.com",
