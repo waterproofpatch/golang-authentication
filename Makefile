@@ -29,10 +29,16 @@ prod_backend: update_timestamp
 prod: prod_frontend prod_backend
 
 # deploy the production images
-deploy: prod
+deploy: prod deploy_backend deploy_frontend
+
+deploy_frontend: prod_frontend
+	az account set --subscription $(AZ_SUBSCRIPTION_ID)
+	az acr login --name $(AZ_ACR_NAME)
+	docker push $(AZ_ACR_URL)/frontend-prod:latest
+	az webapp restart --resource-group $(AZ_RESOURCE_GROUP) --name $(AZ_FRONTEND_NAME)
+
+deploy_backend: prod_backend
 	az account set --subscription $(AZ_SUBSCRIPTION_ID)
 	az acr login --name $(AZ_ACR_NAME)
 	docker push $(AZ_ACR_URL)/backend-prod:latest
-	docker push $(AZ_ACR_URL)/frontend-prod:latest
 	az webapp restart --resource-group $(AZ_RESOURCE_GROUP) --name $(AZ_BACKEND_NAME)
-	az webapp restart --resource-group $(AZ_RESOURCE_GROUP) --name $(AZ_FRONTEND_NAME)

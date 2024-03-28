@@ -1,4 +1,4 @@
-FROM golang:1.18-alpine AS build
+FROM golang:1.22.1-alpine AS build
 
 RUN apk add python3 tzdata
 RUN go install github.com/cosmtrek/air@latest
@@ -10,6 +10,6 @@ WORKDIR /email_service
 RUN python3 -m venv venv
 RUN venv/bin/python -m pip install -r requirements.txt
 
-ENV SITE_TIMESTAMP="10-add-password-reset-workflow_261d671_01/28/24 21:40:42"
+ENV SITE_TIMESTAMP="main_0974a43_03/27/24 22:43:17"
 
 WORKDIR /app/src
