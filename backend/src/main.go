@@ -69,7 +69,10 @@ func main() {
 	dropTables := false
 	port := DEFAULT_PORT
 	if os.Getenv("DROP_TABLES") == "true" {
+		fmt.Printf("DROP_TABLES=true")
 		dropTables = true
+	} else {
+		fmt.Printf("DROP_TABLES=false")
 	}
 
 	port, err := strconv.Atoi(os.Getenv("PORT"))
@@ -95,6 +98,7 @@ func main() {
 		os.Getenv("DATABASE_URL"),
 		dropTables,
 		true, // requiresVerificaiton
+		app.ResetPasswordCallback,
 		app.RegistrationCallback,
 		registrationCallbackUrl)
 

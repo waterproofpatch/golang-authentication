@@ -279,9 +279,25 @@ func sendGenericEmail(email string, content string) {
 	}()
 }
 
-// handle new user registered and needs to be emailed their verification code
+// handle user requesting password reset
+func ResetPasswordCallback(email string, resetCode string) error {
+	fmt.Printf("resetPasswordCallback for %v", email)
+	// the backend will redirect
+	url := fmt.Sprintf("https://www.plantmindr.com/authentication?mode=performPasswordReset&resetCode=%s&resetEmail=%s", resetCode, email)
+	if os.Getenv("DEBUG") == "true" {
+		url = fmt.Sprintf("https://localhost:4200/authentication?mode=performPasswordReset&resetCode=%s&resetEmail=%s", resetCode, email)
+	}
+	// Craft the email content
+	emailContent := fmt.Sprintf(`Hello,
+You requested a password reset. Click the link below to reset your password:
+%s`, url)
+
+	sendGenericEmail(email, emailContent)
+	return nil
+}
+
 func RegistrationCallback(email string, verificationCode string) error {
-	fmt.Printf("email=%v, verificationCode=%v\n", email, verificationCode)
+	fmt.Printf("registrationCallback for %v", email)
 	// the backend will redirect
 	url := fmt.Sprintf("https://strider.azurewebsites.net/api/verify?code=%s&email=%s", verificationCode, email)
 	if os.Getenv("DEBUG") == "true" {

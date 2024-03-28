@@ -30,7 +30,8 @@ export class BaseService extends BaseComponent {
   constructor() {
     super();
   }
-  getUrlBase(): string {
+
+  public getUrlBase(): string {
     return environment.apiUrlBase;
   }
 }
