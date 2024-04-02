@@ -10,6 +10,6 @@ WORKDIR /email_service
 RUN python3 -m venv venv
 RUN venv/bin/python -m pip install -r requirements.txt
 
-ENV SITE_TIMESTAMP="main_0974a43_03/27/24 22:43:17"
+ENV SITE_TIMESTAMP="azure-work_9fa89ff_03/27/24 23:40:26"
 
 WORKDIR /app/src

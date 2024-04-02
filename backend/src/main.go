@@ -33,8 +33,10 @@ func startServing(port int, router *mux.Router) {
 	methods := []string{"GET", "POST", "PUT", "DELETE"}
 	headers := []string{"Content-Type", "Access-Control-Allow-Origin", "Authorization"}
 	origins := []string{
-		// from the storage account
+		// from the storage account static website endpoint
 		"https://plantmindrstorage.z13.web.core.windows.net",
+		// from the azure CDN endpoint
+		"https://plantmindr-frontend-profile.azureedge.net",
 		"https://www.plantmindr.com",
 		"https://plantmindr.com",
 		"www.plantmindr.com",

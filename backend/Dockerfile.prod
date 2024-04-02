@@ -27,7 +27,7 @@ RUN venv/bin/python -m pip install -r requirements.txt
 WORKDIR /usr/bin
 COPY --from=build /web-app .
 
-ENV SITE_TIMESTAMP="main_0974a43_03/27/24 22:43:17"
+ENV SITE_TIMESTAMP="azure-work_9fa89ff_03/27/24 23:40:26"
 
 EXPOSE 80
 CMD /usr/bin/web-app --port $PORT 
