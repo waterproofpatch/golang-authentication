@@ -10,8 +10,10 @@ if [ "$1" == "--help" ]; then
     exit 0
 fi
 
-make down
-pg_dump -h ${DB_SERVER}.postgres.database.azure.com -d ${DB_NAME} -U ${DB_USERNAME} -p 5432 -T cron.job -T cron.job_run_details > backup.sql
+#make down
+echo "Downloading database from prod..."
+pg_dump -h ${DB_SERVER}.postgres.database.azure.com -d ${DB_NAME} -U ${DB_USERNAME} -p 5432 --exclude-table cron.job --exclude-table cron.job_run_details --data-only > backup.sql
+echo "Done downloading database from prod..."
 
 if [ "$1" == "--load" ]; then
     docker-compose up -d db
