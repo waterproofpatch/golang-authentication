@@ -2,6 +2,7 @@ AZ_ACR_NAME=pointinsertion
 AZ_ACR_URL=$(AZ_ACR_NAME).azurecr.io
 AZ_FRONTEND_NAME=antlion
 AZ_BACKEND_NAME=strider
+AZ_RESOURCE_GROUP=my-resource-group
 
 all: down up
 

@@ -17,3 +17,5 @@ backup.sql
 frontend/dist
 tags.temp
 tags.lock
+myvenv
+
