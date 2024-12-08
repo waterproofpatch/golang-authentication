@@ -13,6 +13,9 @@ brew update && brew install azure-cli
 ```bash
 sudo apt install make -y
 sudo snap install docker
+python3 -m venv myvenv
+source myvenv/bin/python
+python3 -m pip install az-cli
 ```
 
 ## Setup
@@ -50,12 +53,14 @@ az login
 Set the following environment variables to your azure account values (do not commit them to source control!)
 
 `export AZ_SUBCRIPTION_ID=<your-subscription-id>`
-`export AZ_RESOURCE_GROUP=<your-resource-group>`
 
 Then run the deploy target:
 
 ```bash
 make deploy
+# alternatively
+make deploy_backdend
+make deploy_frontend
 ```
 
 ## Load Production Database in Dev Container
