@@ -25,6 +25,7 @@ If you plan on working on the `go_authentication` project:
 ```bash
 git submodule init
 git submodule update
+# see about "replace" in backend/src/go.mod
 ```
 
 Set up initial SSL certificates (frontend):
@@ -59,7 +60,7 @@ Then run the deploy target:
 ```bash
 make deploy
 # alternatively
-make deploy_backdend
+make deploy_backend
 make deploy_frontend
 ```
 
