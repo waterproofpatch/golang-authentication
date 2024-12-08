@@ -1,8 +1,6 @@
-FROM node:14 as builder
+FROM node:18 as builder
 WORKDIR /app
-RUN npm install -g @angular/cli
-RUN npm uninstall @angular-devkit/build-angular
-RUN npm install --save-dev @angular-devkit/build-angular
+RUN npm install -g @angular/cli@19.0.4
 COPY . .
 RUN npm install
 RUN ng build
